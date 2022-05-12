@@ -646,7 +646,7 @@
 				if(!((e.name == "l_arm") || (e.name == "r_arm") || (e.name == "l_leg") || (e.name == "r_leg") || (e.name == "l_hand") || (e.name == "r_hand") || (e.name == "l_foot") || (e.name == "r_foot")))
 					core_fracture = 1
 		if(core_fracture)
-			dat += "\t[SPAN_SCANNER("*<b>Bone fractures</b> detected. Advanced scanner required for location.")]\n"
+			dat += "\t[SPAN_SCANNER("*<b>Bone fractures</b> detected.")]\n"
 		if(internal_bleed_detected)
 			dat += "\t[SPAN_SCANNER("*<b>Internal bleeding</b> detected. Advanced scanner required for location.")]\n"
 		if(embedded_item_detected)
