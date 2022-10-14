@@ -40,7 +40,7 @@
 	if(prefs.muted & MUTE_ADMINHELP)
 		to_chat(src,
 			type = MESSAGE_TYPE_ADMINPM,
-			html = SPAN_DANGER("Error: Admin-PM: You are unable to use admin PM-s (muted)."),
+			html = ticket_block(SPAN_DANGER("Error: Admin-PM: You are unable to use admin PM-s (muted).")),
 			confidential = TRUE)
 		return
 	var/client/C
@@ -52,7 +52,7 @@
 		if(CLIENT_IS_STAFF(src))
 			to_chat(src,
 				type = MESSAGE_TYPE_ADMINPM,
-				html = SPAN_DANGER("Error: Admin-PM: Client not found."),
+				html = ticket_block(SPAN_DANGER("Error: Admin-PM: Client not found.")),
 				confidential = TRUE)
 		return
 
@@ -83,11 +83,11 @@
 		else
 			to_chat(src,
 				type = MESSAGE_TYPE_ADMINPM,
-				html = SPAN_DANGER("Error: Admin-PM: Client not found."),
+				html = ticket_block(SPAN_DANGER("Error: Admin-PM: Client not found.")),
 				confidential = TRUE)
 			to_chat(src,
 				type = MESSAGE_TYPE_ADMINPM,
-				html = "[SPAN_DANGER("<b>Message not sent:</b>")]<br>[msg]",
+				html = ticket_block("[SPAN_DANGER("<b>Message not sent:</b>")]<br>[msg]"),
 				confidential = TRUE)
 			AH.AddInteraction("<b>No client found, message not sent:</b><br>[msg]")
 			return
@@ -99,18 +99,17 @@
 	if(prefs.muted & MUTE_ADMINHELP)
 		to_chat(src,
 			type = MESSAGE_TYPE_ADMINPM,
-			html = SPAN_DANGER("Error: Admin-PM: You are unable to use admin PM-s (muted)."),
+			html = ticket_block(SPAN_DANGER("Error: Admin-PM: You are unable to use admin PM-s (muted).")),
 			confidential = TRUE)
 		return
 
 	if(!CLIENT_IS_STAFF(src) && !current_ticket) //no ticket? https://www.youtube.com/watch?v=iHSPf6x1Fdo
+		var/message
+		message += SPAN_DANGER("You can no longer reply to this ticket, please open another one by using the Adminhelp verb if need be.")
+		message += SPAN_NOTICE("\nMessage: [msg]")
 		to_chat(src,
 			type = MESSAGE_TYPE_ADMINPM,
-			html = SPAN_DANGER("You can no longer reply to this ticket, please open another one by using the Adminhelp verb if need be."),
-			confidential = TRUE)
-		to_chat(src,
-			type = MESSAGE_TYPE_ADMINPM,
-			html = SPAN_NOTICE("Message: [msg]"),
+			html = ticket_block(message),
 			confidential = TRUE)
 		return
 
@@ -126,7 +125,7 @@
 	if(!recipient)
 		to_chat(src,
 			type = MESSAGE_TYPE_ADMINPM,
-			html = SPAN_DANGER("Error: Admin-PM: Client not found."),
+			html = ticket_block(SPAN_DANGER("Error: Admin-PM: Client not found.")),
 			confidential = TRUE)
 		return
 
@@ -147,11 +146,11 @@
 			if(CLIENT_IS_STAFF(src))
 				to_chat(src,
 					type = MESSAGE_TYPE_ADMINPM,
-					html = SPAN_DANGER("Error: Admin-PM: Client not found."),
+					html = ticket_block(SPAN_DANGER("Error: Admin-PM: Client not found.")),
 					confidential = TRUE)
 				to_chat(src,
 					type = MESSAGE_TYPE_ADMINPM,
-					html = "[SPAN_DANGER("<b>Message not sent:</b>")]<br>[msg]",
+					html = ticket_block("[SPAN_DANGER("<b>Message not sent:</b>")]<br>[msg]"),
 					confidential = TRUE)
 				if(recipient_ticket)
 					recipient_ticket.AddInteraction("<b>No client found, message not sent:</b><br>[msg]")
@@ -164,7 +163,7 @@
 	if(prefs.muted & MUTE_ADMINHELP)
 		to_chat(src,
 			type = MESSAGE_TYPE_ADMINPM,
-			html = SPAN_DANGER("Error: Admin-PM: You are unable to use admin PM-s (muted)."),
+			html = ticket_block(SPAN_DANGER("Error: Admin-PM: You are unable to use admin PM-s (muted).")),
 			confidential = TRUE)
 		return
 
@@ -191,11 +190,11 @@
 		if(CLIENT_IS_STAFF(src))
 			to_chat(recipient,
 				type = MESSAGE_TYPE_ADMINPM,
-				html = SPAN_ADMINSAY("\nAdmin PM from-<b>[key_name(src, recipient, 1)]</b>: <span class='linkify'>[msg]</span>\n\n"),
+				html = ticket_block(SPAN_ADMINSAY("\nAdmin PM from-<b>[key_name(src, recipient, 1)]</b>: <span class='linkify'>[msg]</span>\n\n")),
 				confidential = TRUE)
 			to_chat(src,
 				type = MESSAGE_TYPE_ADMINPM,
-				html = SPAN_NOTICE("Admin PM to-<b>[key_name(recipient, src, 1)]</b>: <span class='linkify'>[msg]</span>"),
+				html = ticket_block(SPAN_NOTICE("Admin PM to-<b>[key_name(recipient, src, 1)]</b>: <span class='linkify'>[msg]</span>")),
 				confidential = TRUE)
 			//omg this is dumb, just fill in both their tickets
 			var/interaction_message = "<font color='purple'>PM from-<b>[key_name(src, recipient, TRUE)]</b> to-<b>[key_name(recipient, src, TRUE)]</b>: [msg]</font>"
@@ -210,11 +209,11 @@
 			admin_ticket_log(src, "<font color='red'>[replymsg]</font>", log_in_blackbox = FALSE, player_message = player_replymsg)
 			to_chat(recipient,
 				type = MESSAGE_TYPE_ADMINPM,
-				html = SPAN_DANGER("\n[replymsg]\n"),
+				html = ticket_block(SPAN_DANGER("\n[replymsg]\n")),
 				confidential = TRUE)
 			to_chat(src,
 				type = MESSAGE_TYPE_ADMINPM,
-				html = SPAN_NOTICE("PM to-<b>Admins</b>: <span class='linkify'>[msg]</span>"),
+				html = ticket_block(SPAN_NOTICE("PM to-<b>Admins</b>: <span class='linkify'>[msg]</span>")),
 				confidential = TRUE)
 			log_ahelp(current_ticket.id, "Reply", msg, recipient.ckey, src.ckey)
 
@@ -229,23 +228,15 @@
 				already_logged = TRUE
 				log_ahelp(recipient.current_ticket.id, "Ticket Opened", msg, recipient.ckey, src.ckey)
 
+			var/message
+			message += "\n<font color='red' size='4'><b>-- Administrator private message --</b></font>\n"
+			message += SPAN_ADMINSAY("Admin PM from-<b>[key_name(src, recipient, 0)]</b>: <span class='linkify'>[msg]</span>") + "\n"
+			message += SPAN_ADMINSAY("<i>Click on the administrator's name to reply.</i>\n\n") + "\n"
+			message += SPAN_NOTICE("Admin PM to-<b>[key_name(recipient, src, 1)]</b>: <span class='linkify'>[msg]</span>")
 			to_chat(recipient,
 				type = MESSAGE_TYPE_ADMINPM,
-				html = "\n<font color='red' size='4'><b>-- Administrator private message --</b></font>",
+				html = message,
 				confidential = TRUE)
-			to_chat(recipient,
-				type = MESSAGE_TYPE_ADMINPM,
-				html = SPAN_ADMINSAY("Admin PM from-<b>[key_name(src, recipient, 0)]</b>: <span class='linkify'>[msg]</span>"),
-				confidential = TRUE)
-			to_chat(recipient,
-				type = MESSAGE_TYPE_ADMINPM,
-				html = SPAN_ADMINSAY("<i>Click on the administrator's name to reply.</i>\n\n"),
-				confidential = TRUE)
-			to_chat(src,
-				type = MESSAGE_TYPE_ADMINPM,
-				html = SPAN_NOTICE("Admin PM to-<b>[key_name(recipient, src, 1)]</b>: <span class='linkify'>[msg]</span>"),
-				confidential = TRUE)
-
 			admin_ticket_log(recipient, "<font color='purple'>PM From [key_name_admin(src)]: [msg]</font>", log_in_blackbox = FALSE, player_message = "<font color='purple'>PM From [key_name_admin(src, include_name = FALSE)]: [msg]</font>")
 
 			if(!already_logged) //Reply to an existing ticket
@@ -258,7 +249,7 @@
 			if(!current_ticket)
 				to_chat(src,
 					type = MESSAGE_TYPE_ADMINPM,
-					html = SPAN_DANGER("Error: Admin-PM: Non-admin to non-admin PM communication is forbidden."),
+					html = ticket_block(SPAN_DANGER("Error: Admin-PM: Non-admin to non-admin PM communication is forbidden.")),
 					confidential = TRUE)
 				to_chat(src,
 					type = MESSAGE_TYPE_ADMINPM,
@@ -276,5 +267,5 @@
 		if(X.key!=key && X.key!=recipient.key) //check client/X is an admin and isn't the sender or recipient
 			to_chat(X,
 				type = MESSAGE_TYPE_ADMINPM,
-				html = SPAN_NOTICE("<B>PM: [key_name(src, X, 0)]-&gt;[key_name(recipient, X, 0)]:</B> [msg]") ,
+				html = ticket_block(SPAN_NOTICE("<B>PM: [key_name(src, X, 0)]-&gt;[key_name(recipient, X, 0)]:</B> [msg]")),
 				confidential = TRUE)

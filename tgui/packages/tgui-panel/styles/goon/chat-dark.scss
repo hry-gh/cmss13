@@ -1429,3 +1429,17 @@ em {
   font-style: italic;
   border-bottom: 1px dashed #fff;
 }
+
+.ticket_block {
+  background: #a32121;
+  border: 1px solid #111a27;
+  margin: 0.5em;
+  padding: 0.5em 0.75em;
+}
+
+.ticket_block .icon {
+  width: 1.5em;
+  height: 1.5em;
+  margin: 0;
+  padding: 0;
+}

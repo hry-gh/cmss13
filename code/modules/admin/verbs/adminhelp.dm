@@ -388,7 +388,7 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	msg = sanitize(copytext_char(msg, 1, MAX_MESSAGE_LEN))
 	var/ref_src = "[REF(src)]"
 	//Message to be sent to all admins
-	var/admin_msg = SPAN_ADMINSAY(SPAN_ADMINHELP("Ticket [TicketHref("#[id]", ref_src)]</span><b>: [LinkedReplyName(ref_src)] [FullMonty(ref_src)]:</b> <span class='linkify'>[msg]"))
+	var/admin_msg = ticket_block(SPAN_ADMINSAY(SPAN_ADMINHELP("Ticket [TicketHref("#[id]", ref_src)]</span><b>: [LinkedReplyName(ref_src)] [FullMonty(ref_src)]:</b> <span class='linkify'>[msg]")))
 
 	AddInteraction("<font color='red'>[LinkedReplyName(ref_src)]: [msg]</font>", player_message = "<font color='red'>[LinkedReplyName(ref_src)]: [msg]</font>")
 	log_admin_private("Ticket #[id]: [key_name(initiator)]: [msg]")
@@ -402,13 +402,13 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 		window_flash(X)
 		to_chat(X,
 			type = MESSAGE_TYPE_ADMINPM,
-			html = "\n[admin_msg]\n\n",
+			html = ticket_block("\n[admin_msg]\n\n"),
 			confidential = TRUE)
 
 	//show it to the person adminhelping too
 	to_chat(initiator,
 		type = MESSAGE_TYPE_ADMINPM,
-		html = SPAN_ADMINNOTICE("PM to-<b>Admins</b>: <span class='linkify'>[msg]</span>"),
+		html = ticket_block(SPAN_ADMINNOTICE("PM to-<b>Admins</b>: <span class='linkify'>[msg]</span>")),
 		confidential = TRUE)
 	log_ahelp(id, "Ticket Opened", msg, null, initiator.ckey, urgent = urgent)
 
@@ -473,7 +473,7 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	addtimer(CALLBACK(initiator, /client/proc/giveadminhelpverb), 50)
 
 	AddInteraction("<font color='green'>Resolved by [key_name].</font>", player_message = "<font color='green'>Ticket resolved!</font>")
-	to_chat(initiator, SPAN_ADMINHELP("Your ticket has been resolved by an admin. The Adminhelp verb will be returned to you shortly."), confidential = TRUE)
+	to_chat(initiator, ticket_block(SPAN_ADMINHELP("Your ticket has been resolved by an admin. The Adminhelp verb will be returned to you shortly.")), confidential = TRUE)
 	if(!silent)
 		var/msg = "Ticket [TicketHref("#[id]")] resolved by [key_name]"
 		message_staff(msg)
