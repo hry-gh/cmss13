@@ -250,6 +250,7 @@
 			replace_ammo(null, current_mag)
 	else ammo = GLOB.ammo_list[ammo] //If they don't have a mag, they fire off their own thing.
 
+	set_gun_safety()
 	set_gun_attachment_offsets()
 	set_gun_config_values()
 	set_bullet_traits()
@@ -262,6 +263,9 @@
 
 /obj/item/weapon/gun/proc/set_gun_attachment_offsets()
 	attachable_offset = null
+
+/obj/item/weapon/gun/proc/set_gun_safety()
+	flags_gun_features |= GUN_TRIGGER_SAFETY
 
 
 /**
@@ -1437,6 +1441,7 @@ not all weapons use normal magazines etc. load_into_chamber() itself is designed
 
 		if(flags_gun_features & GUN_TRIGGER_SAFETY)
 			to_chat(user, SPAN_WARNING("The safety is on!"))
+			balloon_alert(user, "The safety is on!")
 			return
 
 		if((flags_gun_features & GUN_WIELDED_FIRING_ONLY) && !(flags_item & WIELDED)) //If we're not holding the weapon with both hands when we should.
