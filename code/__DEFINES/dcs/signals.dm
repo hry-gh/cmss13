@@ -483,3 +483,8 @@
 // Checks whether the xeno can build a thick structure regardless of hive weeds
 #define COMSIG_XENO_THICK_RESIN_BYPASS "xeno_thick_resin_bypass"
 	#define COMPONENT_THICK_BYPASS (1<<0)
+
+#define COMSIG_VV_TOPIC "vv_topic"
+	#define COMPONENT_VV_HANDLED (1<<0)
+
+#define COMSIG_ATOM_VV_MODIFY_TRANSFORM "atom_vv_modify_transform"

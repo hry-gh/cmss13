@@ -21,6 +21,9 @@ GLOBAL_PROTECT(href_token)
 	///Whether this admin is invisiminning
 	var/invisimined = FALSE
 
+	var/list/tagged_datums
+	var/datum/filter_editor/filteriffic
+
 /datum/admins/New(initial_rank = "Temporary Admin", initial_rights = 0, ckey)
 	if(!ckey)
 		error("Admin datum created without a ckey argument. Datum has been deleted")

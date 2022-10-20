@@ -161,6 +161,14 @@ proc/listclearnulls(list/list)
 			else		L_n[i] = L_o[i]
 			L_o -= i
 
+///same as shuffle, but returns nothing and acts on list in place
+/proc/shuffle_inplace(list/inserted_list)
+	if(!inserted_list)
+		return
+
+	for(var/i in 1 to inserted_list.len - 1)
+		inserted_list.Swap(i, rand(i, inserted_list.len))
+
 //Return a list with no duplicate entries
 /proc/uniquelist(var/list/L)
 	var/list/K = list()

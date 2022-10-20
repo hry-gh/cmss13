@@ -72,3 +72,23 @@
 ///sort any value in a list
 /proc/sort_list(list/list_to_sort, cmp=/proc/cmp_text_asc)
 	return sortTim(list_to_sort.Copy(), cmp)
+
+///same as unique_list, but returns nothing and acts on list in place (also handles associated values properly)
+/proc/unique_list_in_place(list/inserted_list)
+	var/temp = inserted_list.Copy()
+	inserted_list.len = 0
+	for(var/key in temp)
+		if (isnum(key))
+			inserted_list |= key
+		else
+			inserted_list[key] = temp[key]
+
+/**
+ * Removes any null entries from the list
+ * Returns TRUE if the list had nulls, FALSE otherwise
+**/
+/proc/list_clear_nulls(list/list_to_clear)
+	var/start_len = list_to_clear.len
+	var/list/new_list = new(start_len)
+	list_to_clear -= new_list
+	return list_to_clear.len < start_len

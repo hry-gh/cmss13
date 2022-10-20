@@ -30,7 +30,7 @@ GLOBAL_PROTECT(AdminProcCallSpamPrevention)
 		to_chat(starting_client, "<font color='red'>Error: callproc_datum(): type [A.type] has no proc named [procname].</font>")
 		return
 
-	var/list/lst = starting_client.admin_holder.get_callproc_args()
+	var/list/lst = starting_client.get_callproc_args()
 	if(!lst)
 		return
 
@@ -96,7 +96,7 @@ GLOBAL_PROTECT(AdminProcCallSpamPrevention)
 			to_chat(usr, "<font color='red'>Error: callproc(): proc [procname] does not exist. (Did you forget the /proc/ part?)</font>")
 			return
 
-	var/list/lst = usr.client.admin_holder.get_callproc_args()
+	var/list/lst = usr.client.get_callproc_args()
 	if(!lst)
 		return
 
@@ -141,7 +141,7 @@ GLOBAL_PROTECT(AdminProcCallSpamPrevention)
 		. = "<span class='notice'>[procname] returned: [!isnull(returnval) ? returnval : "null"]</font>"
 
 
-/datum/admins/proc/get_callproc_args()
+/client/proc/get_callproc_args()
 	var/argnum = tgui_input_number(usr, "Number of arguments", "Number:", 0)
 	if(isnull(argnum))
 		return

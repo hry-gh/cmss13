@@ -666,3 +666,7 @@ GLOBAL_LIST_INIT(whitelisted_client_procs, list(
 		return TRUE
 	return FALSE
 
+/client/proc/open_filter_editor(atom/in_atom)
+	if(admin_holder)
+		admin_holder.filteriffic = new /datum/filter_editor(in_atom)
+		admin_holder.filteriffic.tgui_interact(mob)
