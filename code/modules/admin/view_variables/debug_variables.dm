@@ -54,7 +54,7 @@
 				<tr><td>[M.b]</td><td>[M.e]</td><td>0</td></tr>
 				<tr><td>[M.c]</td><td>[M.f]</td><td>1</td></tr>
 			</tbody>
-			</table></td><td class='rbrak'>&nbsp;</td></tr></tbody></table></span>"} //TODO link to modify_transform wrapper for all matrices
+			</table></td><td class='rbrak'>&nbsp;</td></tr></tbody></table></span>"}
 	else if (isdatum(value))
 		var/datum/DV = value
 		if ("[DV]" != "[DV.type]") //if the thing as a name var, lets use it.

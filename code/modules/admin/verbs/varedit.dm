@@ -226,16 +226,14 @@
 	while (opentime && selectedbutton <= 0 && (!timeout || opentime+timeout > world.time))
 		stoplag(1)
 
-
 /datum/browser/modal/listpicker
 	var/valueslist = list()
-
 
 /datum/browser/modal/listpicker/New(User,Message,Title,Button1="Ok",Button2,Button3,StealFocus = 1, Timeout = FALSE,list/values,inputtype="checkbox", width, height, slidecolor)
 	if(!User)
 		return
 
-	var/output =  {"<form><input type="hidden" name="src" value="[REF(src)]"><ul class="sparse">"}
+	var/output = {"<form><input type="hidden" name="src" value="[REF(src)]"><ul class="sparse">"}
 	if(inputtype == "checkbox" || inputtype == "radio")
 		for(var/i in values)
 			var/div_slider = slidecolor
@@ -264,7 +262,6 @@
 	output += {"</form></div>"}
 	..(User, ckey("[User]-[Message]-[Title]-[world.time]-[rand(1,10000)]"), Title, width, height, src, StealFocus, Timeout)
 	set_content(output)
-
 
 /datum/browser/modal/listpicker/Topic(href,href_list)
 	if(href_list["close"] || !user || !user.client)

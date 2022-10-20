@@ -359,24 +359,21 @@ GLOBAL_PROTECT(VVpixelmovement)
 	log_admin("[key_name(src)] modified [original_name]'s [objectvar]: [original_var]=[new_var]")
 	message_staff("[key_name_admin(src)] modified [original_name]'s varlist [objectvar]: [original_var]=[new_var]")
 
+/proc/vv_varname_lockcheck(param_var_name)
+	if(param_var_name in GLOB.VVlocked)
+		if(!check_rights(R_DEBUG))
+			return FALSE
+	if(param_var_name in GLOB.VVckey_edit)
+		if(!check_rights(R_SPAWN|R_DEBUG))
+			return FALSE
+	if(param_var_name in GLOB.VVicon_edit_lock)
+		if(!check_rights(R_DEBUG))
+			return FALSE
+	return TRUE
 
-/client/proc/modify_variables(var/atom/O, var/param_var_name = null, var/autodetect_class = 0)
-	if(!check_rights(R_VAREDIT))	return
-
-	var/list/locked = list("vars", "key", "ckey", "client", "icon")
-
-	if(O.is_datum_protected())
-		to_chat(usr, SPAN_WARNING("This datum is protected. Access Denied"))
+/client/proc/modify_variables(atom/O, param_var_name = null, autodetect_class = 0)
+	if(!check_rights(R_VAREDIT))
 		return
-
-	if(!O.can_vv_modify() && !(admin_holder.rights & R_DEBUG))
-		to_chat(usr, "You can't modify this object! You require debugging permission")
-		return
-
-	for(var/p in forbidden_varedit_object_types)
-		if( istype(O,p) )
-			to_chat(usr, SPAN_DANGER("It is forbidden to edit this object's variables."))
-			return
 
 	var/class
 	var/variable
@@ -384,241 +381,93 @@ GLOBAL_PROTECT(VVpixelmovement)
 
 	if(param_var_name)
 		if(!(param_var_name in O.vars))
-			to_chat(src, "A variable with this name ([param_var_name]) doesn't exist in this atom ([O])")
+			to_chat(src, "A variable with this name ([param_var_name]) doesn't exist in this datum ([O])", confidential = TRUE)
 			return
-
-		if(param_var_name == "admin_holder" || (param_var_name in locked))
-			if(!check_rights(R_DEBUG))	return
-
 		variable = param_var_name
 
-		var_value = O.vars[variable]
-
-		if(autodetect_class)
-			if(isnull(var_value))
-				to_chat(usr, "Unable to determine variable type.")
-				class = null
-				autodetect_class = null
-			else if(isnum(var_value))
-				to_chat(usr, "Variable appears to be <b>NUM</b>.")
-				class = "num"
-				dir = 1
-
-			else if(istext(var_value))
-				to_chat(usr, "Variable appears to be <b>TEXT</b>.")
-				class = "text"
-
-			else if(isloc(var_value))
-				to_chat(usr, "Variable appears to be <b>REFERENCE</b>.")
-				class = "reference"
-
-			else if(isicon(var_value))
-				to_chat(usr, "Variable appears to be <b>ICON</b>.")
-				var_value = "\icon[var_value]"
-				class = "icon"
-
-			else if(istype(var_value,/matrix))
-				to_chat(usr, "Variable appears to be <b>MATRIX</b>.")
-				class = "matrix"
-
-			else if(istype(var_value,/atom) || istype(var_value,/datum))
-				to_chat(usr, "Variable appears to be <b>TYPE</b>.")
-				class = "type"
-
-			else if(istype(var_value,/list))
-				to_chat(usr, "Variable appears to be <b>LIST</b>.")
-				class = "list"
-
-			else if(istype(var_value,/client))
-				to_chat(usr, "Variable appears to be <b>CLIENT</b>.")
-				class = "cancel"
-			else
-				to_chat(usr, "Variable appears to be <b>FILE</b>.")
-				class = "file"
-
 	else
-
 		var/list/names = list()
 		for (var/V in O.vars)
 			names += V
 
-		names = sortList(names)
+		names = sort_list(names)
 
-		variable = tgui_input_list(usr, "Which var?","Var", names)
-		if(!variable)	return
-		var_value = O.vars[variable]
-
-		if(variable == "admin_holder" || (variable in locked))
-			if(!check_rights(R_DEBUG))	return
-
-	if(!autodetect_class)
-
-		var/dir
-		if(isnull(var_value))
-			to_chat(usr, "Unable to determine variable type.")
-
-		else if(isnum(var_value))
-			to_chat(usr, "Variable appears to be <b>NUM</b>.")
-
-			dir = 1
-
-		else if(istext(var_value))
-			to_chat(usr, "Variable appears to be <b>TEXT</b>.")
-
-
-		else if(isloc(var_value))
-			to_chat(usr, "Variable appears to be <b>REFERENCE</b>.")
-
-
-		else if(isicon(var_value))
-			to_chat(usr, "Variable appears to be <b>ICON</b>.")
-			var_value = "\icon[var_value]"
-
-
-		else if(istype(var_value,/matrix))
-			to_chat(usr, "Variable appears to be <b>MATRIX</b>.")
-			class = "matrix"
-
-		else if(istype(var_value,/atom) || istype(var_value,/datum))
-			to_chat(usr, "Variable appears to be <b>TYPE</b>.")
-
-
-		else if(istype(var_value,/list))
-			to_chat(usr, "Variable appears to be <b>LIST</b>.")
-
-
-		else if(istype(var_value,/client))
-			to_chat(usr, "Variable appears to be <b>CLIENT</b>.")
-
-
-		else
-			to_chat(usr, "Variable appears to be <b>FILE</b>.")
-
-
-		to_chat(usr, "Variable contains: [var_value]")
-		if(dir)
-			switch(var_value)
-				if(1)
-					dir = "NORTH"
-				if(2)
-					dir = "SOUTH"
-				if(4)
-					dir = "EAST"
-				if(8)
-					dir = "WEST"
-				if(5)
-					dir = "NORTHEAST"
-				if(6)
-					dir = "SOUTHEAST"
-				if(9)
-					dir = "NORTHWEST"
-				if(10)
-					dir = "SOUTHWEST"
-				else
-					dir = null
-			if(dir)
-				to_chat(usr, "If a direction, direction is: [dir]")
-
-
-		var/list/possible_classes = list("text","num","type","reference","mob reference","icon","file","list")
-		if(LAZYLEN(stored_matrices))
-			possible_classes += "matrix"
-		if(admin_holder && admin_holder.marked_datums.len)
-			possible_classes += "marked datum"
-		possible_classes += "edit referenced object"
-		possible_classes += "restore to default"
-
-		class = tgui_input_list(usr, "What kind of variable?","Variable Type", possible_classes)
-		if(!class)
+		variable = input("Which var?","Var") as null|anything in names
+		if(!variable)
 			return
 
-	var/original_name
+	if(!O.can_vv_get(variable))
+		return
 
-	if (!istype(O, /atom))
-		original_name = "\ref[O] ([O])"
+	var_value = O.vars[variable]
+	if(!vv_varname_lockcheck(variable))
+		return
+
+	var/default = vv_get_class(variable, var_value)
+
+	if(isnull(default))
+		to_chat(src, "Unable to determine variable type.", confidential = TRUE)
 	else
-		original_name = O:name
+		to_chat(src, "Variable appears to be <b>[uppertext(default)]</b>.", confidential = TRUE)
+
+	to_chat(src, "Variable contains: [var_value]", confidential = TRUE)
+
+	if(default == VV_NUM)
+		var/dir_text = ""
+		if(var_value > 0 && var_value < 16)
+			if(var_value & 1)
+				dir_text += "NORTH"
+			if(var_value & 2)
+				dir_text += "SOUTH"
+			if(var_value & 4)
+				dir_text += "EAST"
+			if(var_value & 8)
+				dir_text += "WEST"
+
+		if(dir_text)
+			to_chat(src, "If a direction, direction is: [dir_text]", confidential = TRUE)
+
+	if(autodetect_class && default != VV_NULL)
+		if (default == VV_TEXT)
+			default = VV_MESSAGE
+		class = default
+
+	var/list/value = vv_get_value(class, default, var_value, extra_classes = list(VV_LIST), var_name = variable)
+	class = value["class"]
+
+	if (!class)
+		return
+	var/var_new = value["value"]
+
+	if(class == VV_MESSAGE)
+		class = VV_TEXT
+
+	var/original_name = "[O]"
 
 	switch(class)
+		if(VV_LIST)
+			if(!islist(var_value))
+				mod_list(list(), O, original_name, variable)
 
-		if("list")
-			mod_list(O.vars[variable])
+			mod_list(var_value, O, original_name, variable)
 			return
 
-		if("restore to default")
-			O.vars[variable] = initial(O.vars[variable])
+		if(VV_RESTORE_DEFAULT)
+			var_new = initial(O.vars[variable])
 
-		if("edit referenced object")
-			return .(O.vars[variable])
+		if(VV_TEXT)
+			var/list/varsvars = vv_parse_text(O, var_new)
+			for(var/V in varsvars)
+				var_new = replacetext(var_new,"\[[V]]","[O.vars[V]]")
 
-		if("text")
-			var/var_new = input("Enter new text:","Text",O.vars[variable]) as null|text
-			if(var_new==null) return
-			O.vars[variable] = var_new
 
-		if("num")
-			if(variable=="luminosity")
-				var/var_new = tgui_input_real_number(src, "Enter new number:","Num", O.vars[variable])
-				if(var_new == null) return
-				O.SetLuminosity(var_new)
-			else if(variable=="stat")
-				var/var_new = tgui_input_real_number(src, "Enter new number:","Num", O.vars[variable])
-				if(var_new == null) return
-				if((O.vars[variable] == 2) && (var_new < 2))//Bringing the dead back to life
-					GLOB.dead_mob_list -= O
-					GLOB.alive_mob_list += O
-				if((O.vars[variable] < 2) && (var_new == 2))//Kill he
-					GLOB.alive_mob_list -= O
-					GLOB.dead_mob_list += O
-				O.vars[variable] = var_new
-			else
-				var/var_new =  tgui_input_real_number(src, "Enter new number:","Num", O.vars[variable])
-				if(var_new==null) return
-				O.vars[variable] = var_new
-
-		if("type")
-			var/var_new = tgui_input_list(usr, "Enter type:","Type", typesof(/obj,/mob,/area,/turf))
-			if(var_new==null) return
-			O.vars[variable] = var_new
-
-		if("reference")
-			var/var_new = input("Select reference:","Reference",O.vars[variable]) as null|mob|obj|turf|area in world
-			if(var_new==null) return
-			O.vars[variable] = var_new
-
-		if("mob reference")
-			var/var_new = input("Select reference:","Reference",O.vars[variable]) as null|mob in GLOB.mob_list
-			if(var_new==null) return
-			O.vars[variable] = var_new
-
-		if("file")
-			var/var_new = input("Pick file:","File",O.vars[variable]) as null|file
-			if(var_new==null) return
-			O.vars[variable] = var_new
-
-		if("icon")
-			var/var_new = input("Pick icon:","Icon",O.vars[variable]) as null|icon
-			if(var_new==null) return
-			O.vars[variable] = var_new
-
-		if("matrix")
-			var/matrix_name = tgui_input_list(usr, "Choose a matrix", "Matrix", (stored_matrices + "Cancel"))
-			if(!matrix_name || matrix_name == "Cancel")
-				return
-
-			var/matrix/M = LAZYACCESS(stored_matrices, matrix_name)
-			if(!M)
-				return
-
-			O.vars[variable] = M
-
-			world.log << "### VarEdit by [key_name(src)]: [O.type] '[variable]': [var_value] => matrix \"[matrix_name]\" with columns ([M.a], [M.b], [M.c]), ([M.d], [M.e], [M.f])"
-			message_staff("[key_name_admin(src)] modified [original_name]'s '[variable]': [var_value] => matrix \"[matrix_name]\" with columns ([M.a], [M.b], [M.c]), ([M.d], [M.e], [M.f])", 1)
-
-		if("marked datum")
-			var/datum/D = input_marked_datum(admin_holder.marked_datums)
-			O.vars[variable] = D
-
-	if(class != "matrix")
-		world.log << "### VarEdit by [key_name(src)]: [O.type] '[variable]': [var_value] => [html_encode("[O.vars[variable]]")]"
-		message_staff("[key_name_admin(src)] modified [original_name]'s '[variable]': [var_value] => [O.vars[variable]]", 1)
+	if (O.vv_edit_var(variable, var_new) == FALSE)
+		to_chat(src, "Your edit was rejected by the object.", confidential = TRUE)
+		return
+	vv_update_display(O, "varedited", VV_MSG_EDITED)
+	log_world("### VarEdit by [key_name(src)]: [O.type] [variable]=[var_value] => [var_new]")
+	log_admin("[key_name(src)] modified [original_name]'s [variable] from [html_encode("[var_value]")] to [html_encode("[var_new]")]")
+	var/msg = "[key_name_admin(src)] modified [original_name]'s [variable] from [var_value] to [var_new]"
+	message_admins(msg)
+	admin_ticket_log(O, msg)
+	return TRUE

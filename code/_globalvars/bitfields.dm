@@ -1,6 +1,3 @@
-
-
-
 GLOBAL_LIST_INIT(bitfields, generate_bitfields())
 
 /// Specifies a bitfield for smarter debugging
