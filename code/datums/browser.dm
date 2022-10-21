@@ -19,7 +19,7 @@
 	var/static/datum/asset/simple/other/other_asset = get_asset_datum(/datum/asset/simple/other)
 
 
-/datum/browser/New(nuser, nwindow_id, ntitle = 0, nstylesheet = "common.css", nwidth = 0, nheight = 0, var/atom/nref = null)
+/datum/browser/New(nuser, nwindow_id, ntitle = 0, nwidth = 0, nheight = 0, atom/nref = null, nstylesheet = "common.css")
 	user = nuser
 	window_id = nwindow_id
 	if (ntitle)

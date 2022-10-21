@@ -187,7 +187,7 @@
 
 
 /datum/browser/modal/New(nuser, nwindow_id, ntitle = 0, nwidth = 0, nheight = 0, atom/nref = null, StealFocus = TRUE, Timeout = 6000)
-	. = ..()
+	. = ..(nuser, nwindow_id, nwidth, nheight, null, "common.css")
 	stealfocus = StealFocus
 	if(!StealFocus)
 		window_options += "focus=false;"

@@ -8,30 +8,38 @@ body {
 	line-height: 170%;
 }
 
-hr
-{
+hr {
 	background-color: #40628a;
 	height: 1px;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
 	background-color: #333333;
 	color: #507aac;
 	border: 1px solid #161616;
 	font-family: Verdana, Geneva, sans-serif;
 }
 
-button, .button {
-    box-sizing: content-box;
+button,
+.button {
+	box-sizing: content-box;
 }
 
-a, a:link, a:visited, a:active, .linkOn, .linkOff, button, .button {
+a,
+a:link,
+a:visited,
+a:active,
+.linkOn,
+.linkOff,
+button {
 	color: #ffffff;
 	text-decoration: none;
 	background: #40628a;
 	border: 1px solid #161616;
 	padding: 0 4px 0 4px;
-	cursor:default;
+	cursor: default;
 	display: inline-block;
 }
 
@@ -39,14 +47,17 @@ a:hover {
 	background: #507aac;
 }
 
-a.white, a.white:link, a.white:visited, a.white:active {
+a.white,
+a.white:link,
+a.white:visited,
+a.white:active {
 	color: #40628a;
 	text-decoration: none;
 	background: #ffffff;
 	border: 1px solid #161616;
 	padding: 1px 4px 1px 4px;
 	margin: 0 2px 0 0;
-	cursor:default;
+	cursor: default;
 }
 
 a.white:hover {
@@ -54,24 +65,35 @@ a.white:hover {
 	background: #40628a;
 }
 
-.linkOn, a.linkOn:link, a.linkOn:visited, a.linkOn:active, a.linkOn:hover {
+.linkOn,
+a.linkOn:link,
+a.linkOn:visited,
+a.linkOn:active,
+a.linkOn:hover {
 	color: #ffffff;
 	background: #2f943c;
 	border-color: #24722e;
 }
 
-.linkOff, a.linkOff:link, a.linkOff:visited, a.linkOff:active, a.linkOff:hover {
+.linkOff,
+a.linkOff:link,
+a.linkOff:visited,
+a.linkOff:active,
+a.linkOff:hover {
 	color: #ffffff;
 	background: #999999;
 	border-color: #666666;
 }
 
-a.icon, .linkOn.icon, .linkOff.icon {
+a.icon,
+.linkOn.icon,
+.linkOff.icon {
 	position: relative;
 	padding: 1px 4px 2px 20px;
 }
 
-a.icon img, .linkOn.icon img {
+a.icon img,
+.linkOn.icon img {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -79,64 +101,65 @@ a.icon img, .linkOn.icon img {
 	height: 18px;
 }
 
-.inactive, a.inactive:link, a.inactive:visited, a.inactive:active {
-    color: #ffffff;
-    background: #999999;
-    border-color: #666666;
+.inactive,
+a.inactive:link,
+a.inactive:visited,
+a.inactive:active {
+	color: #ffffff;
+	background: #999999;
+	border-color: #666666;
 }
 
 a.inactive:hover {
 	background: #b3b3b3;
 }
 
-ul
-{
+ul {
 	padding: 4px 0 0 10px;
 	margin: 0;
 	list-style-type: none;
 }
 
-li
-{
+li {
 	padding: 0 0 2px 0;
 }
 
-img, a img
-{
-	border-style:none;
+img,
+a img {
+	border-style: none;
 }
 
-h1, h2, h3, h4, h5, h6
-{
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	margin: 0;
 	padding: 16px 0 8px 0;
 	color: #517087;
 }
 
-h1
-{
+h1 {
 	font-size: 15px;
 }
 
-h2
-{
+h2 {
 	font-size: 14px;
 }
 
-h3
-{
+h3 {
 	font-size: 13px;
 }
 
-h4
-{
+h4 {
 	font-size: 12px;
 }
 
 .uiWrapper {
 	width: 100%;
 	height: 100%;
-	padding-top:32px;
+	padding-top: 32px;
 }
 
 .uiTitle {
@@ -144,26 +167,25 @@ h4
 	padding: 6px 8px 6px 8px;
 	border-bottom: 2px solid #161616;
 	background: #383838;
-	color: #98B0C3;
+	color: #98b0c3;
 	font-size: 16px;
 }
 
 .uiTitleWrapper {
-	position:fixed;
-	top:0px;
-	left:0px;
-	right:0px;
-	z-index: 10
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	z-index: 10;
 }
 
 .uiTitleButtons {
-	position:fixed;
-	top:0px;
-	right:0px;
-	height:32px;
-	z-index:11;
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	height: 32px;
+	z-index: 11;
 }
-
 
 .uiTitle.icon {
 	padding: 6px 8px 6px 42px;
@@ -177,49 +199,41 @@ h4
 	font-family: Verdana, Geneva, sans-serif;
 }
 
-.good
-{
+.good {
 	color: #00ff00;
 }
 
-.average
-{
+.average {
 	color: #d09000;
 }
 
-.bad
-{
+.bad {
 	color: #ff0000;
 }
 
-.highlight
-{
-	color: #8BA5C4;
+.highlight {
+	color: #8ba5c4;
 }
 
-.dark
-{
+.dark {
 	color: #272727;
 }
 
-.notice
-{
+.notice {
 	position: relative;
-	background: #E9C183;
-	color: #15345A;
+	background: #e9c183;
+	color: #15345a;
 	font-size: 10px;
 	font-style: italic;
 	padding: 2px 4px 0 4px;
 	margin: 4px;
 }
 
-.notice.icon
-{
+.notice.icon {
 	padding: 2px 4px 0 20px;
 }
 
-.notice img
-{
+.notice img {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -227,13 +241,11 @@ h4
 	height: 16px;
 }
 
-div.notice
-{
+div.notice {
 	clear: both;
 }
 
-.statusDisplay
-{
+.statusDisplay {
 	background: #000000;
 	color: #ffffff;
 	border: 1px solid #40628a;
@@ -241,21 +253,18 @@ div.notice
 	margin: 3px 0;
 }
 
-.block
-{
+.block {
 	padding: 8px;
 	margin: 10px 4px 4px 4px;
 	border: 1px solid #40628a;
 	background-color: #202020;
 }
 
-.block h3
-{
+.block h3 {
 	padding: 0;
 }
 
-.progressBar
-{
+.progressBar {
 	width: 240px;
 	height: 14px;
 	border: 1px solid #666666;
@@ -264,55 +273,46 @@ div.notice
 	overflow: hidden;
 }
 
-.progressFill
-{
+.progressFill {
 	width: 100%;
 	height: 100%;
 	background: #40628a;
 	overflow: hidden;
 }
 
-.progressFill.good
-{
+.progressFill.good {
 	color: #ffffff;
 	background: #00ff00;
 }
 
-.progressFill.average
-{
+.progressFill.average {
 	color: #ffffff;
 	background: #d09000;
 }
 
-.progressFill.bad
-{
+.progressFill.bad {
 	color: #ffffff;
 	background: #ff0000;
 }
 
-.progressFill.highlight
-{
+.progressFill.highlight {
 	color: #ffffff;
-	background: #8BA5C4;
+	background: #8ba5c4;
 }
 
-.clearBoth
-{
+.clearBoth {
 	clear: both;
 }
 
-.clearLeft
-{
+.clearLeft {
 	clear: left;
 }
 
-.clearRight
-{
+.clearRight {
 	clear: right;
 }
 
-.line
-{
+.line {
 	width: 100%;
 	clear: both;
 }
@@ -353,7 +353,7 @@ a.blue:hover {
 }
 
 a.orange {
-	background-color: 	#cc8500;
+	background-color: #cc8500;
 }
 
 a.orange:hover {
@@ -361,7 +361,7 @@ a.orange:hover {
 }
 
 a.purple {
-	background-color: 	#802880;
+	background-color: #802880;
 }
 
 a.purple:hover {
@@ -508,7 +508,9 @@ a.purple:hover {
 	height: 26px;
 }
 
-.switch input {display:none;}
+.switch input {
+	display: none;
+}
 
 .slider {
 	position: absolute;
@@ -518,7 +520,7 @@ a.purple:hover {
 	right: 0;
 	bottom: 0;
 	background-color: #383838;
-	transition: .4s;
+	transition: 0.4s;
 }
 
 .slider:before {
@@ -528,8 +530,8 @@ a.purple:hover {
 	width: 18px;
 	left: 4px;
 	bottom: 4px;
-	background-color: #98B0C3;
-	transition: .4s;
+	background-color: #98b0c3;
+	transition: 0.4s;
 }
 
 .slider.red:before {
@@ -554,7 +556,7 @@ input:checked + .slider.locked {
 }
 
 input:focus + .slider {
-	box-shadow: 0 0 1px #2196F3;
+	box-shadow: 0 0 1px #2196f3;
 }
 
 input:focus + .slider.red {
@@ -577,7 +579,7 @@ input:checked + .slider:before {
 }
 
 ul.sparse {
-	padding-bottom:20px;
+	padding-bottom: 20px;
 }
 
 .sparse li {
