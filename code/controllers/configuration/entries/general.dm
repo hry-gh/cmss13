@@ -25,6 +25,8 @@ Basics, the most important.
 
 /datum/config_entry/string/discordurl
 
+/datum/config_entry/string/discord_prefix
+
 /datum/config_entry/string/banappeals
 
 /datum/config_entry/string/dburl

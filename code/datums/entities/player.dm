@@ -5,6 +5,8 @@
 	var/last_known_ip
 	var/last_known_cid
 
+	var/linked_discordid
+
 	var/last_login
 
 	var/is_permabanned = FALSE
@@ -37,6 +39,7 @@
 	var/migrating_bans = FALSE
 	var/migrating_jobbans = FALSE
 
+	var/datum/entity/discord_link/linked_discord
 	var/datum/entity/player/permaban_admin
 	var/datum/entity/player/time_ban_admin
 	var/list/datum/entity/player_note/notes
@@ -55,6 +58,7 @@ BSQL_PROTECT_DATUM(/datum/entity/player)
 		"last_known_ip" = DB_FIELDTYPE_STRING_SMALL,
 		"last_known_cid" = DB_FIELDTYPE_STRING_SMALL,
 		"last_login" = DB_FIELDTYPE_STRING_LARGE,
+		"linked_discordid" = DB_FIELDTYPE_BIGINT,
 		"is_permabanned" = DB_FIELDTYPE_INT,
 		"permaban_reason" = DB_FIELDTYPE_STRING_MAX,
 		"permaban_date" = DB_FIELDTYPE_STRING_LARGE,
@@ -378,6 +382,8 @@ BSQL_PROTECT_DATUM(/datum/entity/player)
 		permaban_admin = DB_ENTITY(/datum/entity/player, permaban_admin_id)
 	if(time_ban_admin_id)
 		time_ban_admin = DB_ENTITY(/datum/entity/player, time_ban_admin_id)
+	if(linked_discordid)
+		linked_discord = DB_ENTITY(/datum/entity/discord_link, linked_discordid)
 
 
 
@@ -668,3 +674,7 @@ BSQL_PROTECT_DATUM(/datum/entity/player)
 		"last_known_ip",
 		"last_known_cid")
 	root_filter = DB_OR(DB_COMP("is_permabanned", DB_EQUALS, 1), DB_COMP("is_time_banned", DB_EQUALS, 1))
+
+/datum/entity/player/proc/link_discord(id)
+	linked_discordid = id
+	save()
