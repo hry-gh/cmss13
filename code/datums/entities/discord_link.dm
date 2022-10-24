@@ -11,12 +11,11 @@
 /datum/entity_meta/discord_link
 	entity_type = /datum/entity/discord_link
 	table_name = "discord_link"
-	key_field = "ckey"
 	field_types = list("ckey" = DB_FIELDTYPE_STRING_MEDIUM,
 		"one_time_password" = DB_FIELDTYPE_STRING_LARGE,
 		"discordid" = DB_FIELDTYPE_BIGINT,
 		"timestamp" = DB_FIELDTYPE_DATE,
-		"playerid"=DB_FIELDTYPE_BIGINT)
+		"playerid"= DB_FIELDTYPE_BIGINT)
 
 /datum/entity_link/discord_link_to_player
 	parent_entity = /datum/entity/player
@@ -26,7 +25,7 @@
 	parent_name = "player"
 	child_name = "linked_discord"
 
-/datum/entity_meta/discord_link/on_read(var/datum/entity/discord_link/link)
+/datum/entity_meta/discord_link/on_read(datum/entity/discord_link/link)
 	if(link.playerid)
 		link.player = DB_ENTITY(/datum/entity/player, link.playerid)
 
