@@ -209,10 +209,6 @@ var/world_topic_spam_protect_time = world.timeofday
 	if(!notify_manager(restarting = TRUE))
 		log_debug("Failed to notify manager daemon of restart")
 
-	if(CONFIG_GET(flag/no_restarts))
-		shutdown()
-		return
-
 	TgsReboot()
 	..(reason)
 
