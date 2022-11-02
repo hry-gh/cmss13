@@ -36,7 +36,7 @@
 		"timestamp",
 		"playerid"
     )
-    order_by = list("total_minutes" = DB_ORDER_BY_DESC)
+    order_by = list("id" = DB_ORDER_BY_ASC)
 
 /datum/entity_link/discord_link_to_player
 	parent_entity = /datum/entity/player

@@ -28,15 +28,27 @@
 /datum/tgs_chat_command/link/Run(datum/tgs_chat_user/sender, params)
 	var/list/all_params = splittext(params, " ")
 
-	var/one_time_password = all_params[1]
-	var/datum/entity/player/player = get_player_from_one_time_password(one_time_password)
-	if(player)
-		player.linked_discord.discordid = sender.id
-		player.linked_discord.timestamp = "[time2text(world.realtime, "YYYY-MM-DD hh:mm:ss")]"
-		player.linked_discord.save()
-		return "You've been linked to CKEY: [player.ckey]. You can now get the Verified role!"
+	if(all_params[1])
+		var/one_time_password = all_params[1]
+		var/datum/entity/player/player = get_player_from_one_time_password(one_time_password)
+		if(player)
+			player.linked_discord.discordid = sender.id
+			player.linked_discord.timestamp = "[time2text(world.realtime, "YYYY-MM-DD hh:mm:ss")]"
+			player.linked_discord.save()
+			return "You've been linked to CKEY: [player.ckey]. You can now get the Verified role!"
 
 /proc/get_player_from_one_time_password(token)
 	var/datum/view_record/discord_link_view/view = DB_VIEW(/datum/view_record/discord_link_view, DB_COMP("token", DB_EQUALS, token))
-	var/player = DB_ENTITY(/datum/entity/player, view.playerid)
+	var/datum/entity/player = DB_ENTITY(/datum/entity/player, view.playerid)
 	return player
+
+/client/verb/get_player_from_token()
+	set name = "Get Player from Token"
+	set category = "OOC"
+
+	var/input = input(src, "Hey", "Input Token")
+	if(input)
+		var/one_time_password = input
+		var/datum/entity/player/player = get_player_from_one_time_password(one_time_password)
+		if(player)
+			to_chat(src, "[player.linked_discordid]")
