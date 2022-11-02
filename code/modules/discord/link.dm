@@ -37,8 +37,8 @@
 			player.linked_discord.save()
 			return "You've been linked to CKEY: [player.ckey]. You can now get the Verified role!"
 
-/proc/get_player_from_one_time_password(token)
-	var/datum/view_record/discord_link_view/view = DB_VIEW(/datum/view_record/discord_link_view, DB_COMP("token", DB_EQUALS, token))
+/proc/get_player_from_one_time_password(one_time_password)
+	var/datum/view_record/discord_link_view/view = DB_VIEW(/datum/view_record/discord_link_view, DB_COMP("one_time_password", DB_EQUALS, one_time_password))
 	var/datum/entity/player = DB_ENTITY(/datum/entity/player, view.playerid)
 	return player
 
