@@ -31,4 +31,5 @@
 
 /datum/entity/discord_link/proc/generate_one_time_password()
 	one_time_password = trim("[pick(operation_prefixes)]-[pick(operation_prefixes)]-[pick(operation_prefixes)]-[pick(operation_prefixes)]-[pick(operation_prefixes)]-[pick(operation_prefixes)]", 100)
+	save()
 	return(one_time_password)

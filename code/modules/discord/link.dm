@@ -2,20 +2,23 @@
 	set name = "Get One Time Password"
 	set category = "OOC"
 
-	var/datum/entity/player/P = player_data
-	if(P.linked_discord)
+	var/datum/entity/player/data = player_data
+	if(data.linked_discord)
 		to_chat(src, SPAN_BOLD("DISCORD: You are already linked - delink your record first."))
 		return
 
-	var/datum/entity/discord_link/new_link
-	new_link = new /datum/entity/discord_link
+	var/datum/entity/discord_link/new_link = DB_ENTITY(/datum/entity/discord_link)
 	new_link.ckey = src.key
-	new_link.player = P
+	new_link.playerid = data.id
+	new_link.player = data
+	new_link.save()
 
 	new_link.generate_one_time_password()
-	new_link.save()
-	P.linked_discord = new_link
-	var/one_time_password = P.linked_discord.one_time_password
+	data.linked_discord = new_link
+	data.linked_discord.sync_new()
+	data.linked_discordid = data.linked_discord.id
+	data.save()
+	var/one_time_password = data.linked_discord.one_time_password
 	to_chat(src, SPAN_BOLD("DISCORD: Your One Time Password is [one_time_password], use the command \"[CONFIG_GET(string/discord_prefix)] link [one_time_password]\" to complete verification."))
 
 /datum/tgs_chat_command/link
