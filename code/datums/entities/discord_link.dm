@@ -17,6 +17,27 @@
 		"timestamp" = DB_FIELDTYPE_DATE,
 		"playerid"= DB_FIELDTYPE_BIGINT)
 
+/datum/view_record/discord_link_view
+    var/id
+    var/ckey
+    var/one_time_password
+    var/discordid
+    var/timestamp
+    var/playerid
+
+/datum/entity_view_meta/discord_link_view
+    root_record_type = /datum/entity/discord_link_view
+    destination_entity = /datum/view_record/discord_link_view
+    fields = list(
+        "id",
+		"ckey",
+		"one_time_password",
+		"discordid",
+		"timestamp",
+		"playerid"
+    )
+    order_by = list("total_minutes" = DB_ORDER_BY_DESC)
+
 /datum/entity_link/discord_link_to_player
 	parent_entity = /datum/entity/player
 	child_entity = /datum/entity/discord_link

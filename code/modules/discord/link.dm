@@ -37,5 +37,6 @@
 		return "You've been linked to CKEY: [player.ckey]. You can now get the Verified role!"
 
 /proc/get_player_from_one_time_password(token)
-	var/datum/entity/discord_link/link = DB_EKEY(/datum/entity/discord_link, token)
-	return link.player
+	var/datum/view_record/discord_link_view/view = DB_VIEW(/datum/view_record/discord_link_view, DB_COMP("token", DB_EQUALS, token))
+	var/player = DB_ENTITY(/datum/entity/player, view.playerid)
+	return player
