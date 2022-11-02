@@ -26,7 +26,7 @@
     var/playerid
 
 /datum/entity_view_meta/discord_link_view
-    root_record_type = /datum/entity/discord_link_view
+    root_record_type = /datum/entity/discord_link
     destination_entity = /datum/view_record/discord_link_view
     fields = list(
         "id",
