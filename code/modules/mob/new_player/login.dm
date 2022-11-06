@@ -33,4 +33,7 @@
 		if(author != "Unknown")
 			to_chat(src, SPAN_ROUNDBODY("<hr>This round's lobby art is brought to you by [author]<hr>"))
 	if(join_motd)
+		var/tm_info = GLOB.revdata.GetTestMergeInfo()
+		if(join_motd || tm_info)
+			join_motd = join_motd ? "[join_motd]<br>[tm_info]" : tm_info
 		to_chat(src, "<div class=\"motd\">[join_motd]</div>")
