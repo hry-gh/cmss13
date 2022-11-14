@@ -42,9 +42,11 @@
 	sleep(1)
 	initialized_at = world.time
 	// Perform a clean initialization
-	window.initialize(inline_assets = list(
-		get_asset_datum(/datum/asset/simple/tgui_panel),
-	))
+	window.initialize(
+		strict_mode = TRUE,
+		assets = list(
+			get_asset_datum(/datum/asset/simple/tgui_panel),
+		))
 	window.send_asset(get_asset_datum(/datum/asset/simple/fontawesome))
 	window.send_asset(get_asset_datum(/datum/asset/spritesheet/chat))
 	// Other setup
