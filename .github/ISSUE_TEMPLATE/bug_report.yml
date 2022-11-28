@@ -47,4 +47,4 @@ body:
       options:
         - label: "Issue could be reproduced at least once"
         - label: "Issue happened in a recent (less than 7 days ago) round"
-        - label: "Couldn't find an existing issue about this (https://github.com/cmss13-devs/cmss13/issues)"
+        - label: "Could not find an existing issue about this (https://github.com/cmss13-devs/cmss13/issues)"
