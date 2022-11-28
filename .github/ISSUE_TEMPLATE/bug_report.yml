@@ -22,8 +22,8 @@ body:
   - type: textarea
     id: what-should-have-happened
     attributes:
-      label: "What's the difference with what should have happened?"
-      description: "What's the expected behaviour?"
+      label: "What is the difference with what should have happened?"
+      description: "What is the expected behaviour?"
       placeholder: "Not this. Never this..."
     validations:
       required: true
