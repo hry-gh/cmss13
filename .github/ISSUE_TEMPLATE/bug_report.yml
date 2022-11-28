@@ -7,7 +7,7 @@ body:
     id: current-tms
     attributes:
       label: "Testmerges"
-      description: "Are there any current TMs on the server? You can see this from the message when you join, or via using the OOC -> Show Revision Info verb. If you're certain the issue is to be caused by a test merge, report it in the pull request's comment section rather than on the tracker."
+      description: "Are there any current TMs on the server? You can see this from the message when you join, or via using the OOC -> Show Revision Info verb. If you are certain the issue is to be caused by a test merge, report it in the pull request comment section rather than on the tracker."
       placeholder: "#1, #2, #3, etc"
     validations:
       required: true
