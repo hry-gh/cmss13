@@ -43,16 +43,6 @@
 	var/is_landing_zone = FALSE // primarily used to prevent mortars from hitting this location
 	var/resin_construction_allowed = TRUE	// Allow construction of resin walls, and other special
 
-	/// List of all turfs currently inside this area. Acts as a filtered bersion of area.contents
-	/// For faster lookup (area.contents is actually a filtered loop over world)
-	/// Semi fragile, but it prevents stupid so I think it's worth it
-	var/list/turf/contained_turfs = list()
-	/// Contained turfs is a MASSIVE list, so rather then adding/removing from it each time we have a problem turf
-	/// We should instead store a list of turfs to REMOVE from it, then hook into a getter for it
-	/// There is a risk of this and contained_turfs leaking, so a subsystem will run it down to 0 incrementally if it gets too large
-	var/list/turf/turfs_to_uncontain = list()
-
-
 	// Weather
 	var/weather_enabled = TRUE	// Manual override for weather if set to false
 
@@ -491,18 +481,3 @@
 	if(!areas_in_z["[z]"])
 		areas_in_z["[z]"] = list()
 	areas_in_z["[z]"] += src
-
-/area/proc/get_contained_turfs()
-	if(length(turfs_to_uncontain))
-		cannonize_contained_turfs()
-	return contained_turfs
-
-/// Ensures that the contained_turfs list properly represents the turfs actually inside us
-/area/proc/cannonize_contained_turfs()
-	// This is massively suboptimal for LARGE removal lists
-	// Try and keep the mass removal as low as you can. We'll do this by ensuring
-	// We only actually add to contained turfs after large changes (Also the management subsystem)
-	// Do your damndest to keep turfs out of /area/space as a stepping stone
-	// That sucker gets HUGE and will make this take actual tens of seconds if you stuff turfs_to_uncontain
-	contained_turfs -= turfs_to_uncontain
-	turfs_to_uncontain = list()

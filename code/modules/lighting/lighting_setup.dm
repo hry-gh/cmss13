@@ -1,10 +1,10 @@
 
 /proc/create_all_lighting_objects()
-	for(var/area/A as anything in GLOB.areas)
+	for(var/area/A in world)
 		if(!A.static_lighting)
 			continue
 
-		for(var/turf/T as anything in A.get_contained_turfs())
+		for(var/turf/T in A)
 			if(T.always_lit)
 				continue
 			new/datum/lighting_object(T)
