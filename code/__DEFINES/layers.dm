@@ -117,7 +117,9 @@
 
 #define ABOVE_FLY_LAYER 6
 
-#define ABOVE_LIGHTING_PLANE 16
+#define LIGHTING_PRIMARY_LAYER 15	//The layer for the main lights of the station
+#define LIGHTING_PRIMARY_DIMMER_LAYER 15.1	//The layer that dims the main lights of the station
+#define LIGHTING_SECONDARY_LAYER 16	//The colourful, usually small lights that go on top
 
 #define BELOW_FULLSCREEN_LAYER 16.9 //blip from motion detector
 #define FULLSCREEN_LAYER 17
@@ -152,10 +154,29 @@
 
 #define BLACKNESS_PLANE 0 //To keep from conflicts with SEE_BLACKNESS internals
 
+//---------- LIGHTING -------------
+///Normal 1 per turf dynamic lighting underlays
+#define LIGHTING_PLANE 10
+
+///Lighting objects that are "free floating"
+#define O_LIGHTING_VISUAL_PLANE 11
+#define O_LIGHTING_VISUAL_RENDER_TARGET "O_LIGHT_VISUAL_PLANE"
+
+/// This plane masks out lighting to create an "emissive" effect, ie for glowing lights in otherwise dark areas.
+#define EMISSIVE_PLANE 14
+#define EMISSIVE_RENDER_TARGET "*EMISSIVE_PLANE"
+
+/// Masks the emissive plane
+#define EMISSIVE_MASK_PLANE 15
+#define EMISSIVE_MASK_RENDER_TARGET "*EMISSIVE_MASK_PLANE"
+
+#define RENDER_PLANE_LIGHTING 16
+
+///Things that should render ignoring lighting
+#define ABOVE_LIGHTING_PLANE 17
+
 #define GHOST_PLANE 80
 
-//---------- LIGHTING -------------
-#define LIGHTING_PLANE 100
 #define EXTERIOR_LIGHTING_PLANE 101
 
 ///--------------- FULLSCREEN RUNECHAT BUBBLES ------------

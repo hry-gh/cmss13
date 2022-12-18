@@ -75,6 +75,10 @@
 /// From /atom/proc/Decorate
 #define COMSIG_ATOM_DECORATED "atom_decorated"
 
+#define COMSIG_ATOM_USED_IN_CRAFT "atom_used_in_craft"
+
+
+
 ///from base of atom/setDir(): (old_dir, new_dir). Called before the direction changes.
 #define COMSIG_ATOM_DIR_CHANGE "atom_dir_change"
 
@@ -355,6 +359,8 @@
 
 ///from /turf/ChangeTurf
 #define COMSIG_ATOM_TURF_CHANGE "movable_turf_change"
+
+#define COMSIG_ATOM_SET_OPACITY "atom_set_opacity"
 
 ///from /atom/hitby(): (atom/movable/AM)
 #define COMSIG_ATOM_HITBY "atom_hitby"

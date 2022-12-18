@@ -101,7 +101,7 @@
 /obj/structure/resource_node/plasma/proc/grow()
 	growth_level++
 
-	SetLuminosity(growth_level+2)
+	set_light(growth_level+2)
 	update_icon()
 
 	if(growth_level == max_growth_level)

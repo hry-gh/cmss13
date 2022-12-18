@@ -55,6 +55,27 @@
 	// Fishing
 	var/supports_fishing = FALSE // set to false when MRing, this is just for testing
 
+	///Lumcount added by sources other than lighting datum objects, such as the overlay lighting component.
+	var/dynamic_lumcount = 0
+
+	///Bool, whether this turf will always be illuminated no matter what area it is in
+	var/always_lit = FALSE
+
+	var/tmp/lighting_corners_initialised = FALSE
+
+	///Our lighting object.
+	var/tmp/datum/lighting_object/lighting_object
+	///Lighting Corner datums.
+	var/tmp/datum/lighting_corner/lighting_corner_NE
+	var/tmp/datum/lighting_corner/lighting_corner_SE
+	var/tmp/datum/lighting_corner/lighting_corner_SW
+	var/tmp/datum/lighting_corner/lighting_corner_NW
+
+	///Which directions does this turf block the vision of, taking into account both the turf's opacity and the movable opacity_sources.
+	var/directional_opacity = NONE
+	///Lazylist of movable atoms providing opacity sources.
+	var/list/atom/movable/opacity_sources
+
 /turf/Initialize(mapload)
 	SHOULD_CALL_PARENT(FALSE) // this doesn't parent call for optimisation reasons
 	if(flags_atom & INITIALIZED)
@@ -85,10 +106,8 @@
 	for(var/atom/movable/AM in src)
 		Entered(AM)
 
-	if(luminosity)
-		if(light)	WARNING("[type] - Don't set lights up manually during New(), We do it automatically.")
-		trueLuminosity = luminosity * luminosity
-		light = new(src)
+	if (light_power && light_range)
+		update_light()
 
 	return INITIALIZE_HINT_NORMAL
 
@@ -115,9 +134,6 @@
 
 /turf/ex_act(severity)
 	return 0
-
-/turf/proc/update_icon() //Base parent. - Abby
-	return
 
 /turf/proc/add_cleanable_overlays()
 	for(var/cleanable_type in cleanables)
@@ -344,7 +360,13 @@
 		if(/turf/baseturf_bottom)
 			path = /turf/open/floor/plating
 
-	var/old_lumcount = lighting_lumcount - initial(lighting_lumcount)
+	var/old_lighting_object = lighting_object
+	var/old_lighting_corner_NE = lighting_corner_NE
+	var/old_lighting_corner_SE = lighting_corner_SE
+	var/old_lighting_corner_SW = lighting_corner_SW
+	var/old_lighting_corner_NW = lighting_corner_NW
+	var/old_directional_opacity = directional_opacity
+	var/old_dynamic_lumcount = dynamic_lumcount
 
 	//if(src.type == new_turf_path) // Put this back if shit starts breaking
 	//	return src
@@ -368,10 +390,26 @@
 
 	W.linked_pylons = pylons
 
-	W.lighting_lumcount += old_lumcount
-	if(old_lumcount != W.lighting_lumcount)
-		W.lighting_changed = 1
-		SSlighting.changed_turfs += W
+	if(W.always_lit)
+		W.overlays += GLOB.fullbright_overlay
+	else
+		W.overlays -= GLOB.fullbright_overlay
+
+	lighting_corner_NE = old_lighting_corner_NE
+	lighting_corner_SE = old_lighting_corner_SE
+	lighting_corner_SW = old_lighting_corner_SW
+	lighting_corner_NW = old_lighting_corner_NW
+
+	dynamic_lumcount = old_dynamic_lumcount
+
+	if(SSlighting.initialized)
+		W.lighting_object = old_lighting_object
+
+		directional_opacity = old_directional_opacity
+		recalculate_directional_opacity()
+
+		if(lighting_object && !lighting_object.needs_update)
+			lighting_object.update()
 
 	W.levelupdate()
 	return W
@@ -555,10 +593,10 @@
 	return NOT_WEEDABLE
 
 /turf/open/auto_turf/shale/layer1/is_weedable()
-	return FALSE 
+	return FALSE
 
 /turf/open/auto_turf/shale/layer2/is_weedable()
-	return FALSE 
+	return FALSE
 
 /turf/closed/wall/is_weedable()
 	return FULLY_WEEDABLE //so we can spawn weeds on the walls

@@ -18,7 +18,7 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	name = "\improper Space"
 	requires_power = 1
 	always_unpowered = 1
-	lighting_use_dynamic = 0
+
 	power_light = FALSE
 	power_equip = FALSE
 	power_environ = FALSE
@@ -37,7 +37,7 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	ceiling = CEILING_METAL
 
 /area/admin/droppod
-	lighting_use_dynamic = FALSE
+
 
 /area/admin/droppod/holding
 	name = "\improper Admin Supply Drops Droppod"
@@ -56,7 +56,7 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	ceiling = CEILING_MAX
 	requires_power = 0
 	luminosity = 1
-	lighting_use_dynamic = 0
+
 	has_gravity = 1
 
 // === end remove

@@ -553,7 +553,7 @@ GLOBAL_LIST_EMPTY(flamer_particles)
 	RegisterSignal(SSdcs, COMSIG_GLOB_WEATHER_CHANGE, .proc/update_in_weather_status)
 
 /obj/flamer_fire/Destroy()
-	SetLuminosity(0)
+	set_light(0)
 	STOP_PROCESSING(SSobj, src)
 	. = ..()
 
@@ -642,7 +642,7 @@ GLOBAL_LIST_EMPTY(flamer_particles)
 		flame_level++ //the initial flame burst is 1 level higher for a small time
 
 	icon_state = "[flame_icon]_[flame_level]"
-	SetLuminosity(flame_level * 2)
+	set_light(flame_level * 2)
 
 /obj/flamer_fire/proc/un_burst_flame()
 	initial_burst = FALSE

@@ -59,10 +59,6 @@
 	layer = GAME_PLANE
 	plane = GAME_PLANE
 
-///le awesome parent type
-/atom/movable/screen/proc/update_icon()
-	return
-
 /**
  * Sets screen_loc of this screen object, in form of point coordinates,
  * with optional pixel offset (px, py).

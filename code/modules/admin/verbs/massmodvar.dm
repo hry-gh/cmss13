@@ -222,7 +222,7 @@
 			var/new_value = tgui_input_real_number(usr, "Enter new number:","Num",O.vars[variable])
 			if(new_value == null) return
 			if(variable=="luminosity")
-				O.SetLuminosity(new_value)
+				O.set_light(new_value)
 			else
 				O.vars[variable] = new_value
 
@@ -231,7 +231,7 @@
 					for(var/mob/M in GLOB.mob_list)
 						if ( istype(M , O.type) )
 							if(variable=="luminosity")
-								M.SetLuminosity(new_value)
+								M.set_light(new_value)
 							else
 								M.vars[variable] = O.vars[variable]
 
@@ -239,7 +239,7 @@
 					for(var/obj/A in world)
 						if ( istype(A , O.type) )
 							if(variable=="luminosity")
-								A.SetLuminosity(new_value)
+								A.set_light(new_value)
 							else
 								A.vars[variable] = O.vars[variable]
 
@@ -247,7 +247,7 @@
 					for(var/turf/A in turfs)
 						if ( istype(A , O.type) )
 							if(variable=="luminosity")
-								A.SetLuminosity(new_value)
+								A.set_light(new_value)
 							else
 								A.vars[variable] = O.vars[variable]
 
@@ -256,7 +256,7 @@
 					for(var/mob/M in GLOB.mob_list)
 						if (M.type == O.type)
 							if(variable=="luminosity")
-								M.SetLuminosity(new_value)
+								M.set_light(new_value)
 							else
 								M.vars[variable] = O.vars[variable]
 
@@ -264,7 +264,7 @@
 					for(var/obj/A in world)
 						if (A.type == O.type)
 							if(variable=="luminosity")
-								A.SetLuminosity(new_value)
+								A.set_light(new_value)
 							else
 								A.vars[variable] = O.vars[variable]
 
@@ -272,7 +272,7 @@
 					for(var/turf/A in turfs)
 						if (A.type == O.type)
 							if(variable=="luminosity")
-								A.SetLuminosity(new_value)
+								A.set_light(new_value)
 							else
 								A.vars[variable] = O.vars[variable]
 

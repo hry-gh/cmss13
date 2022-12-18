@@ -730,7 +730,7 @@
 /obj/structure/machinery/vending/power_change()
 	..()
 	if(stat & NOPOWER)
-		addtimer(CALLBACK(src, .proc/update_icon), rand(1, 15))
+		addtimer(CALLBACK(src, /atom.proc/update_icon), rand(1, 15))
 		return
 	update_icon()
 

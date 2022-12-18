@@ -500,7 +500,7 @@ var/list/forbidden_varedit_object_types = list(
 			if(variable=="luminosity")
 				var/var_new = tgui_input_real_number(src, "Enter new number:","Num", O.vars[variable])
 				if(var_new == null) return
-				O.SetLuminosity(var_new)
+				O.set_light(var_new)
 			else if(variable=="stat")
 				var/var_new = tgui_input_real_number(src, "Enter new number:","Num", O.vars[variable])
 				if(var_new == null) return

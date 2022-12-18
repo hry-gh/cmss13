@@ -12,6 +12,16 @@
 	var/rebounds = FALSE
 	var/rebounding = FALSE // whether an object that was launched was rebounded (to prevent infinite recursive loops from wall bouncing)
 
+	/// Either FALSE, [EMISSIVE_BLOCK_GENERIC], or [EMISSIVE_BLOCK_UNIQUE]
+	var/blocks_emissive = FALSE
+	///Internal holder for emissive blocker object, do not use directly use blocks_emissive
+	var/atom/movable/emissive_blocker/em_block
+
+	///Lazylist to keep track on the sources of illumination.
+	var/list/affected_dynamic_lights
+	///Highest-intensity light affecting us, which determines our visibility.
+	var/affecting_dynamic_lumi = 0
+
 	var/acid_damage = 0 //Counter for stomach acid damage. At ~60 ticks, dissolved
 
 	var/move_intentionally = FALSE // this is for some deep stuff optimization. This means that it is regular movement that can only be NSWE and you don't need to perform checks on diagonals. ALWAYS reset it back to FALSE when done
@@ -19,6 +29,23 @@
 	var/datum/component/orbiter/orbiting
 
 //===========================================================================
+/atom/movable/Initialize(mapload)
+	. = ..()
+	switch(blocks_emissive)
+		if(EMISSIVE_BLOCK_GENERIC)
+			update_emissive_block()
+		if(EMISSIVE_BLOCK_UNIQUE)
+			render_target = ref(src)
+			em_block = new(src, render_target)
+			vis_contents += em_block
+	if(opacity)
+		AddElement(/datum/element/light_blocking)
+	switch(light_system)
+		if(MOVABLE_LIGHT)
+			AddComponent(/datum/component/overlay_lighting)
+		if(MOVABLE_LIGHT_DIRECTIONAL)
+			AddComponent(/datum/component/overlay_lighting, is_directional = TRUE)
+
 /atom/movable/Destroy()
 	for(var/atom/movable/I in contents)
 		qdel(I)
@@ -57,17 +84,11 @@
 		return src.master.attack_hand(a, b, c)
 	return
 
-
-
-
-
-
 //when a mob interact with something that gives them a special view,
 //check_eye() is called to verify that they're still eligible.
 //if they are not check_eye() usually reset the mob's view.
 /atom/proc/check_eye(mob/user)
 	return
-
 
 /mob/proc/set_interaction(atom/movable/AM)
 	if(interactee)
@@ -79,28 +100,23 @@
 	if(istype(interactee)) //some stupid code is setting datums as interactee...
 		interactee.on_set_interaction(src)
 
-
 /mob/proc/unset_interaction()
 	if(interactee)
 		if(istype(interactee))
 			interactee.on_unset_interaction(src)
 		interactee = null
 
-
 //things the user's machine must do just after we set the user's machine.
 /atom/movable/proc/on_set_interaction(mob/user)
 	return
-
 
 /obj/on_set_interaction(mob/user)
 	..()
 	in_use = 1
 
-
 //things the user's machine must do just before we unset the user's machine.
 /atom/movable/proc/on_unset_interaction(mob/user)
 	return
-
 
 // Spin for a set amount of time at a set speed using directional states
 /atom/movable/proc/spin(var/duration, var/turn_delay = 1, var/clockwise = 0, var/cardinal_only = 1)
@@ -222,10 +238,10 @@
 
 	if(light) //Clone lighting
 		if(!clone.light)
-			clone.SetLuminosity(luminosity) //Create clone light
+			clone.set_light(luminosity) //Create clone light
 	else
 		if(clone.light)
-			clone.SetLuminosity(0) //Kill clone light
+			clone.set_light(0) //Kill clone light
 
 /atom/movable/proc/destroy_clone()
 	clones.Remove(src.clone)
@@ -250,3 +266,16 @@
 	//if((force < (move_resist * MOVE_FORCE_THROW_RATIO)) || (move_resist == INFINITY))
 	//	return
 	return throw_atom(target, range, speed, thrower, spin)
+
+/atom/movable/proc/update_emissive_block()
+	if(!blocks_emissive)
+		return
+	else if (blocks_emissive == EMISSIVE_BLOCK_GENERIC)
+		var/mutable_appearance/gen_emissive_blocker = emissive_blocker(icon, icon_state, src, alpha = src.alpha, appearance_flags = src.appearance_flags)
+		gen_emissive_blocker.dir = dir
+		return gen_emissive_blocker
+	else if(blocks_emissive == EMISSIVE_BLOCK_UNIQUE)
+		if(!em_block && !QDELETED(src))
+			render_target = ref(src)
+			em_block = new(src, render_target)
+		return em_block

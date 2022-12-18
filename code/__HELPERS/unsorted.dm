@@ -886,12 +886,6 @@
 	var/turf/current = get_turf(source)
 	var/turf/target_turf = get_turf(target)
 	var/steps = 0
-	var/has_nightvision = FALSE
-	if(ismob(source))
-		var/mob/M = source
-		has_nightvision = M.see_in_dark >= 12
-	if(!has_nightvision && target_turf.lighting_lumcount == 0)
-		return FALSE
 
 	while(current != target_turf)
 		if(steps > length) return FALSE
@@ -1226,8 +1220,7 @@ var/global/image/action_purple_power_up
 /proc/return_sorted_areas()
 	var/list/area/AL = list()
 	for(var/area/A in GLOB.sorted_areas)
-		if(!A.lighting_subarea)
-			AL += A
+		AL += A
 	return AL
 
 //Takes: Area type as text string or as typepath OR an instance of the area.
@@ -1377,7 +1370,7 @@ var/global/image/action_purple_power_up
 
 //					if(AR.lighting_use_dynamic)							//TODO: rewrite this code so it's not messed by lighting ~Carn
 //						X.opacity = !X.opacity
-//						X.SetOpacity(!X.opacity)
+//						X.set_opacity(!X.opacity)
 
 					toupdate += X
 
@@ -1993,3 +1986,36 @@ GLOBAL_LIST_INIT(duplicate_forbidden_vars,list(
 		if(stop_type && istype(turf_to_check, stop_type))
 			break
 	return turf_to_check
+
+/proc/get_turf_pixel(atom/checked_atom)
+	if(!istype(checked_atom))
+		return
+
+	//Find coordinates
+	var/turf/atom_turf = get_turf(checked_atom) //use checked_atom's turfs, as it's coords are the same as checked_atom's AND checked_atom's coords are lost if it is inside another atom
+	if(!atom_turf)
+		return null
+
+	//Find checked_atom's matrix so we can use it's X/Y pixel shifts
+	var/matrix/atom_matrix = matrix(checked_atom.transform)
+
+	var/pixel_x_offset = checked_atom.pixel_x + atom_matrix.get_x_shift()
+	var/pixel_y_offset = checked_atom.pixel_y + atom_matrix.get_y_shift()
+
+	//Irregular objects
+	var/icon/checked_atom_icon = icon(checked_atom.icon, checked_atom.icon_state)
+	var/checked_atom_icon_height = checked_atom_icon.Height()
+	var/checked_atom_icon_width = checked_atom_icon.Width()
+	if(checked_atom_icon_height != world.icon_size || checked_atom_icon_width != world.icon_size)
+		pixel_x_offset += ((checked_atom_icon_width / world.icon_size) - 1) * (world.icon_size * 0.5)
+		pixel_y_offset += ((checked_atom_icon_height / world.icon_size) - 1) * (world.icon_size * 0.5)
+
+	//DY and DX
+	var/rough_x = round(round(pixel_x_offset, world.icon_size) / world.icon_size)
+	var/rough_y = round(round(pixel_y_offset, world.icon_size) / world.icon_size)
+
+	var/final_x = clamp(atom_turf.x + rough_x, 1, world.maxx)
+	var/final_y = clamp(atom_turf.y + rough_y, 1, world.maxy)
+
+	if(final_x || final_y)
+		return locate(final_x, final_y, atom_turf.z)

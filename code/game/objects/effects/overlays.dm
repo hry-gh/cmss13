@@ -149,7 +149,7 @@
 		source_binoc.laser_cooldown = world.time + source_binoc.cooldown_duration
 		source_binoc.coord = null
 		source_binoc = null
-	SetLuminosity(0)
+	set_light(0)
 	. = ..()
 
 /obj/effect/overlay/temp/laser_target
@@ -191,7 +191,7 @@
 		source_binoc.laser = null
 		source_binoc = null
 
-	SetLuminosity(0)
+	set_light(0)
 	. = ..()
 
 /obj/effect/overlay/temp/laser_target/ex_act(severity) //immune to explosions
@@ -214,7 +214,7 @@
 	icon_state = "laser_target3"
 
 /obj/effect/overlay/temp/blinking_laser/Destroy()
-	SetLuminosity(0)
+	set_light(0)
 	. = ..()
 
 /obj/effect/overlay/temp/emp_sparks
@@ -285,3 +285,12 @@
 	icon = 'icons/mob/xenos/effects.dmi'
 	icon_state = "pool_splash"
 	effect_duration = 10 SECONDS
+
+/obj/effect/overlay/vis
+	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	anchored = TRUE
+	vis_flags = VIS_INHERIT_DIR
+	///When detected to be unused it gets set to world.time, after a while it gets removed
+	var/unused = 0
+	///overlays which go unused for this amount of time get cleaned up
+	var/cache_expiration = 2 MINUTES

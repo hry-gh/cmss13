@@ -50,6 +50,7 @@
 
 #define SS_INIT_TICKER_SPAWN       999
 #define SS_INIT_INPUT              85
+#define SS_INIT_VIS               80
 #define SS_INIT_RUST               26
 #define SS_INIT_SUPPLY_SHUTTLE     25
 #define SS_INIT_GARBAGE            24
@@ -143,6 +144,7 @@
 #define SS_PRIORITY_LIGHTING       20
 #define SS_PRIORITY_TRACKING       19
 #define SS_PRIORITY_PING       	   10
+#define SS_PRIORITY_VIS            10
 #define SS_PRIORITY_DATABASE	   15
 #define SS_PRIORITY_PLAYTIME       5
 #define SS_PRIORITY_PERFLOGGING    4
