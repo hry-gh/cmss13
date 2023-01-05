@@ -101,9 +101,9 @@
 //=================================================
 
 //=================================================
-#define PAIN_OVERLAY_BLURRY						0 //Blurs your screen a varying amount depending on eye_blur.
-#define PAIN_OVERLAY_IMPAIR						1 //Impairs your screen like a welding helmet does depending on eye_blur.
-#define PAIN_OVERLAY_LEGACY						2 //Creates a legacy blurring effect over your screen if you have any eye_blur at all. Not recommended.
+#define PAIN_OVERLAY_BLURRY 0 //Blurs your screen a varying amount depending on eye_blur.
+#define PAIN_OVERLAY_IMPAIR 1 //Impairs your screen like a welding helmet does depending on eye_blur.
+#define PAIN_OVERLAY_LEGACY 2 //Creates a legacy blurring effect over your screen if you have any eye_blur at all. Not recommended.
 //=================================================
 
 
@@ -237,7 +237,7 @@ var/global/list/whitelist_hierarchy = list(WHITELIST_NORMAL, WHITELIST_COUNCIL, 
 #define FACTION_MARINE "USCM"
 #define FACTION_SURVIVOR "Survivor"
 #define FACTION_UPP "UPP"
-#define FACTION_RESS "RESS"
+#define FACTION_TWE "TWE"
 #define FACTION_WY "Wey-Yu"
 #define FACTION_CLF "CLF"
 #define FACTION_PMC "PMC"
@@ -262,7 +262,7 @@ var/global/list/whitelist_hierarchy = list(WHITELIST_NORMAL, WHITELIST_COUNCIL, 
 #define FACTION_LIST_WY list(FACTION_PMC, FACTION_WY_DEATHSQUAD, FACTION_WY)
 #define FACTION_LIST_MARINE_WY list(FACTION_MARINE, FACTION_PMC, FACTION_WY_DEATHSQUAD, FACTION_WY)
 #define FACTION_LIST_MARINE_UPP list(FACTION_MARINE, FACTION_UPP)
-#define FACTION_LIST_MARINE_RESS list(FACTION_MARINE, FACTION_RESS)
+#define FACTION_LIST_MARINE_TWE list(FACTION_MARINE, FACTION_TWE)
 
 // Xenomorphs
 #define FACTION_PREDALIEN "Predalien"
