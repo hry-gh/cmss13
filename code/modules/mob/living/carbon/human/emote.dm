@@ -500,6 +500,7 @@
 
 			message = "shouts an inspiring cry!"
 			m_type = 2
+			make_langchat(FALSE)
 
 			show_speech_bubble("hwarcry")
 			if(isHumanSynthStrict(src))
