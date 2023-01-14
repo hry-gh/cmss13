@@ -32,12 +32,14 @@
 	var/mob/living/carbon/Xenomorph/X = owner
 	if(!istype(A, /obj/item) && !istype(A, /obj/structure/) && !istype(A, /obj/vehicle/multitile))
 		to_chat(X, SPAN_XENOHIGHDANGER("Can only melt barricades and items!"))
+		X.balloon_alert(X, "can't melt this!")
 		return
 	var/datum/behavior_delegate/runner_acider/BD = X.behavior_delegate
 	if (!istype(BD))
 		return
 	if(BD.acid_amount < acid_cost)
 		to_chat(X, SPAN_XENOHIGHDANGER("Not enough acid stored!"))
+		X.balloon_alert(X, "not enough acid!")
 		return
 
 	X.corrosive_acid(A, acid_type, 0)
@@ -54,13 +56,16 @@
 			var/obj/item/explosive/plastic/E = O
 			if(E.plant_target && !E.plant_target.Adjacent(src))
 				to_chat(src, SPAN_WARNING("You can't reach [O]."))
+				balloon_alert(src, "can't reach!")
 				return
 		else
 			to_chat(src, SPAN_WARNING("[O] is too far away."))
+			balloon_alert(src, "too far!")
 			return
 
 	if(!isturf(loc) || burrow)
 		to_chat(src, SPAN_WARNING("You can't melt [O] from here!"))
+		balloon_alert(src, "can't melt!")
 		return
 
 	face_atom(O)
@@ -72,6 +77,7 @@
 	for(var/obj/effect/xenomorph/acid/A in T)
 		if(acid_type == A.type && A.acid_t == O)
 			to_chat(src, SPAN_WARNING("[A] is already drenched in acid."))
+			balloon_alert(src, "enough acid already!")
 			return
 
 	var/obj/I
@@ -83,14 +89,17 @@
 			var/obj/structure/window_frame/WF = O
 			if(WF.reinforced && acid_type != /obj/effect/xenomorph/acid/strong)
 				to_chat(src, SPAN_WARNING("This [O.name] is too tough to be melted by your weak acid."))
+				balloon_alert(src, "acid too weak!")
 				return
 
 		wait_time = I.get_applying_acid_time()
 		if(wait_time == -1)
 			to_chat(src, SPAN_WARNING("You cannot dissolve \the [I]."))
+			balloon_alert(src, "cannot dissolve!")
 			return
 	else
 		to_chat(src, SPAN_WARNING("You cannot dissolve [O]."))
+		balloon_alert(src, "cannot dissolve!")
 		return
 	wait_time = wait_time / 4
 	if(!do_after(src, wait_time, INTERRUPT_NO_NEEDHAND, BUSY_ICON_HOSTILE))
@@ -100,6 +109,7 @@
 	for(var/obj/effect/xenomorph/acid/A in T)
 		if(acid_type == A.type && A.acid_t == O)
 			to_chat(src, SPAN_WARNING("[A] is already drenched in acid."))
+			balloon_alert(src, "enough acid already!")
 			return
 
 	if(!check_state())
@@ -113,9 +123,11 @@
 			var/obj/item/explosive/plastic/E = O
 			if(E.plant_target && !E.plant_target.Adjacent(src))
 				to_chat(src, SPAN_WARNING("You can't reach [O]."))
+				balloon_alert(src, "cannot reach!")
 				return
 		else
 			to_chat(src, SPAN_WARNING("[O] is too far away."))
+			balloon_alert(src, "too far!")
 			return
 
 	var/datum/behavior_delegate/runner_acider/BD = behavior_delegate
@@ -123,6 +135,7 @@
 		return
 	if(BD.acid_amount < BD.melt_acid_cost)
 		to_chat(src, SPAN_XENOHIGHDANGER("Not enough acid stored!"))
+		balloon_alert(src, "not enough acid!")
 		return
 
 	BD.modify_acid(-BD.melt_acid_cost)

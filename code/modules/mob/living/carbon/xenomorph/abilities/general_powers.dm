@@ -16,24 +16,29 @@
 
 	if(!istype(T))
 		to_chat(X, SPAN_WARNING("You can't do that here."))
+		X.balloon_alert(X, "not from here!")
 		return
 
 	var/is_weedable = T.is_weedable()
 	if(!is_weedable)
 		to_chat(X, SPAN_WARNING("Bad place for a garden!"))
+		X.balloon_alert(X, "bad place!")
 		return
 	if(!plant_on_semiweedable && is_weedable < FULLY_WEEDABLE)
 		to_chat(X, SPAN_WARNING("Bad place for a garden!"))
+		X.balloon_alert(X, "bad place!")
 		return
 
 	var/obj/effect/alien/weeds/node/N = locate() in T
 	if(N && N.weed_strength >= X.weed_level)
 		to_chat(X, SPAN_WARNING("There's a pod here already!"))
+		X.balloon_alert(X, "pod already here!")
 		return
 
 	var/obj/effect/alien/resin/trap/resin_trap = locate() in T
 	if(resin_trap)
 		to_chat(X, SPAN_WARNING("You can't weed on top of a trap!"))
+		X.balloon_alert(X, "on a trap!")
 		return
 
 	var/list/to_convert
@@ -43,11 +48,13 @@
 	var/obj/effect/alien/weeds/W = locate(/obj/effect/alien/weeds) in T
 	if (W && W.weed_strength >= WEED_LEVEL_HIVE)
 		to_chat(X, SPAN_WARNING("These weeds are too strong to plant a node on!"))
+		X.balloon_alert(X, "weeds too strong!")
 		return
 
 	var/area/AR = get_area(T)
 	if(isnull(AR) || !(AR.is_resin_allowed))
 		to_chat(X, SPAN_XENOWARNING("It's too early to spread the hive this far."))
+		X.balloon_alert(X, "too early!")
 		return
 
 	if (!check_and_use_plasma_owner())
@@ -74,18 +81,22 @@
 /mob/living/carbon/Xenomorph/lay_down()
 	if(hardcore)
 		to_chat(src, SPAN_WARNING("No time to rest, must KILL!"))
+		balloon_alert(src, "no time!")
 		return
 
 	if(fortify)
 		to_chat(src, SPAN_WARNING("You cannot rest while fortified!"))
+		balloon_alert(src, "fortified!")
 		return
 
 	if(burrow)
 		to_chat(src, SPAN_WARNING("You cannot rest while burrowed!"))
+		balloon_alert(src, "burrowed!")
 		return
 
 	if(crest_defense)
 		to_chat(src, SPAN_WARNING("You cannot rest while your crest is down!"))
+		balloon_alert(src, "crest is down!")
 		return
 
 	return ..()
@@ -121,6 +132,7 @@
 
 	if(!isturf(X.loc))
 		to_chat(X, SPAN_WARNING("You cannot regurgitate here."))
+		X.balloon_alert(X, "not here!")
 		return
 
 	if(X.stomach_contents.len)
@@ -259,6 +271,7 @@
 
 	if(ismob(A)) //anticheese : if they click a mob, it will cancel.
 		to_chat(X, SPAN_XENOWARNING("You can't place resin markers on living things!"))
+		X.balloon_alert(X, "not on living things!")
 		return FALSE //this is because xenos have thermal vision and can see mobs through walls - which would negate not being able to place them through walls
 
 	if(isstorage(A.loc) || X.contains(A) || istype(A, /atom/movable/screen)) return FALSE
@@ -266,9 +279,11 @@
 
 	if(target_turf.z != X.z)
 		to_chat(X, SPAN_XENOWARNING("This area is too far away to affect!"))
+		X.balloon_alert(X, "too far!")
 		return
 	if(!X.hive.living_xeno_queen || X.hive.living_xeno_queen.z != X.z)
 		to_chat(X, SPAN_XENOWARNING("You have no queen, the psychic link is gone!"))
+		X.balloon_alert(X, "no queen!")
 		return
 
 	var/tally = 0
@@ -320,15 +335,18 @@
 		return
 	if(!(locate(/datum/action/xeno_action/onclick/emit_pheromones) in actions))
 		to_chat(src, SPAN_XENOWARNING("You are incapable of emitting pheromones!"))
+		balloon_alert(src, "can't emit pheromones!")
 		return
 	if(!pheromone)
 		if(current_aura)
 			current_aura = null
 			visible_message(SPAN_XENOWARNING("\The [src] stops emitting pheromones."), \
 			SPAN_XENOWARNING("You stop emitting pheromones."), null, 5)
+			balloon_alert(src, "stopped emitting pheromones")
 		else
 			if(!check_plasma(emit_cost))
 				to_chat(src, SPAN_XENOWARNING("You do not have enough plasma!"))
+				balloon_alert(src, "not enough plasma!")
 				return
 			if(client.prefs && client.prefs.no_radials_preference)
 				pheromone = tgui_input_list(src, "Choose a pheromone", "Pheromone Menu", caste.aura_allowed + "help" + "cancel", theme="hive_status")
@@ -348,12 +366,15 @@
 	if(pheromone)
 		if(pheromone == current_aura)
 			to_chat(src, SPAN_XENOWARNING("You are already emitting [pheromone] pheromones!"))
+			balloon_alert(src, "already emitting!")
 			return
 		if(!check_plasma(emit_cost))
 			to_chat(src, SPAN_XENOWARNING("You do not have enough plasma!"))
+			balloon_alert(src, "not enough plasma!")
 			return
 		use_plasma(emit_cost)
 		current_aura = pheromone
+		balloon_alert(src, "started emitting pheromones")
 		visible_message(SPAN_XENOWARNING("\The [src] begins to emit strange-smelling pheromones."), \
 		SPAN_XENOWARNING("You begin to emit '[pheromone]' pheromones."), null, 5)
 		playsound(loc, "alien_drool", 25)
@@ -376,6 +397,7 @@
 
 	if(!isturf(X.loc))
 		to_chat(X, SPAN_XENOWARNING("You can't [ability_name] from here!"))
+		X.balloon_alert(X, "not from here!")
 		return
 
 	if(!X.check_state())
@@ -383,6 +405,7 @@
 
 	if(X.legcuffed)
 		to_chat(X, SPAN_XENODANGER("You can't [ability_name] with that thing on your leg!"))
+		X.balloon_alert(X, "legcuffed!")
 		return
 
 	if(!check_and_use_plasma_owner())
@@ -410,6 +433,7 @@
 
 		if (!do_after(X, windup_duration, INTERRUPT_NO_NEEDHAND, BUSY_ICON_HOSTILE))
 			to_chat(X, SPAN_XENODANGER("You cancel your [ability_name]!"))
+			X.balloon_alert(X, "interrupted!")
 			if (!windup_interruptable)
 				X.frozen = FALSE
 				X.anchored = FALSE
@@ -459,6 +483,7 @@
 
 	if(!isturf(X.loc))
 		to_chat(X, SPAN_XENOWARNING("You can't [ability_name] from here!"))
+		X.balloon_alert(X, "not from here!")
 		return
 
 	if(!X.check_state() || X.action_busy)
@@ -467,6 +492,7 @@
 	if (activation_delay)
 		if(!do_after(X, activation_delay_length, INTERRUPT_NO_NEEDHAND, BUSY_ICON_HOSTILE))
 			to_chat(X, SPAN_XENOWARNING("You decide to cancel your acid spray."))
+			X.balloon_alert(X, "interrupted!")
 			end_cooldown()
 			return
 
@@ -707,10 +733,12 @@
 
 	if(!isturf(X.loc))
 		to_chat(src, SPAN_WARNING("You can't spit from here!"))
+		X.balloon_alert(X, "not from here!")
 		return
 
 	if(!action_cooldown_check())
 		to_chat(src, SPAN_WARNING("You must wait for your spit glands to refill."))
+		X.balloon_alert(X, "wait a bit!")
 		return
 
 	var/turf/current_turf = get_turf(X)
@@ -829,12 +857,14 @@
 /mob/living/carbon/Xenomorph/proc/can_bombard_turf(var/atom/target, var/range = 5, var/atom/bombard_source) // I couldnt be arsed to do actual raycasting :I This is horribly inaccurate.
 	if(!bombard_source || !isturf(bombard_source.loc))
 		to_chat(src, SPAN_XENODANGER("That target is obstructed!"))
+		balloon_alert(src, "target obstructed!")
 		return FALSE
 	var/turf/current = bombard_source.loc
 	var/turf/target_turf = get_turf(target)
 
 	if (get_dist_sqrd(current, target_turf) > (range*range))
 		to_chat(src, SPAN_XENODANGER("That is too far away!"))
+		balloon_alert(src, "too far!")
 		return
 
 	. = TRUE
@@ -852,6 +882,7 @@
 					break
 		if(!.)
 			to_chat(src, SPAN_XENODANGER("That target is obstructed!"))
+			balloon_alert(src, "target obstructed!")
 			return
 
 		current = get_step_towards(current, target_turf)

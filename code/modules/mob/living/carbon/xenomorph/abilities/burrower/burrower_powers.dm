@@ -13,10 +13,12 @@
 
 	if(istype(T, /turf/open/floor/almayer/research/containment) || istype(T, /turf/closed/wall/almayer/research/containment))
 		to_chat(src, SPAN_XENOWARNING("You can't escape this cell!"))
+		balloon_alert(src, "can't escape cell!")
 		return
 
 	if(clone) //Prevents burrowing on stairs
 		to_chat(src, SPAN_XENOWARNING("You can't burrow here!"))
+		balloon_alert(src, "not here!")
 		return
 
 	if(caste_type && GLOB.xeno_datum_list[caste_type])
@@ -86,18 +88,22 @@
 
 	if(!burrow)
 		to_chat(src, SPAN_NOTICE("You must be burrowed to do this."))
+		balloon_alert(src, "must be burrowed!")
 		return
 
 	if(used_tunnel)
 		to_chat(src, SPAN_NOTICE("You must wait some time to do this."))
+		balloon_alert(src, "wait a bit!")
 		return
 
 	if(!T)
 		to_chat(src, SPAN_NOTICE("You can't tunnel there!"))
+		balloon_alert(src, "not here!")
 		return
 
 	if(T.density)
 		to_chat(src, SPAN_XENOWARNING("You can't tunnel into a solid wall!"))
+		balloon_alert(src, "too solid!")
 		return
 
 	if(istype(T, /turf/open/space))
@@ -106,11 +112,13 @@
 
 	if(clone) //Prevents tunnels in Z transition areas
 		to_chat(src, SPAN_XENOWARNING("You make tunnels, not wormholes!"))
+		balloon_alert(src, "not here!")
 		return
 
 	var/area/A = get_area(T)
 	if(A.flags_area & AREA_NOTUNNEL)
 		to_chat(src, SPAN_XENOWARNING("There's no way to tunnel over there."))
+		balloon_alert(src, "can't tunnel there!")
 		return
 
 	for(var/obj/O in T.contents)
@@ -118,6 +126,7 @@
 			if(O.flags_atom & ON_BORDER)
 				continue
 			to_chat(src, SPAN_WARNING("There's something solid there to stop you emerging."))
+			balloon_alert(src, "can't emerge here!")
 			return
 
 	if(tunnel)
@@ -129,6 +138,7 @@
 
 	if(!T || T.density)
 		to_chat(src, SPAN_NOTICE("You cannot tunnel to there!"))
+		balloon_alert(src, "can't tunnel there!")
 	tunnel = TRUE
 	to_chat(src, SPAN_NOTICE("You start tunneling!"))
 	tunnel_timer = (get_dist(src, T)*10) + world.time
@@ -180,6 +190,7 @@
 /mob/living/carbon/Xenomorph/proc/tremor() //More support focused version of crusher earthquakes.
 	if(burrow || is_ventcrawling)
 		to_chat(src, SPAN_XENOWARNING("You must be above ground to do this."))
+		balloon_alert(src, "not above ground!")
 		return
 
 	if(!check_state())
@@ -187,6 +198,7 @@
 
 	if(used_tremor)
 		to_chat(src, SPAN_XENOWARNING("Your aren't ready to cause more tremors yet!"))
+		balloon_alert(src, "not ready yet!")
 		return
 
 	if(!check_plasma(100)) return

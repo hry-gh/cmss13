@@ -5,6 +5,7 @@
 
 	if(!action_cooldown_check())
 		to_chat(src, SPAN_WARNING("You must wait for your spit glands to refill."))
+		xeno.balloon_alert(xeno, "wait a bit!")
 		return
 
 	var/turf/current_turf = get_turf(xeno)
@@ -40,6 +41,7 @@
 
 	if(!action_cooldown_check())
 		to_chat(src, SPAN_WARNING("You must wait for your spit glands to refill."))
+		xeno.balloon_alert(xeno, "wait a bit!")
 		return
 
 	var/turf/current_turf = get_turf(xeno)

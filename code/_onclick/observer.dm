@@ -39,7 +39,7 @@
 					var/deathtime = world.time - timeofdeath
 					if(deathtime < 2.5 MINUTES)
 						var/time_until_rejoin = deathtime - 2.5 MINUTES
-						balloon_alert(src, "must wait [DisplayTimeText(deathtime)]!")
+						balloon_alert(src, "must wait [DisplayTimeText(time_until_rejoin)]!")
 						to_chat(src, SPAN_WARNING("You have been dead for [DisplayTimeText(deathtime)]."))
 						to_chat(src, SPAN_WARNING("You must wait 2.5 minutes before rejoining the game!"))
 						return FALSE

@@ -5,6 +5,7 @@
 
 	if(xeno.fortify)
 		to_chat(xeno, SPAN_XENOWARNING("You cannot use abilities while fortified."))
+		xeno.balloon_alert(xeno, "fortified!")
 		return
 
 	if(!xeno.check_state())
@@ -54,6 +55,7 @@
 
 	if(fendy.fortify && !fendy.steelcrest)
 		to_chat(fendy, SPAN_XENOWARNING("You cannot use headbutt while fortified."))
+		fendy.balloon_alert(fendy, "fortified!")
 		return
 
 	var/mob/living/carbon/carbone = target_atom
@@ -117,10 +119,12 @@
 
 	if(X.fortify)
 		to_chat(src, SPAN_XENOWARNING("You cannot use tail swipe while fortified."))
+		X.balloon_alert(X, "fortified!")
 		return
 
 	if(X.crest_defense)
 		to_chat(src, SPAN_XENOWARNING("You cannot use tail swipe with your crest lowered."))
+		X.balloon_alert(X, "crest is down!")
 		return
 
 	X.visible_message(SPAN_XENOWARNING("[X] sweeps its tail in a wide circle!"), \
@@ -161,10 +165,12 @@
 
 	if(xeno.crest_defense && xeno.steelcrest)
 		to_chat(src, SPAN_XENOWARNING("You cannot fortify while your crest is already down!"))
+		xeno.balloon_alert(xeno, "crest is down!")
 		return
 
 	if(xeno.crest_defense)
 		to_chat(src, SPAN_XENOWARNING("You cannot use fortify with your crest lowered."))
+		xeno.balloon_alert(xeno, "crest is down!")
 		return
 
 	if(!xeno.check_state())
