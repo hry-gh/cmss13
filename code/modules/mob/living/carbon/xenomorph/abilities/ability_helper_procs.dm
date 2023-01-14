@@ -6,13 +6,16 @@
 			var/obj/item/explosive/plastic/E = O
 			if(E.plant_target && !E.plant_target.Adjacent(src))
 				to_chat(src, SPAN_WARNING("You can't reach [O]."))
+				balloon_alert(src, "can't reach!")
 				return
 		else
 			to_chat(src, SPAN_WARNING("[O] is too far away."))
+			balloon_alert(src, "too far!")
 			return
 
 	if(!isturf(loc) || burrow)
 		to_chat(src, SPAN_WARNING("You can't melt [O] from here!"))
+		balloon_alert(src, "not from here!")
 		return
 
 	face_atom(O)
@@ -24,6 +27,7 @@
 	for(var/obj/effect/xenomorph/acid/A in T)
 		if(acid_type == A.type && A.acid_t == O)
 			to_chat(src, SPAN_WARNING("[A] is already drenched in acid."))
+			balloon_alert(src, "enough acid!")
 			return
 
 	var/obj/I
@@ -35,11 +39,13 @@
 			var/obj/structure/window_frame/WF = I
 			if(WF.reinforced && acid_type != /obj/effect/xenomorph/acid/strong)
 				to_chat(src, SPAN_WARNING("This [O.name] is too tough to be melted by your weak acid."))
+				balloon_alert(src, "too tough!")
 				return
 
 		wait_time = I.get_applying_acid_time()
 		if(wait_time == -1)
 			to_chat(src, SPAN_WARNING("You cannot dissolve \the [I]."))
+			balloon_alert(src, "cannot dissolve!")
 			return
 
 	//TURF CHECK
@@ -49,18 +55,21 @@
 			var/turf/closed/wall/wall_target = O
 			if(wall_target.acided_hole)
 				to_chat(src, SPAN_WARNING("[O] is already weakened."))
+				balloon_alert(src, "already weakened!")
 				return
 
 		var/dissolvability = T.can_be_dissolved()
 		switch(dissolvability)
 			if(0)
 				to_chat(src, SPAN_WARNING("You cannot dissolve [T]."))
+				balloon_alert(src, "can't dissolve!")
 				return
 			if(1)
 				wait_time = 50
 			if(2)
 				if(acid_type != /obj/effect/xenomorph/acid/strong)
 					to_chat(src, SPAN_WARNING("This [T.name] is too tough to be melted by your weak acid."))
+					balloon_alert(src, "too tough!")
 					return
 				wait_time = 100
 			else
@@ -83,6 +92,7 @@
 					if(!istype(wall_north_turf) && !istype(wall_south_turf) && !istype(wall_east_turf) && !istype(wall_west_turf))
 						// ...don't make an acid hole
 						to_chat(src, ambiguous_dir_msg)
+						balloon_alert(src, "no direction!")
 						return
 					else if(!istype(wall_north_turf) && !istype(wall_south_turf))
 						W.acided_hole_dir = dir_to & (NORTH|SOUTH)
@@ -91,6 +101,7 @@
 					else
 						// ...don't make an acid hole for corners bordering other walls
 						to_chat(src, ambiguous_dir_msg)
+						balloon_alert(src, "no direction!")
 						return
 
 			var/acided_hole_type = W.acided_hole_dir & (EAST|WEST) ? "a hole horizontally" : "a hole vertically"
@@ -99,15 +110,18 @@
 			to_chat(src, SPAN_XENOWARNING("You begin generating enough acid to melt through [T]."))
 	else
 		to_chat(src, SPAN_WARNING("You cannot dissolve [O]."))
+		balloon_alert(src, "can't dissolve!")
 		return
 
 	if(!do_after(src, wait_time, INTERRUPT_NO_NEEDHAND, BUSY_ICON_HOSTILE))
+		balloon_alert(src, "interrupted!")
 		return
 
 	// AGAIN BECAUSE SOMETHING COULD'VE ACIDED THE PLACE
 	for(var/obj/effect/xenomorph/acid/A in T)
 		if(acid_type == A.type && A.acid_t == O)
 			to_chat(src, SPAN_WARNING("[A] is already drenched in acid."))
+			balloon_alert(src, "enough acid!")
 			return
 
 	if(!check_state())
@@ -124,9 +138,11 @@
 			var/obj/item/explosive/plastic/E = O
 			if(E.plant_target && !E.plant_target.Adjacent(src))
 				to_chat(src, SPAN_WARNING("You can't reach [O]."))
+				balloon_alert(src, "can't reach!")
 				return
 		else
 			to_chat(src, SPAN_WARNING("[O] is too far away."))
+			balloon_alert(src, "too far!")
 			return
 
 	use_plasma(plasma_cost)
@@ -171,6 +187,7 @@
 		var/mob/living/carbon/human/T = H
 		T.update_xeno_hostile_hud()
 	to_chat(H, SPAN_XENOHIGHDANGER("You can move again!"))
+	H.balloon_alert(H, "can move")
 
 /proc/xeno_throw_human(mob/living/carbon/H, mob/living/carbon/Xenomorph/X, direction, distance)
 	if (!istype(H) || !istype(X) ||  !direction || !distance)
@@ -333,7 +350,11 @@
 
 	to_chat(src, SPAN_NOTICE("You start focusing your plasma towards [target]."))
 	to_chat(target, SPAN_NOTICE("You feel that [src] starts transferring some of their plasma to you."))
+	target.balloon_alert(src, "transferring plasma")
+	balloon_alert(target, "plasma being transferred")
 	if(!do_after(src, transfer_delay, INTERRUPT_ALL, BUSY_ICON_FRIENDLY))
+		balloon_alert(target, "interrupted!")
+		balloon_alert(src, "interrupted!")
 		return
 
 	if(!check_can_transfer_plasma(target, max_range))
@@ -353,26 +374,32 @@
 
 	if(target.stat == DEAD)
 		to_chat(src, SPAN_WARNING("[target] is dead!"))
+		target.balloon_alert(src, "dead!")
 		return FALSE
 
 	if(!isturf(loc))
 		to_chat(src, SPAN_WARNING("You can't transfer plasma from here!"))
+		target.balloon_alert(src, "not from here!")
 		return FALSE
 
 	if(get_dist(src, target) > max_range)
 		to_chat(src, SPAN_WARNING("You need to be closer to [target]."))
+		target.balloon_alert(src, "too far!")
 		return FALSE
 
 	if(HAS_TRAIT(target, TRAIT_ABILITY_OVIPOSITOR))
 		to_chat(src, SPAN_WARNING("You can't transfer plasma to a queen mounted on her ovipositor."))
+		target.balloon_alert(src, "on the ovipositor!")
 		return FALSE
 
 	if(HAS_TRAIT(target, TRAIT_ABILITY_NO_PLASMA_TRANSFER))
 		to_chat(src, SPAN_WARNING("You can't transfer plasma to \the [target]."))
+		target.balloon_alert(src, "can't transfer!")
 		return FALSE
 
 	if(target.plasma_max == XENO_NO_PLASMA)
 		to_chat(src, SPAN_WARNING("\The [target] doesn't use plasma."))
+		target.balloon_alert(src, "doesn't use plasma!")
 		return FALSE
 
 	return TRUE

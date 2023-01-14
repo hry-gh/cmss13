@@ -240,6 +240,7 @@
 	if(isstorage(A.loc) || X.contains(A) || istype(A, /atom/movable/screen)) return FALSE
 	if(A.z != X.z)
 		to_chat(owner, SPAN_XENOWARNING("This area is too far away to affect!"))
+		X.balloon_alert(X, "too far!")
 		return
 	apply_cooldown()
 	switch(X.build_resin(A, thick, make_message, plasma_cost != 0, build_speed_mod))
@@ -549,21 +550,25 @@
 
 	if(!istype(T) || T.is_weedable() < FULLY_WEEDABLE || !can_xeno_build(T))
 		to_chat(X, SPAN_WARNING("You can't do that here."))
+		X.balloon_alert(X, "not here!")
 		return
 
 	var/area/AR = get_area(T)
 
 	if(istype(AR,/area/shuttle/drop1/lz1) || istype(AR,/area/shuttle/drop2/lz2) || GLOB.interior_manager.interior_z == X.z)
 		to_chat(X, SPAN_WARNING("You sense this is not a suitable area for creating a resin hole."))
+		X.balloon_alert(X, "not here!")
 		return
 
 	var/obj/effect/alien/weeds/alien_weeds = locate() in T
 	if(!alien_weeds)
 		to_chat(X, SPAN_WARNING("You can only shape on weeds. Find some resin before you start building!"))
+		X.balloon_alert(X, "not weeded!")
 		return
 
 	if(alien_weeds.linked_hive.hivenumber != X.hivenumber)
 		to_chat(X, SPAN_WARNING("These weeds don't belong to your hive!"))
+		X.balloon_alert(X, "not yours!")
 		return
 
 	if(!X.check_alien_construction(T,check_doors=TRUE))
@@ -571,10 +576,12 @@
 
 	if(locate(/obj/effect/alien/resin/trap) in orange(1, T)) // obj/effect/alien/resin presence is checked on turf by check_alien_construction, so we just check orange.
 		to_chat(X, SPAN_XENOWARNING("This is too close to another resin hole!"))
+		X.balloon_alert(X, "another nearby!")
 		return
 
 	if(locate(/obj/effect/alien/resin/fruit) in orange(1, T))
 		to_chat(X, SPAN_XENOWARNING("This is too close to a fruit!"))
+		X.balloon_alert(X, "too close to fruit!")
 		return
 
 	if(istype(alien_weeds, /obj/effect/alien/weeds/node))
@@ -602,12 +609,15 @@
 	//Make sure construction is unrestricted
 	if(X.hive && X.hive.construction_allowed == XENO_LEADER && X.hive_pos == NORMAL_XENO)
 		to_chat(X, SPAN_WARNING("Construction is currently restricted to Leaders only!"))
+		X.balloon_alert(X, "not allowed - leaders only!")
 		return FALSE
 	else if(X.hive && X.hive.construction_allowed == XENO_QUEEN && !istype(X.caste, /datum/caste_datum/queen))
 		to_chat(X, SPAN_WARNING("Construction is currently restricted to Queen only!"))
+		X.balloon_alert(X, "not allowed - queen only!")
 		return FALSE
 	else if(X.hive && X.hive.construction_allowed == XENO_NOBODY)
 		to_chat(X, SPAN_WARNING("The hive is too weak and fragile to have the strength to design constructions."))
+		X.balloon_alert(X, "not allowed!")
 		return FALSE
 
 	var/turf/T = get_turf(A)
@@ -615,19 +625,23 @@
 	var/area/AR = get_area(T)
 	if(isnull(AR) || !(AR.is_resin_allowed))
 		to_chat(X, SPAN_XENOWARNING("It's too early to spread the hive this far."))
+		X.balloon_alert(X, "too early!")
 		return FALSE
 
 	if(T.z != X.z)
 		to_chat(X, SPAN_XENOWARNING("This area is too far away to affect!"))
+		X.balloon_alert(X, "too far away!")
 		return FALSE
 
 	if(GLOB.interior_manager.interior_z == X.z)
 		to_chat(X, SPAN_XENOWARNING("It's too tight in here to build."))
+		X.balloon_alert(X, "too small!")
 		return FALSE
 
 	var/choice = XENO_STRUCTURE_CORE
 	if(X.hive.hivecore_cooldown)
 		to_chat(X, SPAN_WARNING("The weeds are still recovering from the death of the hive core, wait until the weeds have recovered!"))
+		X.balloon_alert(X, "core died - wait a bit!")
 		return FALSE
 	if(X.hive.has_structure(XENO_STRUCTURE_CORE) || !X.hive.can_build_structure(XENO_STRUCTURE_CORE))
 		choice = tgui_input_list(X, "Choose a structure to build", "Build structure", X.hive.hive_structure_types + "help", theme="hive_status")
@@ -662,37 +676,44 @@
 		qdel(X.hive.hive_location)
 	else if(!X.hive.can_build_structure(choice))
 		to_chat(X, SPAN_WARNING("You can't build any more [choice]s for the hive."))
+		X.balloon_alert(X, "can't build more!")
 		return FALSE
 
 	if(!X.hive.can_build_structure(structure_template.name) && !(choice == XENO_STRUCTURE_CORE))
 		to_chat(X, SPAN_WARNING("You cannot build any more [structure_template.name]!"))
+
 		qdel(structure_template)
 		return FALSE
 
 	if (QDELETED(T))
 		to_chat(X, SPAN_WARNING("You cannot build here!"))
+		X.balloon_alert(X, "not here!")
 		qdel(structure_template)
 		return FALSE
 
 	var/queen_on_zlevel = !X.hive.living_xeno_queen || X.hive.living_xeno_queen.z == T.z
 	if(!queen_on_zlevel)
 		to_chat(X, SPAN_WARNING("Your link to the Queen is too weak here. She is on another world."))
+		X.balloon_alert(X, "queen very far!")
 		qdel(structure_template)
 		return FALSE
 
 	if(GLOB.interior_manager.interior_z == X.z)
 		to_chat(X, SPAN_WARNING("It's too tight in here to build."))
+		X.balloon_alert(X, "too small!")
 		qdel(structure_template)
 		return FALSE
 
 	if(T.is_weedable() < FULLY_WEEDABLE)
 		to_chat(X, SPAN_WARNING("\The [T] can't support a [structure_template.name]!"))
+		X.balloon_alert(X, "can't be supported!")
 		qdel(structure_template)
 		return FALSE
 
 	var/obj/effect/alien/weeds/weeds = locate() in T
 	if(weeds?.block_structures >= BLOCK_SPECIAL_STRUCTURES)
 		to_chat(X, SPAN_WARNING("\The [weeds] block the construction of any special structures!"))
+		X.balloon_alert(X, "blocked!")
 		qdel(structure_template)
 		return FALSE
 
@@ -780,6 +801,7 @@
 
 	if(isnull(T) || istype(T, /turf/closed) || !T.can_bombard(owner))
 		to_chat(X, SPAN_XENODANGER("You can't bombard that!"))
+		X.balloon_alert(X, "not that!")
 		return FALSE
 
 	if (!check_plasma_owner())
@@ -787,6 +809,7 @@
 
 	if(T.z != X.z)
 		to_chat(X, SPAN_WARNING("That target is too far away!"))
+		X.balloon_alert(X, "too far!")
 		return FALSE
 
 	var/atom/bombard_source = get_bombard_source()
@@ -796,6 +819,7 @@
 	X.visible_message(SPAN_XENODANGER("[X] digs itself into place!"), SPAN_XENODANGER("You dig yourself into place!"))
 	if (!do_after(X, activation_delay, interrupt_flags, BUSY_ICON_HOSTILE))
 		to_chat(X, SPAN_XENODANGER("You decide to cancel your bombard."))
+		X.balloon_alert(X, "interrupted!")
 		return FALSE
 
 	if (!X.can_bombard_turf(T, range, bombard_source)) //Second check in case something changed during the do_after.
@@ -907,10 +931,12 @@
 	for(var/turf/path_turf as anything in path)
 		if(path_turf.density)
 			to_chat(stabbing_xeno, SPAN_WARNING("There's something blocking your strike!"))
+			stabbing_xeno.balloon_alert(stabbing_xeno, "strike blocked!")
 			return FALSE
 		for(var/obj/path_contents in path_turf.contents)
 			if(path_contents != targetted_atom && path_contents.density && !path_contents.throwpass)
 				to_chat(stabbing_xeno, SPAN_WARNING("There's something blocking your strike!"))
+				stabbing_xeno.balloon_alert(stabbing_xeno, "strike blocked!")
 				return FALSE
 
 		var/atom/barrier = path_turf.handle_barriers(stabbing_xeno, null, (PASS_MOB_THRU_XENO|PASS_OVER_THROW_MOB|PASS_TYPE_CRAWLER))
@@ -918,6 +944,7 @@
 			var/tail_stab_cooldown_multiplier = barrier.handle_tail_stab(stabbing_xeno)
 			if(!tail_stab_cooldown_multiplier)
 				to_chat(stabbing_xeno, SPAN_WARNING("There's something blocking your strike!"))
+				stabbing_xeno.balloon_alert(stabbing_xeno, "strike blocked!")
 			else
 				apply_cooldown(cooldown_modifier = tail_stab_cooldown_multiplier)
 				xeno_attack_delay(stabbing_xeno)

@@ -9,10 +9,12 @@
 
 	if((!hive.living_xeno_queen || SSmapping.configs[GROUND_MAP].map_name == MAP_WHISKEY_OUTPOST) && !hive.allow_no_queen_actions) //No Hive status on WO
 		to_chat(src, SPAN_WARNING("There is no Queen. You are alone."))
+		balloon_alert(src, "no queen!")
 		return
 
 	if(interference)
 		to_chat(src, SPAN_WARNING("A headhunter temporarily cut off your psychic connection!"))
+		balloon_alert(src, "interference!")
 		return
 
 	hive.hive_ui.open_hive_status(src)
@@ -27,10 +29,12 @@
 
 	if((!hive.living_xeno_queen || Check_WO()) && !hive.allow_no_queen_actions) //No Hive status on WO
 		to_chat(src, SPAN_WARNING("There is no Queen. You are alone."))
+		balloon_alert(src, "no queen!")
 		return
 
 	if(interference)
 		to_chat(src, SPAN_WARNING("A headhunter temporarily cut off your psychic connection!"))
+		balloon_alert(src, "interference!")
 		return
 
 	hive.faction_ui.tgui_interact(src)
@@ -42,6 +46,7 @@
 
 	if(!length(built_structures))
 		to_chat(usr, SPAN_WARNING("You don't have any built structures!"))
+		balloon_alert(src, "no built structures!")
 		return
 
 	var/list/options = list()
@@ -108,8 +113,10 @@
 	client.prefs.save_preferences()
 	if (client.prefs.toggle_prefs & TOGGLE_MIDDLE_MOUSE_CLICK)
 		to_chat(src, SPAN_NOTICE("The selected xeno ability will now be activated with middle mouse clicking."))
+		balloon_alert(src, "abilities on middle mouse!")
 	else
 		to_chat(src, SPAN_NOTICE("The selected xeno ability will now be activated with shift clicking."))
+		balloon_alert(src, "abilities on shift click!")
 
 /mob/living/carbon/Xenomorph/verb/directional_attack_toggle()
 	set name = "Toggle Directional Attacks"
@@ -123,8 +130,10 @@
 	client.prefs.save_preferences()
 	if(client.prefs.toggle_prefs & TOGGLE_DIRECTIONAL_ATTACK)
 		to_chat(src, SPAN_NOTICE("Attacks will now use directional assist."))
+		balloon_alert(src, "using directional assist!")
 	else
 		to_chat(src, SPAN_NOTICE("Attacks will no longer use directional assist."))
+		balloon_alert(src, "not using directional assist!")
 
 /mob/living/carbon/Xenomorph/cancel_camera()
 	. = ..()

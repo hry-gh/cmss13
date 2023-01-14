@@ -493,9 +493,11 @@
 		return
 	if(I.flags_item & NODROP)
 		to_chat(src, SPAN_WARNING("You can't remove \the [I.name], it appears to be stuck!"))
+		M.balloon_alert(src, "can't remove - stuck!")
 		return
 	if(I.flags_inventory & CANTSTRIP)
 		to_chat(src, SPAN_WARNING("You're having difficulty removing \the [I.name]."))
+		M.balloon_alert(src, "can't remove!")
 		return
 	M.attack_log += "\[[time_stamp()]\] <font color='orange'>Has had their [I.name] ([slot_to_process]) attempted to be removed by [key_name(src)]</font>"
 	attack_log += "\[[time_stamp()]\] <font color='red'>Attempted to remove [key_name(M)]'s [I.name] ([slot_to_process])</font>"
@@ -518,14 +520,17 @@
 	if(I && !(I.flags_item & ITEM_ABSTRACT))
 		if(I.flags_item & NODROP)
 			to_chat(src, SPAN_WARNING("You can't put \the [I.name] on [M], it's stuck to your hand!"))
+			balloon_alert(src, "stuck to hand!")
 			return
 		if(I.flags_inventory & CANTSTRIP)
 			to_chat(src, SPAN_WARNING("You're having difficulty putting \the [I.name] on [M]."))
+			M.balloon_alert(src, "can't put it on!")
 			return
 		if(I.flags_item & WIELDED)
 			I.unwield(src)
 		if(!I.mob_can_equip(M, slot_to_process, TRUE))
 			to_chat(src, SPAN_WARNING("You can't put \the [I.name] on [M]!"))
+			M.balloon_alert(src, "can't put it on!")
 			return
 		visible_message(SPAN_NOTICE("[src] tries to put \the [I.name] on [M]."), null, null, 5)
 		if(do_after(src, HUMAN_STRIP_DELAY * src.get_skill_duration_multiplier(), INTERRUPT_ALL, BUSY_ICON_GENERIC, M, INTERRUPT_MOVED, BUSY_ICON_GENERIC))

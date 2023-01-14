@@ -42,9 +42,11 @@
 					SPAN_NOTICE("You begin to open \the [backpack] on [src], so you can check its contents."), null, 5, CHAT_TYPE_FLUFF_ACTION)
 					if(!do_after(M, 1 SECONDS, INTERRUPT_NO_NEEDHAND, BUSY_ICON_GENERIC, src, INTERRUPT_MOVED, BUSY_ICON_GENERIC)) //Timed opening.
 						to_chat(M, SPAN_WARNING("You were interrupted!"))
+						balloon_alert(src, "interrupted!")
 						return FALSE
 					if(!Adjacent(M))
 						to_chat(M, SPAN_WARNING("You were interrupted!"))
+						balloon_alert(src, "interrupted!")
 						return FALSE
 					backpack.open(M)
 					return
@@ -129,6 +131,7 @@
 
 			if(stat == DEAD)
 				to_chat(M, SPAN_WARNING("[src] is dead, why would you want to touch it?"))
+				M.balloon_alert(src, "already dead!")
 				return XENO_NO_DELAY_ACTION
 
 			if(M.can_not_harm(src))
@@ -223,6 +226,7 @@
 	if(target.flags_emote & EMOTING_TAIL_SWIPE && do_after(src, 5, INTERRUPT_MOVED, EMOTE_ICON_TAILSWIPE))
 		if(!(target.flags_emote & EMOTING_TAIL_SWIPE)) //Additional check for if the target moved or was already tail swiped.
 			to_chat(src, SPAN_NOTICE("Too slow!"))
+			balloon_alert(src, "too slow!")
 			return
 		target.flags_emote &= ~EMOTING_TAIL_SWIPE
 		visible_message(SPAN_NOTICE("[src] clashes their tail with [target]!"), \
@@ -236,6 +240,7 @@
 
 	//Initiate tail swipe
 	if(recent_audio_emote)
+		balloon_alert(src, "wait a bit")
 		to_chat(src, "You just did an audible emote. Wait a while.")
 		return
 
@@ -244,4 +249,5 @@
 	flags_emote |= EMOTING_TAIL_SWIPE
 	if(do_after(src, 50, INTERRUPT_ALL|INTERRUPT_EMOTE, EMOTE_ICON_TAILSWIPE) && flags_emote & EMOTING_TAIL_SWIPE)
 		to_chat(src, SPAN_NOTICE("You were left hanging!"))
+		balloon_alert(src, "left hanging...")
 	flags_emote &= ~EMOTING_TAIL_SWIPE

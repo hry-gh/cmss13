@@ -22,27 +22,33 @@
 
 	if((!hive.living_xeno_queen) && castepick != XENO_CASTE_QUEEN && !isXenoLarva(src) && !hive.allow_no_queen_actions)
 		to_chat(src, SPAN_WARNING("The Hive is shaken by the death of the last Queen. You can't find the strength to evolve."))
+		balloon_alert(src, "no strength...")
 		return
 
 	if(castepick == XENO_CASTE_QUEEN) //Special case for dealing with queenae
 		if(!hardcore)
 			if(SSticker.mode && hive.xeno_queen_timer > world.time)
 				to_chat(src, SPAN_WARNING("You must wait about [DisplayTimeText(hive.xeno_queen_timer - world.time, 1)] for the hive to recover from the previous Queen's death."))
+				balloon_alert(src, "wait a bit!")
 				return
 
 			if(plasma_stored >= 500)
 				if(hive.living_xeno_queen)
 					to_chat(src, SPAN_WARNING("There already is a living Queen."))
+					balloon_alert("already a queen!")
 					return
 			else
 				to_chat(src, SPAN_WARNING("You require more plasma! Currently at: [plasma_stored] / 500."))
+				balloon_alert(src, "not enough plasma!")
 				return
 		else
 			to_chat(src, SPAN_WARNING("Nuh-uhh."))
+			balloon_alert(src, "can't!")
 			return
 	if(evolution_threshold && castepick != XENO_CASTE_QUEEN) //Does the caste have an evolution timer? Then check it
 		if(evolution_stored < evolution_threshold)
 			to_chat(src, SPAN_WARNING("You must wait before evolving. Currently at: [evolution_stored] / [evolution_threshold]."))
+			balloon_alert(src, "wait a bit!")
 			return
 
 	// Used for restricting benos to evolve to drone/queen when they're the only potential queen
@@ -81,6 +87,7 @@
 
 	if(!do_after(src, 2.5 SECONDS, INTERRUPT_INCAPACITATED, BUSY_ICON_HOSTILE)) // Can evolve while moving
 		to_chat(src, SPAN_WARNING("You quiver, but nothing happens. Hold still while evolving."))
+		balloon_alert(src, "interrupted!")
 		evolving = FALSE
 		return
 
@@ -91,12 +98,15 @@
 	if(castepick == XENO_CASTE_QUEEN) //Do another check after the tick.
 		if(jobban_isbanned(src, XENO_CASTE_QUEEN))
 			to_chat(src, SPAN_WARNING("You are jobbanned from the Queen role."))
+			balloon_alert(src, "can't be queen!")
 			return
 		if(hive.living_xeno_queen)
 			to_chat(src, SPAN_WARNING("There already is a Queen."))
+			balloon_alert(src, "already a queen!")
 			return
 		if(!hive.allow_queen_evolve)
 			to_chat(src, SPAN_WARNING("You can't find the strength to evolve into a Queen"))
+			balloon_alert(src, "can't be queen!")
 			return
 	else if(!can_evolve(castepick, potential_queens))
 		return
@@ -167,38 +177,46 @@
 
 	if(is_ventcrawling)
 		to_chat(src, SPAN_WARNING("This place is too constraining to evolve."))
+		balloon_alert(src, "too small!")
 		return FALSE
 
 	if(!isturf(loc))
 		to_chat(src, SPAN_WARNING("You can't evolve here."))
+		balloon_alert(src, "not here!")
 		return FALSE
 
 	if(hardcore)
 		to_chat(src, SPAN_WARNING("Nuh-uh."))
+		balloon_alert(src, "cannot evovle!")
 		return FALSE
 
 	if(lock_evolve)
 		to_chat(src, SPAN_WARNING("You are banished and cannot reach the hivemind."))
+		balloon_alert(src, "banished!")
 		return FALSE
 
-	if(jobban_isbanned(src, JOB_XENOMORPH))//~who so genius to do this is?
+	if(jobban_isbanned(src, JOB_XENOMORPH))
 		to_chat(src, SPAN_WARNING("You are jobbanned from aliens and cannot evolve. How did you even become an alien?"))
 		return FALSE
 
 	if(handcuffed || legcuffed)
 		to_chat(src, SPAN_WARNING("The restraints are too restricting to allow you to evolve."))
+		balloon_alert(src, "restrained!")
 		return FALSE
 
 	if(isnull(caste.evolves_to))
 		to_chat(src, SPAN_WARNING("You are already the apex of form and function. Go forth and spread the hive!"))
+		balloon_alert(src, "prime evolution!")
 		return FALSE
 
 	if(health < maxHealth)
 		to_chat(src, SPAN_WARNING("You must be at full health to evolve."))
+		balloon_alert(src, "too weak!")
 		return FALSE
 
 	if(agility || fortify || crest_defense)
 		to_chat(src, SPAN_WARNING("You cannot evolve while in this stance."))
+		balloon_alert(src, "not in this stance!")
 		return FALSE
 
 	if(world.time < (SSticker.mode.round_time_lobby + XENO_ROUNDSTART_PROGRESS_TIME_2))
@@ -220,23 +238,28 @@
 		return
 
 	if(is_ventcrawling)
-		to_chat(src, SPAN_XENOWARNING("You can't deevolve here."))
+		to_chat(src, SPAN_XENOWARNING("You can't de-evolve here."))
+		balloon_alert(src, "not here!")
 		return
 
 	if(!isturf(loc))
-		to_chat(src, SPAN_XENOWARNING("You can't deevolve here."))
+		to_chat(src, SPAN_XENOWARNING("You can't de-evolve here."))
+		balloon_alert(src, "not here!")
 		return
 
 	if(health < maxHealth)
-		to_chat(src, SPAN_XENOWARNING("You are too weak to deevolve, regain your health first."))
+		to_chat(src, SPAN_XENOWARNING("You are too weak to de-evolve, regain your health first."))
+		balloon_alert(src, "too weak!")
 		return
 
 	if(length(caste.deevolves_to) < 1)
 		to_chat(src, SPAN_XENOWARNING("You can't deevolve any further."))
+		balloon_alert(src, "can't de-evolve further!")
 		return
 
 	if(lock_evolve)
 		to_chat(src, SPAN_WARNING("You are banished and cannot reach the hivemind."))
+		balloon_alert(src, "banished!")
 		return FALSE
 
 
@@ -268,6 +291,7 @@
 
 	if(lock_evolve)
 		to_chat(src, SPAN_WARNING("You are banished and cannot reach the hivemind."))
+		balloon_alert(src, "banished!")
 		return FALSE
 
 	var/xeno_type
@@ -355,12 +379,15 @@
 
 	if(tier == 1 && (((used_tier_2_slots + used_tier_3_slots) / totalXenos) * hive.tier_slot_multiplier) >= 0.5 && castepick != XENO_CASTE_QUEEN)
 		to_chat(src, SPAN_WARNING("The hive cannot support another Tier 2, wait for either more aliens to be born or someone to die."))
+		balloon_alert(src, "hive is full!")
 		return FALSE
 	else if(tier == 2 && ((used_tier_3_slots / totalXenos) * hive.tier_slot_multiplier) >= 0.20 && castepick != XENO_CASTE_QUEEN)
 		to_chat(src, SPAN_WARNING("The hive cannot support another Tier 3, wait for either more aliens to be born or someone to die."))
+		balloon_alert(src, "hive is full!")
 		return FALSE
 	else if(hive.allow_queen_evolve && !hive.living_xeno_queen && potential_queens == 1 && isXenoLarva(src) && castepick != XENO_CASTE_DRONE)
 		to_chat(src, SPAN_XENONOTICE("The hive currently has no sister able to become Queen! The survival of the hive requires you to be a Drone!"))
+		balloon_alert(src, "must be drone!")
 		return FALSE
 
 	return TRUE

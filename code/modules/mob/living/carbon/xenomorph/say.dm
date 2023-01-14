@@ -18,6 +18,7 @@
 
 	if(dazed > 0)
 		to_chat(src, SPAN_WARNING("You are too dazed to talk."))
+		balloon_alert(src, "dazed!")
 		return
 
 	if(copytext(message, 1, 2) == "*")
@@ -90,6 +91,7 @@
 /mob/living/carbon/Xenomorph/proc/hivemind_talk(var/message)
 	if(interference)
 		to_chat(src, SPAN_WARNING("A headhunter temporarily cut off your psychic connection!"))
+		balloon_alert(src, "interference!")
 		return
 
 	hivemind_broadcast(message, hive)
@@ -100,6 +102,7 @@
 
 	if(!hive.living_xeno_queen && !SSticker?.mode?.hardcore && !hive.allow_no_queen_actions)
 		to_chat(src, SPAN_WARNING("There is no Queen. You are alone."))
+		balloon_alert(src, "no queen!")
 		return
 
 	log_hivemind("[key_name(src)] : [message]")

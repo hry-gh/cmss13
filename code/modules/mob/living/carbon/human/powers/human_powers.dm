@@ -11,6 +11,7 @@
 
 	if(is_mob_incapacitated() || lying || buckled)
 		to_chat(src, "You cannot tackle someone in your current state.")
+		balloon_alert(src, "incapacitated!")
 		return
 
 	var/list/choices = list()
@@ -29,6 +30,7 @@
 
 	if(is_mob_incapacitated() || lying || buckled)
 		to_chat(src, "You cannot tackle in your current state.")
+		balloon_alert(src, "incapacitated!")
 		return
 
 	last_special = world.time + 50
@@ -58,6 +60,7 @@
 
 	if(is_mob_incapacitated() || lying || buckled)
 		to_chat(src, "You cannot leap in your current state.")
+		balloon_alert(src, "incapacitated!")
 		return
 
 	var/list/choices = list()
@@ -76,6 +79,7 @@
 
 	if(is_mob_incapacitated() || lying || buckled)
 		to_chat(src, "You cannot leap in your current state.")
+		balloon_alert(src, "incapacitated!")
 		return
 
 	last_special = world.time + 75
@@ -112,15 +116,18 @@
 
 	if(is_mob_incapacitated(TRUE) || lying)
 		to_chat(src, SPAN_DANGER("You cannot do that in your current state."))
+		balloon_alert(src, "incapacitated!")
 		return
 
 	var/obj/item/grab/G = locate() in src
 	if(!G || !istype(G))
 		to_chat(src, SPAN_DANGER("You are not grabbing anyone."))
+		balloon_alert(src, "not grabbing!")
 		return
 
 	if(usr.grab_level < GRAB_AGGRESSIVE)
 		to_chat(src, SPAN_DANGER("You must have an aggressive grab to gut your prey!"))
+		balloon_alert(src, "need a strong grab!")
 		return
 
 	last_special = world.time + 50

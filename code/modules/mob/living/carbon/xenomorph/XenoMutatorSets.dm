@@ -37,9 +37,11 @@
 		return
 	if(GLOB.xeno_mutator_list[pick].apply_mutator(src))
 		to_chat(usr, "Mutation complete!")
+		Xeno.balloon_alert(Xeno, "mutation complete!")
 		return TRUE
 	else
 		to_chat(usr, "Mutation failed!")
+		Xeno.balloon_alert(Xeno, "mutation failed!")
 		return FALSE
 
 /datum/mutator_set/proc/can_purchase_mutator(var/mutator_name)
@@ -142,30 +144,35 @@
 			X.recalculate_everything()
 			to_chat(X, SPAN_XENOANNOUNCE("Queen has granted the Hive a boon! [description]"))
 			X.xeno_jitter(15)
+
 /datum/mutator_set/hive_mutators/recalculate_stats(var/description)
 	for(var/mob/living/carbon/Xenomorph/X in GLOB.living_xeno_list)
 		if(X.hivenumber == hive.hivenumber)
 			X.recalculate_stats()
 			to_chat(X, SPAN_XENOANNOUNCE("Queen has granted the Hive a boon! [description]"))
 			X.xeno_jitter(15)
+
 /datum/mutator_set/hive_mutators/recalculate_actions(var/description)
 	for(var/mob/living/carbon/Xenomorph/X in GLOB.living_xeno_list)
 		if(X.hivenumber == hive.hivenumber)
 			X.recalculate_actions()
 			to_chat(X, SPAN_XENOANNOUNCE("Queen has granted the Hive a boon! [description]"))
 			X.xeno_jitter(15)
+
 /datum/mutator_set/hive_mutators/recalculate_pheromones(var/description)
 	for(var/mob/living/carbon/Xenomorph/X in GLOB.living_xeno_list)
 		if(X.hivenumber == hive.hivenumber)
 			X.recalculate_pheromones()
 			to_chat(X, SPAN_XENOANNOUNCE("Queen has granted the Hive a boon! [description]"))
 			X.xeno_jitter(15)
+
 /datum/mutator_set/hive_mutators/proc/recalculate_maturation(var/description)
 	for(var/mob/living/carbon/Xenomorph/X in GLOB.living_xeno_list)
 		if(X.hivenumber == hive.hivenumber)
 			X.recalculate_maturation()
 			to_chat(X, SPAN_XENOANNOUNCE("Queen has granted the Hive a boon! [description]"))
 			X.xeno_jitter(15)
+
 /datum/mutator_set/hive_mutators/proc/recalculate_hive(var/description)
 	hive.recalculate_hive()
 	give_feedback(description)
@@ -243,22 +250,27 @@
 
 	if(is_ventcrawling)
 		to_chat(src, SPAN_WARNING("This place is too constraining to take a strain."))
+		bubble_alert(src, "too tight!")
 		return FALSE
 
 	if(!isturf(loc))
 		to_chat(src, SPAN_WARNING("You can't take a strain here."))
+		bubble_alert(src, "not here!")
 		return FALSE
 
 	if(handcuffed || legcuffed)
 		to_chat(src, SPAN_WARNING("The restraints are too restricting to allow you to take a strain."))
+		bubble_alert(src, "restrainec!")
 		return FALSE
 
 	if(health < maxHealth)
 		to_chat(src, SPAN_WARNING("You must be at full health to take a strain."))
+		bubble_alert(src, "must be full health!")
 		return FALSE
 
 	if(agility || fortify || crest_defense || stealth)
 		to_chat(src, SPAN_WARNING("You cannot take a strain while in this stance."))
+		bubble_alert(src, "not in this stance!")
 		return FALSE
 
 	return TRUE

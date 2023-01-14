@@ -14,18 +14,21 @@
 		return SECRETE_RESIN_FAIL
 	if(GLOB.interior_manager.interior_z == z)
 		to_chat(src, SPAN_XENOWARNING("It's too tight in here to build."))
+		balloon_alert(src, "too small!")
 		return SECRETE_RESIN_FAIL
 
 	if(RC.max_per_xeno != RESIN_CONSTRUCTION_NO_MAX)
 		var/current_amount = length(built_structures[RC.build_path])
 		if(current_amount >= RC.max_per_xeno)
 			to_chat(src, SPAN_XENOWARNING("You've already built the maximum possible structures you can!"))
+			balloon_alert(src, "no more structures!")
 			return SECRETE_RESIN_FAIL
 
 	var/turf/current_turf = get_turf(A)
 
 	if(extra_build_dist != IGNORE_BUILD_DISTANCE && get_dist(src, A) > src.caste.max_build_dist + extra_build_dist) // Hivelords and eggsac carriers have max_build_dist of 1, drones and queens 0
 		to_chat(src, SPAN_XENOWARNING("You can't build from that far!"))
+		balloon_alert(src, "too far!")
 		return SECRETE_RESIN_FAIL
 	else if(thick) //hivelords can thicken existing resin structures.
 		var/thickened = FALSE
@@ -34,14 +37,17 @@
 
 			if(istype(A, /turf/closed/wall/resin/weak))
 				to_chat(src, SPAN_XENOWARNING("[WR] is too flimsy to be reinforced."))
+				balloon_alert(src, "too flimsy!")
 				return SECRETE_RESIN_FAIL
 
 			for(var/datum/effects/xeno_structure_reinforcement/sf in WR.effects_list)
-				to_chat(src, SPAN_XENOWARNING("The extra resin is preventing you from reinforcing [WR]. Wait until it elapse."))
+				to_chat(src, SPAN_XENOWARNING("The extra resin is preventing you from reinforcing [WR]. Wait until it elapses."))
+				balloon_alert(src, "can't be thicker!")
 				return SECRETE_RESIN_FAIL
 
 			if (WR.hivenumber != hivenumber)
 				to_chat(src, SPAN_XENOWARNING("[WR] doesn't belong to your hive!"))
+				balloon_alert(src, "not yours!")
 				return SECRETE_RESIN_FAIL
 
 			if(WR.type == /turf/closed/wall/resin)
@@ -52,6 +58,7 @@
 				total_resin_cost = XENO_THICKEN_MEMBRANE_COST
 			else
 				to_chat(src, SPAN_XENOWARNING("[WR] can't be made thicker."))
+				balloon_alert(src, "can't be thicker!")
 				return SECRETE_RESIN_FAIL
 			thickened = TRUE
 
@@ -59,10 +66,12 @@
 			var/obj/structure/mineral_door/resin/DR = A
 			if (DR.hivenumber != hivenumber)
 				to_chat(src, SPAN_XENOWARNING("[DR] doesn't belong to your hive!"))
+				balloon_alert(src, "not yours!")
 				return SECRETE_RESIN_FAIL
 
 			for(var/datum/effects/xeno_structure_reinforcement/sf in DR.effects_list)
-				to_chat(src, SPAN_XENOWARNING("The extra resin is preventing you from reinforcing [DR]. Wait until it elapse."))
+				to_chat(src, SPAN_XENOWARNING("The extra resin is preventing you from reinforcing [DR]. Wait until it elapses."))
+				balloon_alert(src, "extra resin blocking!")
 				return SECRETE_RESIN_FAIL
 
 			if(DR.hardness == 1.5) //non thickened
@@ -72,6 +81,7 @@
 				total_resin_cost = XENO_THICKEN_DOOR_COST
 			else
 				to_chat(src, SPAN_XENOWARNING("[DR] can't be made thicker."))
+				balloon_alert(src, "can't be thicker!")
 				return SECRETE_RESIN_FAIL
 			thickened = TRUE
 
@@ -177,10 +187,12 @@
 	var/found_weeds = FALSE
 	if(!selected_mark)
 		to_chat(src, SPAN_NOTICE("You must have a meaning for the mark before you can make it."))
+		balloon_alert(src, "select a mark!")
 		hive.mark_ui.open_mark_menu(src)
 		return FALSE
 	if(target_turf.z != src.z)
 		to_chat(src, SPAN_NOTICE("You have no psychic presence on that world."))
+		balloon_alert(src, "too far!")
 		return FALSE
 	if(!(istype(target_turf)) || target_turf.density)
 		return FALSE
@@ -196,6 +208,7 @@
 
 	if(!found_weeds)
 		to_chat(src, SPAN_XENOMINORWARNING("You made the resin mark on ground with no weeds, it will break soon without any."))
+		balloon_alert(src, "no weeds...")
 
 	if(isXenoQueen(src))
 		NM.color = "#7a21c4"

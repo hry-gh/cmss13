@@ -174,6 +174,7 @@
 	if(species?.flags & IS_SYNTHETIC)
 		if(user && error_msg)
 			to_chat(user, SPAN_WARNING("[src] has no flesh to inject."))
+			balloon_alert(user, "no flesh!")
 		return FALSE
 	. = TRUE
 	if(!user)
@@ -191,6 +192,7 @@
 	if(!. && error_msg && user)
 		// Might need re-wording.
 		to_chat(user, SPAN_WARNING("There is no exposed flesh or thin material [target_zone == "head" ? "on their head" : "on their body"] to inject into."))
+		balloon_alert(user, "no exposed material!")
 
 
 /mob/living/carbon/human/has_brain()
@@ -305,6 +307,8 @@
 			to_chat(src, SPAN_NOTICE("Your sources of light short out."))
 		else
 			to_chat(src, SPAN_NOTICE("Your source of light shorts out."))
+	if(goes_out || light_off)
+		balloon_alert(src, "no light...")
 
 
 /mob/living/carbon/human/a_intent_change(intent as num)
@@ -414,6 +418,7 @@
 		ignores_stripdrag_flag = H.species.ignores_stripdrag_flag
 	if(MODE_HAS_TOGGLEABLE_FLAG(MODE_NO_STRIPDRAG_ENEMY) && !ignores_stripdrag_flag && (stat == DEAD || health < HEALTH_THRESHOLD_CRIT) && !get_target_lock(M.faction_group))
 		to_chat(M, SPAN_WARNING("You can't pull a crit or dead member of another faction!"))
+		balloon_alert(M, "can't pull!")
 		return FALSE
 	return TRUE
 

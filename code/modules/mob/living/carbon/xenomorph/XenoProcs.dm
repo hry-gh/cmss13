@@ -1,6 +1,3 @@
-//Xenomorph General Procs And Functions - Colonial Marines
-//LAST EDIT: APOPHIS 22MAY16
-
 //Send a message to all xenos. Mostly used in the deathgasp display
 /proc/xeno_message(var/message = null, var/size = 3, var/hivenumber = XENO_HIVE_NORMAL)
 	if(!message)
@@ -148,13 +145,16 @@
 	if(!permissive)
 		if(is_mob_incapacitated() || lying || buckled || evolving || !isturf(loc))
 			to_chat(src, SPAN_WARNING("You cannot do this in your current state."))
+			bubble_alert(src, "incapacitated!")
 			return FALSE
 		else if(caste_type != XENO_CASTE_QUEEN && observed_xeno)
 			to_chat(src, SPAN_WARNING("You cannot do this in your current state."))
+			bubble_alert(src, "incapacitated!")
 			return FALSE
 	else
 		if(is_mob_incapacitated() || buckled || evolving)
 			to_chat(src, SPAN_WARNING("You cannot do this in your current state."))
+			bubble_alert(src, "incapacitated!")
 			return FALSE
 
 	return TRUE
@@ -163,11 +163,13 @@
 /mob/living/carbon/Xenomorph/proc/check_plasma(value)
 	if(stat)
 		to_chat(src, SPAN_WARNING("You cannot do this in your current state."))
+		bubble_alert(src, "incapacitated!")
 		return FALSE
 
 	if(value)
 		if(plasma_stored < value)
 			to_chat(src, SPAN_WARNING("You do not have enough plasma to do this. You require [value] plasma but have only [plasma_stored] stored."))
+			bubble_alert(src, "insufficient plasma!")
 			return FALSE
 	return TRUE
 
@@ -402,6 +404,7 @@
 				victim.adjust_effect(2, STUN)
 	else
 		to_chat(src, SPAN_WARNING("There's nothing in your belly that needs regurgitating."))
+		bubble_alert(src, "stomach empty!")
 
 /mob/living/carbon/Xenomorph/proc/check_alien_construction(var/turf/current_turf, var/check_blockers = TRUE, var/silent = FALSE, var/check_doors = TRUE)
 	var/has_obstacle
@@ -410,19 +413,23 @@
 			var/obj/effect/build_blocker/bb = O
 			if(!silent)
 				to_chat(src, SPAN_WARNING("This is too close to a [bb.linked_structure]!"))
+				bubble_alert(src, "too close!")
 			return
 		if(check_doors)
 			if(istype(O, /obj/structure/machinery/door))
 				if(!silent)
 					to_chat(src, SPAN_WARNING("\The [O] is blocking the resin! There's not enough space to build that here."))
+					bubble_alert(src, "resin blocked!")
 				return
 		if(istype(O, /obj/item/clothing/mask/facehugger))
 			if(!silent)
 				to_chat(src, SPAN_WARNING("There is a little one here already. Best move it."))
+				bubble_alert(src, "facehugger here!")
 			return
 		if(istype(O, /obj/effect/alien/egg))
 			if(!silent)
 				to_chat(src, SPAN_WARNING("There's already an egg."))
+				bubble_alert(src, "already an egg!")
 			return
 		if(istype(O, /obj/structure/mineral_door) || istype(O, /obj/effect/alien/resin))
 			has_obstacle = TRUE
@@ -450,6 +457,7 @@
 	if(current_turf.density || has_obstacle)
 		if(!silent)
 			to_chat(src, SPAN_WARNING("There's something built here already."))
+			balloon_alert(src, "already built on!")
 		return
 
 	return TRUE
@@ -498,10 +506,12 @@
 		leader_aura_strength = 0
 		leader_current_aura = ""
 		to_chat(src, SPAN_XENOWARNING("Your pheromones wane. The Queen is no longer granting you her pheromones."))
+		balloon_alert(src, "pheromones wane")
 	else
 		leader_aura_strength = Q.aura_strength
 		leader_current_aura = Q.current_aura
 		to_chat(src, SPAN_XENOWARNING("Your pheromones have changed. The Queen has new plans for the Hive."))
+		balloon_alert(src, "new pheromones")
 	hud_set_pheromone()
 
 /mob/living/carbon/Xenomorph/proc/nocrit(var/wowave)
@@ -534,6 +544,7 @@
 	if(isXenoWarrior(src) && !ripping_limb && M.stat != DEAD)
 		if(M.status_flags & XENO_HOST)
 			to_chat(src, SPAN_XENOWARNING("This would harm the embryo!"))
+			M.balloon_alert(src, "living embryo!")
 			return
 		ripping_limb = TRUE
 		if(rip_limb(M))
@@ -554,10 +565,12 @@
 
 	if(can_not_harm(H))
 		to_chat(src, SPAN_XENOWARNING("You can't harm this host!"))
+		H.balloon_alert(src, "not this host!")
 		return
 
 	if(!L || L.body_part == BODY_FLAG_CHEST || L.body_part == BODY_FLAG_GROIN || (L.status & LIMB_DESTROYED)) //Only limbs and head.
 		to_chat(src, SPAN_XENOWARNING("You can't rip off that limb."))
+		H.balloon_alert(src, "not that limb!")
 		return FALSE
 	var/limb_time = rand(40,60)
 
@@ -569,6 +582,7 @@
 
 	if(!do_after(src, limb_time, INTERRUPT_ALL|INTERRUPT_DIFF_SELECT_ZONE, BUSY_ICON_HOSTILE) || M.stat == DEAD)
 		to_chat(src, SPAN_NOTICE("You stop ripping off the limb."))
+		balloon_alert(src, "interrupted!")
 		return FALSE
 
 	if(L.status & LIMB_DESTROYED)
@@ -589,6 +603,7 @@
 	log_attack("[src.name] ([src.ckey]) ripped the [L.display_name] off of [M.name] ([M.ckey]) 1/2 progress")
 
 	if(!do_after(src, limb_time, INTERRUPT_ALL|INTERRUPT_DIFF_SELECT_ZONE, BUSY_ICON_HOSTILE)  || M.stat == DEAD || iszombie(M))
+		balloon_alert(src, "interrupted!")
 		to_chat(src, SPAN_NOTICE("You stop ripping off the limb."))
 		return FALSE
 
@@ -686,6 +701,7 @@
 	tracked_marker = target
 	to_chat(src, SPAN_XENONOTICE("You start tracking the [target.mark_meaning.name] resin mark."))
 	to_chat(src, SPAN_INFO("shift click the compass to watch the mark, alt click to stop tracking"))
+	balloon_alert(src, "started tracking")
 
 /mob/living/carbon/Xenomorph/proc/stop_tracking_resin_mark(destroyed, var/silent = FALSE) //tracked_marker shouldnt be nulled outside this PROC!! >:C
 	var/atom/movable/screen/mark_locator/ML = hud_used.locate_marker
@@ -695,6 +711,7 @@
 			to_chat(src, SPAN_XENONOTICE("The [tracked_marker.mark_meaning.name] resin mark has ceased to exist."))
 		else
 			to_chat(src, SPAN_XENONOTICE("You stop tracking the [tracked_marker.mark_meaning.name] resin mark."))
+		balloon_alert(src, stopped_tracking)
 	if(tracked_marker)
 		tracked_marker.xenos_tracking -= src
 	tracked_marker = null

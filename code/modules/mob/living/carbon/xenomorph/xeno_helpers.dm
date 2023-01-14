@@ -6,6 +6,7 @@
 		for(var/mob/living/carbon/human/H in stomach_contents)
 			if(!isSpeciesMonkey(H))
 				to_chat(src, SPAN_XENOWARNING("You cannot ventcrawl with [H] inside you!"))
+				balloon_alert(src, "can't ventcrawl - stomach contents!")
 				return FALSE
 	return TRUE
 

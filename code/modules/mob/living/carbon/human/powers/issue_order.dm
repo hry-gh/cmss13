@@ -1,14 +1,17 @@
 /mob/living/carbon/human/proc/issue_order(var/order)
 	if(!HAS_TRAIT(src, TRAIT_LEADERSHIP))
 		to_chat(src, SPAN_WARNING("You are not qualified to issue orders!"))
+		balloon_alert(src, "unqualified!")
 		return
 
 	if(stat)
 		to_chat(src, SPAN_WARNING("You cannot give an order in your current state."))
+		balloon_alert(src, "incapacitated!")
 		return
 
 	if(!command_aura_available)
 		to_chat(src, SPAN_WARNING("You have recently given an order. Calm down."))
+		balloon_alert(src, "order issued recently!")
 		return
 
 	if(!skills)
@@ -27,6 +30,7 @@
 
 		if(!command_aura_available)
 			to_chat(src, SPAN_WARNING("You have recently given an order. Calm down."))
+			balloon_alert(src, "order issued recently!")
 			return
 
 	command_aura_available = FALSE
@@ -52,6 +56,7 @@
 
 /mob/living/carbon/human/proc/make_aura_available()
 	to_chat(src, SPAN_NOTICE("You can issue an order again."))
+	balloon_alert(src, "can issue order")
 	command_aura_available = TRUE
 	for(var/datum/action/A in actions)
 		A.update_button_icon()

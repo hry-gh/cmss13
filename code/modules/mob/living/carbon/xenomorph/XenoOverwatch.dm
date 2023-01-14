@@ -81,14 +81,17 @@
 
 		if(!hive.living_xeno_queen && !hive.allow_no_queen_actions)
 			to_chat(src, SPAN_WARNING("There is no Queen. You are alone."))
+			balloon_alert(src, "no queen!")
 			return
 
 		if(targetXeno == src)
 			to_chat(src, SPAN_XENOWARNING("You can't watch yourself!"))
+			balloon_alert(src, "not yourself!")
 			return
 
 		if(targetXeno.interference)
 			to_chat(src, SPAN_XENOWARNING("Your target's psychic connection is cut off!"))
+			balloon_alert(src, "interference!")
 			return
 
 		if(observed_xeno && targetXeno && observed_xeno == targetXeno)

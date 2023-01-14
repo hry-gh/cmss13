@@ -520,6 +520,7 @@
 				to_chat(usr, "You're not wearing a uniform!")
 			else if(U.has_sensor >= UNIFORM_FORCED_SENSORS)
 				to_chat(usr, "The controls are locked.")
+				balloon_alert(src, "controls locked!")
 			else
 				var/oldsens = U.has_sensor
 				visible_message(SPAN_DANGER("<B>[usr] is trying to modify [src]'s sensors!</B>"), null, null, 4)
@@ -529,6 +530,8 @@
 							to_chat(usr, "The controls are locked.")
 						else if(U.has_sensor == oldsens)
 							U.set_sensors(usr)
+				else
+					balloon_alert(src, "interupted!")
 
 	if (href_list["squadfireteam"])
 
@@ -1467,6 +1470,7 @@
 					if(suit.supporting_limbs && suit.supporting_limbs.len)
 						msg = "[HS == HT ? "your":"\proper [HT]'s"]"
 						to_chat(HS, SPAN_WARNING("You cannot remove the splints, [msg] [suit] is supporting some of the breaks."))
+						balloon_alert(HS, "can't remove!")
 						can_reach_splints = FALSE
 				if(can_reach_splints)
 					var/obj/item/stack/W = new /obj/item/stack/medical/splint(HS.loc)
@@ -1487,15 +1491,19 @@
 					msg = "[HS == HT ? "their own":"\proper [HT]'s"]"
 					HT.visible_message(SPAN_NOTICE("[HS] removes [msg] [amount_removed>1 ? "splints":"splint"]."), \
 						SPAN_NOTICE("Your [amount_removed>1 ? "splints are":"splint is"] removed."))
+					HT.balloon_alert_to_viewers("splints removed")
 					HT.update_med_icon()
 			else
 				msg = "[HS == HT ? "your":"\proper [HT]'s"]"
 				to_chat(HS, SPAN_NOTICE("You stop trying to remove [msg] splints."))
+				balloon_alert(src, "interrupted!")
 		else
 			if(same_arm_side)
 				to_chat(HS, SPAN_WARNING("You need to use the opposite hand to remove the splints on your arm and hand!"))
+				balloon_alert(HS, "use opposite!")
 			else
 				to_chat(HS, SPAN_WARNING("There are no splints to remove."))
+				balloon_alert(HS, "no splints!")
 
 /mob/living/carbon/human/yautja/Initialize(mapload)
 	. = ..(mapload, new_species = "Yautja")
@@ -1640,9 +1648,11 @@
 	else
 		var/displaytime = max(1, round(breakouttime / 600)) //Minutes
 		to_chat(src, SPAN_WARNING("You attempt to remove [restraint]. (This will take around [displaytime] minute(s) and you need to stand still)"))
+		balloon_alert(src, "attempting to remove...")
 		for(var/mob/O in viewers(src))
 			O.show_message(SPAN_DANGER("<B>[usr] attempts to remove [restraint]!</B>"), 1)
 		if(!do_after(src, breakouttime, INTERRUPT_NO_NEEDHAND^INTERRUPT_RESIST, BUSY_ICON_HOSTILE))
+			balloon_alert(src, "interupted!")
 			return
 
 		if(!restraint || buckled)

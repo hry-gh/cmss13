@@ -49,7 +49,8 @@
 			evolve_message()
 
 /mob/living/carbon/Xenomorph/proc/evolve_message()
-	to_chat(src, SPAN_XENODANGER("Your carapace crackles and your tendons strengthen. You are ready to <a href='?src=\ref[src];evolve=1;'>evolve</a>!")) //Makes this bold so the Xeno doesn't miss it
+	to_chat(src, SPAN_XENODANGER("Your carapace crackles and your tendons strengthen. You are ready to <a href='?src=\ref[src];evolve=1;'>evolve</a>!")) //Makes this bold so the Xeno doesn't miss it+
+	balloon_alert(src, "ready to evolve")
 	playsound_client(client, sound('sound/effects/xeno_evolveready.ogg'))
 
 // Always deal 80% of damage and deal the other 20% depending on how many fire stacks mob has
@@ -370,6 +371,7 @@ Make sure their actual health updates immediately.*/
 		if(current_aura)
 			current_aura = null
 			to_chat(src, SPAN_WARNING("You have run out of pheromones and stopped emitting pheromones."))
+			balloon_alert(src, "out of pheromones!")
 
 	for(var/X in actions)
 		var/datum/action/A = X

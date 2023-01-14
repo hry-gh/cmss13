@@ -4,9 +4,6 @@
 //Just about ALL the procs are tied to the parent, not to the children
 //This is so they can be easily transferred between them without copypasta
 
-//All this stuff was written by Absynth.... and god help us
-//Edited by Apop - 11JUN16
-
 #define DEBUG_XENO 0
 
 #if DEBUG_XENO
@@ -21,7 +18,8 @@
 	if(mind in SSticker.mode.xenomorphs)
 		to_chat(src, SPAN_DEBUG("[src] mind is in the xenomorph list. Mind key is [mind.key]."))
 		to_chat(src, SPAN_DEBUG("Current mob is: [mind.current]. Original mob is: [mind.original]."))
-	else to_chat(src, SPAN_DEBUG("This xenomorph is not in the xenomorph list."))
+	else
+		to_chat(src, SPAN_DEBUG("This xenomorph is not in the xenomorph list."))
 #endif
 
 #undef DEBUG_XENO
@@ -967,6 +965,7 @@
 	if(aura_strength == 0 && current_aura)
 		current_aura = null
 		to_chat(src, SPAN_XENOWARNING("You lose your pheromones."))
+		balloon_alert(src, "pheromones lost")
 
 	// Also recalculate received pheros now
 	for(var/capped_aura in received_phero_caps)
@@ -1020,6 +1019,7 @@
 
 	var/displaytime = max(1, round(breakouttime / 600)) //Minutes
 	to_chat(src, SPAN_WARNING("You attempt to remove [legcuffed]. (This will take around [displaytime] minute(s) and you need to stand still)"))
+	balloon_alert(src, "trying to remove legcuffs...")
 	for(var/mob/O in viewers(src))
 		O.show_message(SPAN_DANGER("<B>[usr] attempts to remove [legcuffed]!</B>"), SHOW_MESSAGE_VISIBLE)
 	if(!do_after(src, breakouttime, INTERRUPT_NO_NEEDHAND^INTERRUPT_RESIST, BUSY_ICON_HOSTILE))
