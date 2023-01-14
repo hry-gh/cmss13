@@ -115,6 +115,19 @@ do
 	done < <(jq -r '[.map_file] | flatten | .[]' $json)
 done
 
+if $grep 'balloon_alert(.*span_)' code/**/*.dm; then
+	echo
+	echo -e "${RED}ERROR: Balloon alerts should never contain spans.${NC}"
+	st=1
+fi;
+
+part "balloon_alert idiomatic usage"
+if $grep 'balloon_alert\(.*?, ?"[A-Z]' code/**/*.dm; then
+	echo
+	echo -e "${RED}ERROR: Balloon alerts should not start with capital letters. This includes text like 'AI'. If this is a false positive, wrap the text in UNLINT().${NC}"
+	st=1
+fi;
+
 # Check for non-515 compatable .proc/ syntax
 if grep -P --exclude='_byond_version_compat.dm' '\.proc/' code/**/*.dm; then
 	echo
