@@ -71,16 +71,19 @@
 
 	if(!Adjacent(T))
 		to_chat(src, SPAN_WARNING("You have to be next to your target."))
+		balloon_alert(src, "must be adjacent!")
 		return
-		
+
 	if(isXenoLarva(T) || isXenoFacehugger(T))
 		to_chat(src, SPAN_WARNING("This tiny worm is not even worth using your tools on."))
+		T.balloon_alert(src, "too pathetic!")
 		return
 
 	if(is_mob_incapacitated() || lying || buckled)
 		return
 
 	if(isSynth(T))
+		T.balloon_alert(src, "made of metal!")
 		to_chat(src, SPAN_WARNING("You would break your tools if you did this!"))
 		return
 
@@ -113,21 +116,26 @@
 		if(T.butchery_progress)
 			playsound(loc, 'sound/weapons/pierce.ogg', 25)
 			visible_message(SPAN_DANGER("[src] goes back to butchering \the [T]."), SPAN_NOTICE("You get back to butchering \the [T]."))
+			T.balloon_alert(src, "resume butchering")
 		else
 			playsound(loc, 'sound/weapons/pierce.ogg', 25)
+			T.balloon_alert(src, "begin butchering")
 			visible_message(SPAN_DANGER("[src] begins chopping and mutilating \the [T]."), SPAN_NOTICE("You take out your tools and begin your gruesome work on \the [T]. Hold still."))
 			T.butchery_progress = 1
 
 		if(T.butchery_progress == 1)
 			if(do_after(src, 7 SECONDS, INTERRUPT_NO_NEEDHAND, BUSY_ICON_HOSTILE))
+				balloon_alert_to_viewers("starts mutilating \the [T]")
 				visible_message(SPAN_DANGER("[src] makes careful slices and tears out the viscera in \the [T]'s abdominal cavity."), SPAN_NOTICE("You carefully vivisect \the [T], ripping out the guts and useless organs. What a stench!"))
 				T.butchery_progress = 2
 				playsound(loc, 'sound/weapons/slash.ogg', 25)
 			else
+				T.balloon_alert(src, "finish later!")
 				to_chat(src, SPAN_NOTICE("You pause your butchering for later."))
 
 		if(T.butchery_progress == 2)
 			if(do_after(src, 6.5 SECONDS, INTERRUPT_NO_NEEDHAND, BUSY_ICON_HOSTILE))
+				balloon_alert_to_viewers("continues butchering \the [T]")
 				visible_message(SPAN_DANGER("[src] hacks away at \the [T]'s limbs and slices off strips of dripping meat."), SPAN_NOTICE("You slice off a few of \the [T]'s limbs, making sure to get the finest cuts."))
 				if(xeno_victim && isturf(xeno_victim.loc))
 					var/obj/item/reagent_container/food/snacks/meat/xenomeat = new /obj/item/reagent_container/food/snacks/meat/xenomeat(T.loc)
@@ -139,11 +147,13 @@
 				T.butchery_progress = 3
 				playsound(loc, 'sound/weapons/bladeslice.ogg', 25)
 			else
+				T.balloon_alert(src, "finish later!")
 				to_chat(src, SPAN_NOTICE("You pause your butchering for later."))
 
 		if(T.butchery_progress == 3)
 			if(do_after(src, 7 SECONDS, INTERRUPT_NO_NEEDHAND, BUSY_ICON_HOSTILE))
 				visible_message(SPAN_DANGER("[src] tears apart \the [T]'s ribcage and begins chopping off bit and pieces."), SPAN_NOTICE("You rip open \the [T]'s ribcage and start tearing the tastiest bits out."))
+				T.balloon_alert(src, "continue mutilating")
 				if(xeno_victim && isturf(xeno_victim.loc))
 					var/obj/item/reagent_container/food/snacks/meat/xenomeat = new /obj/item/reagent_container/food/snacks/meat/xenomeat(T.loc)
 					xenomeat.name = "raw [xeno_victim.age_prefix][xeno_victim.caste_type] tenderloin"
@@ -154,6 +164,7 @@
 				T.butchery_progress = 4
 				playsound(loc, 'sound/weapons/wristblades_hit.ogg', 25)
 			else
+				T.balloon_alert(src, "finish later!")
 				to_chat(src, SPAN_NOTICE("You pause your butchering for later."))
 
 		if(T.butchery_progress == 4)
@@ -182,27 +193,35 @@
 				T.butchery_progress = 5 //Won't really matter.
 				playsound(loc, 'sound/weapons/slice.ogg', 25)
 				if(hunter_data.prey == T)
+					balloon_alert_to_viewers("finished butchering", "claimed trophy!")
 					to_chat(src, SPAN_YAUTJABOLD("You have claimed [T] as your trophy."))
 					emote("roar2")
 					message_all_yautja("[src.real_name] has claimed [T] as their trophy.")
 					hunter_data.prey = null
 				else
+					balloon_alert_to_viewers("finished butchering")
 					to_chat(src, SPAN_NOTICE("You finish butchering!"))
 				qdel(T)
 			else
+				T.balloon_alert(src, "finish later!")
 				to_chat(src, SPAN_NOTICE("You pause your butchering for later."))
 	else
 		var/limb = procedure_choices[procedure]
 		var/limbName = parse_zone(limb)
 		if(victim.get_limb(limb).status & LIMB_DESTROYED)
+			victim.balloon_alert(src, "no [limbName]!")
 			to_chat(src, SPAN_WARNING("The victim lacks a [limbName]."))
 			return
 		if(limb == "head")
+			balloon_alert_to_viewers("starts beheading")
 			visible_message("<b>[src] reaches down and starts beheading [T].</b>","<b>You reach down and start beheading [T].</b>")
+			T.balloon_alert_to_viewers("")
 		else
+			balloon_alert_to_viewers("starts removing \the [limbName]")
 			visible_message("<b>[src] reaches down and starts removing [T]'s [limbName].</b>","<b>You reach down and start removing [T]'s [limbName].</b>")
 		if(do_after(src, 9 SECONDS, INTERRUPT_NO_NEEDHAND, BUSY_ICON_HOSTILE))
 			if(victim.get_limb(limb).status & LIMB_DESTROYED)
+				T.balloon_alert(src, "lacks a [limbName]!")
 				to_chat(src, SPAN_WARNING("The victim lacks a [limbName]."))
 				return
 			victim.get_limb(limb).droplimb(TRUE, FALSE, "butchering")
@@ -213,6 +232,7 @@
 				message_all_yautja("[src.real_name] has claimed [T] as their trophy.")
 				hunter_data.prey = null
 			else
+				balloon_alert_to_viewers("finished butchering")
 				to_chat(src, SPAN_NOTICE("You finish butchering!"))
 
 /area/yautja
@@ -231,10 +251,12 @@
 	set desc = "When you're on the Predator ship, claim some gear. You can only do this ONCE."
 
 	if(hunter_data.claimed_equipment)
+		balloon_alert(src, "equipment claimed!")
 		to_chat(src, SPAN_WARNING("You've already claimed your equipment."))
 		return
 
 	if(is_mob_incapacitated() || lying || buckled)
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_WARNING("You're not able to do that right now."))
 		return
 
@@ -243,11 +265,13 @@
 		return
 
 	if(!istype(get_area(src), /area/yautja))
+		balloon_alert(src, "must be on ship!")
 		to_chat(src, SPAN_WARNING("Not here. Only on the ship."))
 		return
 
 	var/obj/item/clothing/gloves/yautja/hunter/bracers = gloves
 	if(!istype(bracers))
+		balloon_alert(src, "must be wearing bracers!")
 		to_chat(src, SPAN_WARNING("You need to be wearing your bracers to do this."))
 		return
 
@@ -276,10 +300,12 @@
 
 	bracers = gloves
 	if(!istype(bracers))
+		balloon_alert("must be wearing bracers!")
 		to_chat(src, SPAN_WARNING("You need to be wearing your bracers to do this."))
 		return
 
 	if(hunter_data.claimed_equipment)
+		balloon_alert(src, "equipment claimed!")
 		to_chat(src, SPAN_WARNING("You've already claimed your equipment."))
 		return
 

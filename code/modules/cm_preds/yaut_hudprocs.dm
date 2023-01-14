@@ -4,6 +4,7 @@
 	set desc = "Allows you to mark your prey."
 
 	if(is_mob_incapacitated())
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
@@ -70,11 +71,13 @@
 	set desc = "Mark a target for the hunt."
 
 	if(is_mob_incapacitated())
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
 	// Only one prey per pred
 	if(hunter_data.prey)
+		balloon_alert(src, "already hunting!")
 		to_chat(src, SPAN_DANGER("You're already hunting something."))
 		return
 
@@ -93,6 +96,7 @@
 	if(!M)
 		return
 	if(M.hunter_data.hunter)
+		balloon_alert(src, "already being hunted!")
 		to_chat(src, SPAN_YAUTJABOLD("[M] is already being hunted by [M.hunter_data.hunter.real_name]!"))
 		return
 	hunter_data.prey = M
@@ -101,6 +105,7 @@
 	M.hud_set_hunter()
 
 	// Notify the pred
+	balloon_alert(src, "prey chosen")
 	to_chat(src, SPAN_YAUTJABOLD("You have chosen [hunter_data.prey] as your next prey."))
 
 	// Notify other preds
@@ -116,10 +121,12 @@
 	set desc = "Unmark your hunt target."
 
 	if(is_mob_incapacitated())
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
 	if(!hunter_data.prey)
+		balloon_alert("no prey!")
 		to_chat(src, SPAN_DANGER("You're not hunting anything right now."))
 		return
 
@@ -130,6 +137,7 @@
 	if (alert(usr, "Are you sure you want to abandon this prey?", "Remove from Hunt:", "Yes", "No") != "Yes")
 		return
 	var/mob/living/carbon/prey = hunter_data.prey
+	balloon_alert(src, "prey removed")
 	to_chat(src, SPAN_YAUTJABOLD("You have removed [prey] from your hunt."))
 	prey.hunter_data.hunter = null
 	prey.hunter_data.hunted = FALSE
@@ -141,6 +149,7 @@
 
 /mob/living/carbon/human/proc/mark_honored()
 	if(is_mob_incapacitated())
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
@@ -157,6 +166,7 @@
 	if(!T)
 		return
 	if(T.hunter_data.honored)
+		balloon_alert(src, "already honored!")
 		to_chat(src, SPAN_YAUTJABOLD("[T] has already been honored by [T.hunter_data.honored_set.real_name] for '[T.hunter_data.honored_reason]'!"))
 		return
 
@@ -178,6 +188,7 @@
 
 /mob/living/carbon/human/proc/unmark_honored()
 	if(is_mob_incapacitated())
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
@@ -195,6 +206,7 @@
 	if(!T)
 		return
 	if(!T.hunter_data.honored)
+		balloon_alert(src, "not marked as honored!")
 		to_chat(src, SPAN_YAUTJABOLD("[T] is not marked as honored!"))
 		return
 
@@ -209,12 +221,14 @@
 		T.hunter_data.honored_reason = null
 		T.hud_set_hunter()
 	else
+		balloon_alert(src, "cannot undo actions of others!")
 		to_chat(src, SPAN_YAUTJABOLD("You cannot undo the actions of a living brother or sister!"))
 
 
 
 /mob/living/carbon/human/proc/mark_dishonored()
 	if(is_mob_incapacitated())
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
@@ -234,6 +248,7 @@
 	if(!T)
 		return
 	if(T.hunter_data.dishonored)
+		balloon_alert("already dishonored!")
 		to_chat(src, SPAN_YAUTJABOLD("[T] has already been marked as dishonorable by [T.hunter_data.dishonored_set.real_name] for '[T.hunter_data.dishonored_reason]'!"))
 		return
 
@@ -255,6 +270,7 @@
 
 /mob/living/carbon/human/proc/unmark_dishonored()
 	if(is_mob_incapacitated())
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
@@ -276,6 +292,7 @@
 	if(!T)
 		return
 	if(!T.hunter_data.dishonored)
+		balloon_alert(src, "not dishonored!")
 		to_chat(src, SPAN_YAUTJABOLD("[T] is not marked as dishonorable!"))
 		return
 
@@ -290,6 +307,7 @@
 		T.hunter_data.dishonored_reason = null
 		T.hud_set_hunter()
 	else
+		balloon_alert(src, "cannot undo actions of others!")
 		to_chat(src, SPAN_YAUTJABOLD("You cannot undo the actions of a living brother or sister!"))
 
 
@@ -327,6 +345,7 @@
 
 /mob/living/carbon/human/proc/unmark_gear()
 	if(is_mob_incapacitated())
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
@@ -344,6 +363,7 @@
 	if(!T)
 		return
 	if(!T.hunter_data.gear)
+		balloon_alert(src, "not a gear carrier!")
 		to_chat(src, SPAN_YAUTJABOLD("[T] is not marked as a gear carrier!"))
 		return
 
@@ -357,11 +377,13 @@
 		T.hunter_data.gear = FALSE
 		T.hud_set_hunter()
 	else
+		balloon_alert(src, "cannot undo the actions of others!")
 		to_chat(src, SPAN_YAUTJABOLD("You cannot undo the actions of a living brother or sister!"))
 
 
 /mob/living/carbon/human/proc/mark_thralled()
 	if(is_mob_incapacitated())
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
@@ -370,6 +392,7 @@
 		return
 
 	if(hunter_data.thrall)
+		balloon_alert(src, "have a thrawl!")
 		to_chat(src, SPAN_WARNING("You already have a thrall."))
 		return
 
@@ -384,6 +407,7 @@
 	if(!T)
 		return
 	if(T.hunter_data.thralled)
+		balloon_alert(src, "already thralled!")
 		to_chat(src, SPAN_YAUTJABOLD("[T] has already been thralled by [T.hunter_data.thralled_set.real_name] for '[T.hunter_data.thralled_reason]'!"))
 		return
 
@@ -405,6 +429,7 @@
 
 /mob/living/carbon/human/proc/unmark_thralled()
 	if(is_mob_incapacitated())
+		balloon_alert(src, "incapacitated!")
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
@@ -427,6 +452,7 @@
 	if(!T)
 		return
 	if(!T.hunter_data.thralled)
+		balloon_alert(src, "not marked as thralled!")
 		to_chat(src, SPAN_YAUTJABOLD("[T] is not marked as thralled!"))
 		return
 
@@ -441,4 +467,5 @@
 		hunter_data.thrall = null
 		T.hud_set_hunter()
 	else
+		balloon_alert(src, "cannot undo the actions of others!")
 		to_chat(src, SPAN_YAUTJABOLD("You cannot undo the actions of a living brother or sister!"))

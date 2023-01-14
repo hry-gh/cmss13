@@ -83,6 +83,7 @@
 
 /mob/living/simple_animal/mouse/start_pulling(var/atom/movable/AM)//Prevents mouse from pulling things
 	to_chat(src, SPAN_WARNING("You are too small to pull anything."))
+	balloon_alert(src, "too small!")
 	return
 
 /mob/living/simple_animal/mouse/Crossed(AM as mob|obj)

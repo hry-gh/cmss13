@@ -411,13 +411,16 @@
 /mob/living/carbon/Xenomorph/proc/pickup_fruit(var/obj/effect/alien/resin/fruit/F)
 
 	if(F.bound_xeno && !can_not_harm(F.bound_xeno))
+		F.balloon_alert(src, "*squish*")
 		to_chat(src, SPAN_XENODANGER("You crush [F]."))
 		qdel(F)
 		return
 	if(!F.mature)
+		balloon_alert(src, "not mature!")
 		to_chat(src, SPAN_XENODANGER("[F] isn't mature yet!"))
 		return
 	if(F.picked)
+		balloon_alert(src, "already being picked!")
 		to_chat(src, SPAN_XENODANGER("[F] is already being picked!"))
 		return
 	// Indicates the fruit is being picked, so other xenos can't eat it at the same time
@@ -438,10 +441,12 @@
 	qdel(F)
 
 /mob/living/carbon/Xenomorph/Larva/pickup_fruit(obj/effect/alien/resin/fruit/F)
+	balloon_alert(src, "too small!")
 	to_chat(src, SPAN_XENODANGER("You are too small to pick up \the [F]!"))
 	return
 
 /mob/living/carbon/Xenomorph/Facehugger/pickup_fruit(obj/effect/alien/resin/fruit/F)
+	balloon_alert(src, "too small!")
 	to_chat(src, SPAN_XENODANGER("You are too small to pick up \the [F]!"))
 	return
 

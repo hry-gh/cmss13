@@ -689,6 +689,7 @@
 		var/mob/living/carbon/human/wielder = user
 		var/obj/limb/hand = wielder.get_limb(check_hand)
 		if(!istype(hand) || !hand.is_usable())
+			balloon_alert(user, "other hand can't hold!")
 			to_chat(user, SPAN_WARNING("Your other hand can't hold \the [src]!"))
 			return
 
@@ -760,30 +761,37 @@ User can be passed as null, (a gun reloading itself for instance), so we need to
 		return
 
 	if(!magazine || !istype(magazine))
+		balloon_alert(user, "not a magazine!")
 		to_chat(user, SPAN_WARNING("That's not a magazine!"))
 		return
 
 	if(magazine.flags_magazine & AMMUNITION_HANDFUL)
+		balloon_alert(user, "not a magazine!")
 		to_chat(user, SPAN_WARNING("[src] needs an actual magazine."))
 		return
 
 	if(magazine.current_rounds <= 0)
+		balloon_alert(user, "magazine empty!")
 		to_chat(user, SPAN_WARNING("[magazine] is empty!"))
 		return
 
 	if(!istype(src, magazine.gun_type) && !((magazine.type) in src.accepted_ammo))
+		balloon_alert(user, "magazine doesn't fit!")
 		to_chat(user, SPAN_WARNING("That magazine doesn't fit in there!"))
 		return
 
 	if(current_mag)
+		balloon_alert(user, "still loaded!")
 		to_chat(user, SPAN_WARNING("It's still got something loaded."))
 		return
 
 	if(user)
 		if(magazine.reload_delay > 1)
+			balloon_alert(user, "reloading...")
 			to_chat(user, SPAN_NOTICE("You begin reloading [src]. Hold still..."))
 			if(!do_after(user, magazine.reload_delay, INTERRUPT_ALL, BUSY_ICON_FRIENDLY))
 				to_chat(user, SPAN_WARNING("Your reload was interrupted!"))
+				balloon_alert(user, "interrupted!")
 				return
 		replace_magazine(user, magazine)
 	else
@@ -804,6 +812,7 @@ User can be passed as null, (a gun reloading itself for instance), so we need to
 		cock_gun(user)
 	user.visible_message(SPAN_NOTICE("[user] loads [magazine] into [src]!"),
 		SPAN_NOTICE("You load [magazine] into [src]!"), null, 3, CHAT_TYPE_COMBAT_ACTION)
+	balloon_alert(user, "magazine loaded")
 	if(reload_sound)
 		playsound(user, reload_sound, 25, 1, 5)
 
@@ -897,6 +906,7 @@ User can be passed as null, (a gun reloading itself for instance), so we need to
 		if (world.time % 3) // Limits how often this message pops up, saw this somewhere else and thought it was clever
 			//Absolutely SCREAM this at people so they don't get killed by it
 			to_chat(user, SPAN_HIGHDANGER("Help intent safety is on! Switch to another intent to fire your weapon."))
+			balloon_alert(user, "safety on, change intent!")
 			click_empty(user)
 		return FALSE
 	else if(user.gun_mode && !(A in target))
@@ -935,6 +945,7 @@ and you're good to go.
 		else
 			to_chat(user, SPAN_WARNING("[active_attachable] is empty!"))
 			to_chat(user, SPAN_NOTICE("You disable [active_attachable]."))
+			balloon_alert(user, "empty, disabled!")
 			playsound(user, active_attachable.activation_sound, 15, 1)
 			active_attachable.activate_attachment(src, null, TRUE)
 	else
@@ -1034,6 +1045,7 @@ and you're good to go.
 	//If it's a regular bullet, we're just going to keep it chambered.
 	extra_delay = 2 + (burst_delay + extra_delay)*2 // Some extra delay before firing again.
 	to_chat(user, SPAN_WARNING("[src] jammed! You'll need a second to get it fixed!"))
+	balloon_alert(user, "gun jammed!")
 
 //----------------------------------------------------------
 		//    \\
@@ -1069,6 +1081,7 @@ and you're good to go.
 				click_empty(user) //If it's empty, let them know.
 				to_chat(user, SPAN_WARNING("[active_attachable] is empty!"))
 				to_chat(user, SPAN_NOTICE("You disable [active_attachable]."))
+				balloon_alert(user, "empty, disabled!")
 				active_attachable.activate_attachment(src, null, TRUE)
 			else
 				active_attachable.fire_attachment(target, src, user) //Fire it.
@@ -1404,6 +1417,7 @@ and you're good to go.
 
 		if(EXECUTION_CHECK) //Continue execution if on the correct intent. Accounts for change via the earlier do_after
 			user.visible_message(SPAN_DANGER("[user] has executed [M] with [src]!"), SPAN_DANGER("You have executed [M] with [src]!"), message_flags = CHAT_TYPE_WEAPON_USE)
+			user.balloon_alert_to_viewers("executed [M]")
 			M.death()
 			bullets_to_fire = bullets_fired //Giant bursts are not compatible with precision killshots.
 		// No projectile code to handhold us, we do the cleaning ourselves:
@@ -1462,11 +1476,13 @@ not all weapons use normal magazines etc. load_into_chamber() itself is designed
 	if(ismob(user)) //Could be an object firing the gun.
 		if(!user.IsAdvancedToolUser())
 			to_chat(user, SPAN_WARNING("You don't have the dexterity to do this!"))
+			balloon_alert(user, "not dexterous!")
 			return
 
 		if(ishuman(user))
 			var/mob/living/carbon/human/H = user
 			if(!H.allow_gun_usage)
+				balloon_alert(user, "cannot use!")
 				if(isSynth(user))
 					to_chat(user, SPAN_WARNING("Your programming does not allow you to use firearms."))
 				else
@@ -1475,10 +1491,12 @@ not all weapons use normal magazines etc. load_into_chamber() itself is designed
 
 		if(flags_gun_features & GUN_TRIGGER_SAFETY)
 			to_chat(user, SPAN_WARNING("The safety is on!"))
+			balloon_alert(user, "safety on!")
 			return
 
 		if((flags_gun_features & GUN_WIELDED_FIRING_ONLY) && !(flags_item & WIELDED)) //If we're not holding the weapon with both hands when we should.
 			to_chat(user, SPAN_WARNING("You need a more secure grip to fire this weapon!"))
+			balloon_alert(user, "need a secure grip!")
 			return
 
 		if((flags_gun_features & GUN_WY_RESTRICTED) && !wy_allowed_check(user))
@@ -1516,6 +1534,7 @@ not all weapons use normal magazines etc. load_into_chamber() itself is designed
 /obj/item/weapon/gun/proc/click_empty(mob/user)
 	if(user)
 		to_chat(user, SPAN_WARNING("<b>*click*</b>"))
+		balloon_alert(user, "*click*")
 		playsound(user, 'sound/weapons/gun_empty.ogg', 25, 1, 5) //5 tile range
 	else
 		playsound(src, 'sound/weapons/gun_empty.ogg', 25, 1, 5)

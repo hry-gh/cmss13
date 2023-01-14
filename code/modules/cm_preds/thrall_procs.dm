@@ -42,6 +42,7 @@
 			return
 
 		if(wearer.hunter_data.claimed_equipment)
+			balloon_alert(src, "weapon claimed!")
 			to_chat(src, SPAN_WARNING("You've already claimed your equipment."))
 			return
 

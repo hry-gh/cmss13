@@ -559,6 +559,7 @@
 	set desc = "Send a message to all aliens in the hive that is big and visible"
 	if(health <= 0)
 		to_chat(src, SPAN_WARNING("You can't do that while unconcious."))
+		balloon_alert(src, "unconscious!")
 		return FALSE
 	if(!check_plasma(50))
 		return FALSE
@@ -601,6 +602,7 @@
 
 	if(pslash_delay)
 		to_chat(src, SPAN_WARNING("You must wait a bit before you can toggle this again."))
+		balloon_alert(src, "wait a bit!")
 		return
 
 	pslash_delay = TRUE
@@ -715,6 +717,7 @@
 	if(locate(/obj/item/alien_embryo) in victim) //Maybe they ate it??
 		var/mob/living/carbon/human/human_victim = victim
 		if(human_victim.status_flags & XENO_HOST)
+			balloon_alert(src, "child may hatch!")
 			if(victim.stat != DEAD) //Not dead yet.
 				to_chat(src, SPAN_XENOWARNING("The host and child are still alive!"))
 				return FALSE
@@ -726,6 +729,7 @@
 		var/mob/living/carbon/Xenomorph/xeno = victim
 		if(hivenumber == xeno.hivenumber)
 			to_chat(src, SPAN_WARNING("You can't bring yourself to harm a fellow sister to this magnitude."))
+			balloon_alert(src, "that's a fellow sister!")
 			return FALSE
 
 	var/turf/cur_loc = victim.loc

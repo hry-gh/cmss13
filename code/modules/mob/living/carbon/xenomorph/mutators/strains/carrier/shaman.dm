@@ -174,6 +174,7 @@
 
 	if(!length(xenomorphs_in_range))
 		to_chat(src, SPAN_XENOWARNING("There weren't enough of your allies around for the sacrifice to be effective."))
+		balloon_alert(src, "insufficient xenos in range!")
 		return
 
 	if(xeno_behavior.enable_pain_usage && effect_power < xeno_behavior.remembered_count)
@@ -278,6 +279,7 @@
 
 	if(!effect_power)
 		to_chat(src, SPAN_XENOWARNING("There weren't enough of your allies around for the sacrifice to be effective."))
+		balloon_alert(src, "insufficient xenos in range!")
 		return
 
 	visible_message(SPAN_XENONOTICE("\The [src] squashes the egg into a pulp."), SPAN_XENONOTICE("You squash the egg into a mess of acid, blood, and gore! The collective psychic scream will stun nearby enemies!"), null, 8)
@@ -394,6 +396,7 @@
 
 	if(!effect_power)
 		to_chat(src, SPAN_XENOWARNING("There weren't enough of your allies around for the sacrifice to be effective."))
+		balloon_alert(src, "insufficient xenos in range!")
 		return
 
 	var/effect = min(((effect_power - 1) * action_def.pheromone_strength_per_xeno) + action_def.pheromone_strength_base, 5)
@@ -479,6 +482,7 @@
 
 	if(!effect_power)
 		to_chat(src, SPAN_XENOWARNING("There weren't enough of your allies around for the sacrifice to be effective."))
+		balloon_alert(src, "insufficient xenos in range!")
 		return
 
 	to_chat(src, SPAN_XENOBOLDNOTICE("You absorb the adrenal pheremones of [effect_power] xenomorph\s!"))

@@ -6,8 +6,10 @@
 	if(!client) return
 	client.inquisitive_ghost = !client.inquisitive_ghost
 	if(client.inquisitive_ghost)
+		balloon_alert(src, "now examining on click")
 		to_chat(src, SPAN_NOTICE(" You will now examine everything you click on."))
 	else
+		balloon_alert(src, "now not examining on click")
 		to_chat(src, SPAN_NOTICE(" You will no longer examine things you click on."))
 
 /mob/dead/observer/click(var/atom/A, var/list/mods)
@@ -30,20 +32,22 @@
 			if(isXeno(A) && SSticker.mode.check_xeno_late_join(src)) //if it's a xeno and all checks are alright, we are gonna try to take their body
 				var/mob/living/carbon/Xenomorph/X = A
 				if(X.stat == DEAD || is_admin_level(X.z) || X.aghosted)
+					balloon_alert(src, "cannot join as [X]!")
 					to_chat(src, SPAN_WARNING("You cannot join as [X]."))
 					return
 				if(!SSticker.mode.xeno_bypass_timer)
 					var/deathtime = world.time - timeofdeath
 					if(deathtime < 2.5 MINUTES)
-						var/message = "You have been dead for [DisplayTimeText(deathtime)]."
-						message = SPAN_WARNING("[message]")
-						to_chat(src, message)
+						var/time_until_rejoin = deathtime - 2.5 MINUTES
+						balloon_alert(src, "must wait [DisplayTimeText(deathtime)]!")
+						to_chat(src, SPAN_WARNING("You have been dead for [DisplayTimeText(deathtime)]."))
 						to_chat(src, SPAN_WARNING("You must wait 2.5 minutes before rejoining the game!"))
 						return FALSE
 					if((!isXenoLarva(X) && X.away_timer < XENO_LEAVE_TIMER) || (isXenoLarva(X) && X.away_timer < XENO_LEAVE_TIMER_LARVA))
 						var/to_wait = XENO_LEAVE_TIMER - X.away_timer
 						if(isXenoLarva(X))
 							to_wait = XENO_LEAVE_TIMER_LARVA - X.away_timer
+						balloon_alert(src, "must wait [DisplayTimeText(to_wait)]!")
 						to_chat(src, SPAN_WARNING("That player hasn't been away long enough. Please wait [to_wait] second\s longer."))
 						return FALSE
 				if(alert(src, "Are you sure you want to transfer yourself into [X]?", "Confirm Transfer", "Yes", "No") != "Yes")

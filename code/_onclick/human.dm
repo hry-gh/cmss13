@@ -77,6 +77,7 @@
 
 	var/obj/limb/temp = get_limb(hand ? "l_hand" : "r_hand")
 	if(temp && !temp.is_usable())
+		balloon_alert(src, "can't move [temp.display_name]!")
 		to_chat(src, SPAN_NOTICE("You try to move your [temp.display_name], but cannot!"))
 		return
 
@@ -131,6 +132,7 @@
 	carry_delay = carrydata["carry_delay"]
 
 	if(!skillcheck(src, SKILL_FIREMAN, SKILL_FIREMAN_TRAINED) && !(signal_flags & COMPONENT_CARRY_ALLOW)) // Checking if they have fireman carry as a skill.
+		balloon_alert(src, "not trained!")
 		to_chat(src, SPAN_WARNING("You aren't trained to carry people!"))
 		return . = ..()
 

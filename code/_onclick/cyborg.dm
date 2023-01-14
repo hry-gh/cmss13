@@ -35,6 +35,7 @@
 		if(is_component_functioning("camera"))
 			aiCamera.captureimage(A, usr)
 		else
+			balloon_alert(src, "camera not functioning!")
 			to_chat(src, SPAN_DANGER("Your camera isn't functional."))
 		return 1
 

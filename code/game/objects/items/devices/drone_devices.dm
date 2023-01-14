@@ -53,6 +53,7 @@
 		wrapped = null
 		return
 
+	balloon_alert(src, "dropped the [wrapped]")
 	to_chat(src.loc, SPAN_WARNING("You drop \the [wrapped]."))
 	wrapped.forceMove(get_turf(src))
 	wrapped = null

@@ -47,6 +47,7 @@
 	if(sdisabilities & DISABILITY_DEAF || ear_deaf)
 		if(speaker == src)
 			to_chat(src, SPAN_WARNING("You cannot hear yourself speak!"))
+			balloon_alert(src, "deaf!")
 		else
 			to_chat(src, SPAN_LOCALSAY("<span class='prefix'>[comm_paygrade][speaker_name]</span>[alt_name] talks but you cannot hear them."))
 	else

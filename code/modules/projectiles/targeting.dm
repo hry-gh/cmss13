@@ -218,8 +218,10 @@
 	gun_mode = !gun_mode
 	if(gun_mode)
 		to_chat(src, "You will now take people captive.")
+		balloon_alert(src, "taking captives")
 	else
 		to_chat(src, "You will now shoot where you target.")
+		balloon_alert(src, "now shooting")
 		for(var/obj/item/weapon/gun/G in src)
 			G.stop_aim()
 	update_gun_icons()
@@ -242,8 +244,10 @@
 	target_can_move = !target_can_move
 	if(target_can_move)
 		to_chat(src, "Target may now walk.")
+		balloon_alert(src, "target may walk")
 	else
 		to_chat(src, "Target may no longer move.")
+		balloon_alert(src, "target may not walk")
 		target_can_run = 0
 	if(hud_used && hud_used.gun_run_icon)
 		hud_used.gun_run_icon.update_icon(src)
@@ -258,19 +262,23 @@
 		if(G.target)
 			for(var/mob/living/carbon/human/M in G.target)
 				if(target_can_move)
+					balloon_alert(M, "can [target_can_run ? "run" : "walk"]")
 					to_chat(M, "Your character may now <b>walk</b> at the discretion of their targeter.")
 					if(!target_can_run)
 						to_chat(M, SPAN_WARNING("Your move intent is now set to walk, as your targeter permits it."))
 				else
 					to_chat(M, SPAN_DANGER("Your character will now be shot if they move."))
+					balloon_alert(M, "can't move")
 
 /mob/proc/AllowTargetRun()
 	//Changing client's permissions
 	target_can_run = !target_can_run
 	if(target_can_run)
 		to_chat(src, "Target may now run.")
+		balloon_alert(src, "target may run")
 	else
 		to_chat(src, "Target may no longer run.")
+		balloon_alert(src, "target may not run")
 
 	//Updating running permission button
 	if(hud_used && hud_used.gun_run_icon)
@@ -283,8 +291,10 @@
 			for(var/mob/living/M in G.target)
 				if(target_can_run)
 					to_chat(M, "Your character may now <b>run</b> at the discretion of their targeter.")
+					balloon_alert(M, "can run")
 				else
 					to_chat(M, SPAN_DANGER("Your character will now be shot if they run."))
+					balloon_alert("can't run")
 
 /mob/proc/AllowTargetClick()
 

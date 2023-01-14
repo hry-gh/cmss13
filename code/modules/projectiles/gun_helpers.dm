@@ -566,6 +566,7 @@ As sniper rifles have both and weapon mods can change them as well. ..() deals w
 	set hidden = 1
 	if(usr.is_mob_incapacitated(TRUE) || usr.is_mob_restrained())
 		to_chat(src, SPAN_WARNING("You can't draw a weapon in your current state."))
+		balloon_alert(src, "incapacitated!")
 		return
 
 	var/obj/item/active_hand = get_active_hand()

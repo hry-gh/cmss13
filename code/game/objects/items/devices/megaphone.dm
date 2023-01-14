@@ -13,6 +13,7 @@
 	. = ..()
 	if(user.client)
 		if(user.client?.prefs?.muted & MUTE_IC)
+			balloon_alert("cannot speak!")
 			to_chat(src, SPAN_DANGER("You cannot speak in IC (muted)."))
 			return
 	if(!isHumanSynthStrict(user))

@@ -104,9 +104,11 @@
 			return
 		if(morpher.linked_hive.hivenumber != hivenumber)
 			to_chat(src, SPAN_XENOWARNING("This isn't your hive's eggmorpher!"))
+			balloon_alert(src, "not yours!")
 			return
 		if(morpher.stored_huggers >= morpher.huggers_to_grow_max)
 			to_chat(src, SPAN_XENOWARNING("\The [morpher] is already full of children."))
+			balloon_alert(src, "full!")
 			return
 		visible_message(SPAN_WARNING("\The [src] climbs back into \the [morpher]."), SPAN_XENONOTICE("You climb into \the [morpher]."))
 		morpher.stored_huggers++
@@ -117,18 +119,22 @@
 		var/mob/living/carbon/human/human = A
 		if(!human.lying)
 			to_chat(src, SPAN_WARNING("You can't reach \the [human], they need to be lying down."))
+			balloon_alert(src, "cannot reach!")
 			return
 		if(!can_hug(human, hivenumber))
 			to_chat(src, SPAN_WARNING("You can't infect \the [human]..."))
+			balloon_alert(src, "cannot infect")
 			return
 		visible_message(SPAN_WARNING("\The [src] starts climbing onto \the [human]'s face..."), SPAN_XENONOTICE("You start climbing onto \the [human]'s face..."))
 		if(!do_after(src, 6 SECONDS, INTERRUPT_ALL, BUSY_ICON_HOSTILE, human, INTERRUPT_MOVED, BUSY_ICON_HOSTILE))
 			return
 		if(!human.lying)
 			to_chat(src, SPAN_WARNING("You can't reach \the [human], they need to be lying down."))
+			balloon_alert(src, "can't reach!")
 			return
 		if(!can_hug(human, hivenumber))
 			to_chat(src, SPAN_WARNING("You can't infect \the [human]..."))
+			balloon_alert(src, "cannot infect!")
 			return
 		handle_hug(human)
 		return
@@ -211,12 +217,14 @@
 	for(var/atom/movable/atom in get_turf(current_structure))
 		if(atom != current_structure && atom.density && atom.BlockedPassDirs(src, move_dir))
 			to_chat(src, SPAN_WARNING("\The [atom] prevents you from squeezing under \the [current_structure]!"))
+			balloon_alert(src, "can't squeeze through!")
 			return
 	// Is it an airlock?
 	if(istype(current_structure, /obj/structure/machinery/door/airlock))
 		var/obj/structure/machinery/door/airlock/current_airlock = current_structure
 		if(current_airlock.locked || current_airlock.welded) //Can't pass through airlocks that have been bolted down or welded
 			to_chat(src, SPAN_WARNING("\The [current_airlock] is locked down tight. You can't squeeze underneath!"))
+			balloon_alert(src, "can't squeeze through!")
 			return
 	visible_message(SPAN_WARNING("\The [src] scuttles underneath \the [current_structure]!"), \
 	SPAN_WARNING("You squeeze and scuttle underneath \the [current_structure]."), null, 5)

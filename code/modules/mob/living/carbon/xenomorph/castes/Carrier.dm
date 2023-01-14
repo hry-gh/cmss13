@@ -66,7 +66,7 @@
 		/datum/action/xeno_action/activable/retrieve_egg, //4th macro
 		/datum/action/xeno_action/onclick/set_hugger_reserve,
 		)
-	
+
 	inherent_verbs = list(
 		/mob/living/carbon/Xenomorph/proc/rename_tunnel,
 		/mob/living/carbon/Xenomorph/proc/set_hugger_reserve_for_morpher,
@@ -135,6 +135,7 @@
 			//Hugger explosion, like an egg morpher
 			var/obj/item/clothing/mask/facehugger/hugger
 			visible_message(SPAN_XENOWARNING("The chittering mass of tiny aliens is trying to escape [src]!"))
+			balloon_alert_to_viewers("about to burst!", text_color = ALERT_BALLOON)
 			for(var/i in 1 to huggers_cur)
 				if(prob(chance))
 					hugger = new(loc, hivenumber)
@@ -154,26 +155,32 @@
 /mob/living/carbon/Xenomorph/Carrier/proc/store_hugger(obj/item/clothing/mask/facehugger/F)
 	if(F.hivenumber != hivenumber)
 		to_chat(src, SPAN_WARNING("This hugger is tainted!"))
+		balloon_alert("not yours!")
 		return
 
 	if(huggers_max > 0 && huggers_cur < huggers_max)
 		if(F.stat != DEAD && !F.sterile)
 			huggers_cur++
 			to_chat(src, SPAN_NOTICE("You store the facehugger and carry it for safekeeping. Now sheltering: [huggers_cur] / [huggers_max]."))
+			balloon_alert(src, "[huggers_cur] / [huggers_max]")
 			update_icons()
 			qdel(F)
 		else
 			to_chat(src, SPAN_WARNING("This [F.name] looks too unhealthy."))
+			balloon_alert(src, "too unhealthy!")
 	else
 		to_chat(src, SPAN_WARNING("You can't carry more facehuggers on you."))
+		balloon_alert(src, "full!")
 
 /mob/living/carbon/Xenomorph/Carrier/proc/store_huggers_from_egg_morpher(obj/effect/alien/resin/special/eggmorph/morpher)
 	if(morpher.linked_hive && (morpher.linked_hive.hivenumber != hivenumber))
 		to_chat(src, SPAN_WARNING("That egg morpher is tainted!"))
+		balloon_alert(src, "not yours!")
 		return
 
 	if(morpher.stored_huggers == 0)
 		to_chat(src, SPAN_WARNING("The egg morpher is empty!"))
+		balloon_alert(src, "empty!")
 		return
 
 	if(huggers_max > 0 && huggers_cur < huggers_max)
@@ -182,11 +189,14 @@
 		morpher.stored_huggers -= huggers_to_transfer
 		if(huggers_to_transfer == 1)
 			to_chat(src, SPAN_NOTICE("You store one facehugger and carry it for safekeeping. Now sheltering: [huggers_cur] / [huggers_max]."))
+			balloon_alert(src, "[huggers_cur] / [huggers_max]")
 		else
 			to_chat(src, SPAN_NOTICE("You store [huggers_to_transfer] facehuggers and carry them for safekeeping. Now sheltering: [huggers_cur] / [huggers_max]."))
+			balloon_alert(src, "[huggers_cur] / [huggers_max]")
 		update_icons()
 	else
 		to_chat(src, SPAN_WARNING("You can't carry more facehuggers on you."))
+		balloon_alert(src, "full!")
 
 
 /mob/living/carbon/Xenomorph/Carrier/proc/throw_hugger(atom/T)
@@ -202,10 +212,12 @@
 		if(isturf(F.loc) && Adjacent(F))
 			if(F.hivenumber != hivenumber)
 				to_chat(src, SPAN_WARNING("That facehugger is tainted!"))
+				balloon_alert(src, "not yours!")
 				drop_inv_item_on_ground(F)
 				return
 			if(on_fire)
 				to_chat(src, SPAN_WARNING("Touching \the [F] while you're on fire would burn it!"))
+				balloon_alert(src, "on fire!")
 				return
 			store_hugger(F)
 			return
@@ -216,9 +228,11 @@
 		if(Adjacent(morpher))
 			if(morpher.linked_hive && (morpher.linked_hive.hivenumber != hivenumber))
 				to_chat(src, SPAN_WARNING("That egg morpher is tainted!"))
+				balloon_alert(src, "not yours!")
 				return
 			if(on_fire)
 				to_chat(src, SPAN_WARNING("Touching \the [morpher] while you're on fire would burn the facehuggers in it!"))
+				balloon_alert(src, "on fire!")
 				return
 			store_huggers_from_egg_morpher(morpher)
 			return
@@ -228,21 +242,25 @@
 		//if no hugger in active hand, we take one from our storage
 		if(huggers_cur <= 0)
 			to_chat(src, SPAN_WARNING("You don't have any facehuggers to use!"))
+			balloon_alert(src, "no facehuggers!")
 			return
 
 		if(on_fire)
 			to_chat(src, SPAN_WARNING("Retrieving a stored facehugger while you're on fire would burn it!"))
+			balloon_alert(src, "on fire!")
 			return
 
 		F = new(src, hivenumber)
 		huggers_cur--
 		put_in_active_hand(F)
 		to_chat(src, SPAN_XENONOTICE("You grab one of the facehugger in your storage. Now sheltering: [huggers_cur] / [huggers_max]."))
+		balloon_alert("[huggers_cur] / [huggers_max]")
 		update_icons()
 		return
 
 	if(!istype(F)) //something else in our hand
 		to_chat(src, SPAN_WARNING("You need a facehugger in your hand to throw one!"))
+		balloon_alert("no facehugger!")
 		return
 
 	if(!threw_a_hugger)
@@ -263,16 +281,20 @@
 /mob/living/carbon/Xenomorph/Carrier/proc/store_egg(obj/item/xeno_egg/E)
 	if(E.hivenumber != hivenumber)
 		to_chat(src, SPAN_WARNING("That egg is tainted!"))
+		balloon_alert(src, "wrong egg!")
 		return
 	if(eggs_cur < eggs_max)
 		if(stat == CONSCIOUS)
 			eggs_cur++
 			to_chat(src, SPAN_NOTICE("You store the egg and carry it for safekeeping. Now sheltering: [eggs_cur] / [eggs_max]."))
+			balloon_alert(src, "[eggs_cur] / [eggs_max]")
 			qdel(E)
 		else
 			to_chat(src, SPAN_WARNING("This [E.name] looks too unhealthy."))
+			balloon_alert(src, "too unhealthy!")
 	else
 		to_chat(src, SPAN_WARNING("You can't carry more eggs on you."))
+		balloon_alert(src, "full!")
 
 /mob/living/carbon/Xenomorph/Carrier/proc/retrieve_egg(atom/T)
 	if(!T) return
@@ -298,15 +320,18 @@
 		//if no hugger in active hand, we take one from our storage
 		if(eggs_cur <= 0)
 			to_chat(src, SPAN_WARNING("You don't have any egg to use!"))
+			balloon_alert(src, "no eggs!")
 			return
 		E = new(src, hivenumber)
 		eggs_cur--
 		put_in_active_hand(E)
 		to_chat(src, SPAN_XENONOTICE("You grab one of the eggs in your storage. Now sheltering: [eggs_cur] / [eggs_max]."))
+		balloon_alert(src, "[eggs_cur] / [eggs_max]")
 		return
 
 	if(!istype(E)) //something else in our hand
 		to_chat(src, SPAN_WARNING("You need an empty hand to grab one of your stored eggs!"))
+		balloon_alert(src, "need an empty hand!")
 		return
 
 /mob/living/carbon/Xenomorph/Carrier/attack_ghost(mob/dead/observer/user)

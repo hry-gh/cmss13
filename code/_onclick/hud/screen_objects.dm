@@ -491,6 +491,7 @@
 
 /mob/living/proc/toggle_mov_intent()
 	if(legcuffed)
+		balloon_alert(src, "cannot run!")
 		to_chat(src, SPAN_NOTICE("You are legcuffed! You cannot run until you get \the [legcuffed] removed!"))
 		set_movement_intent(MOVE_INTENT_WALK)
 		return FALSE

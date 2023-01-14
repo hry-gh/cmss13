@@ -578,6 +578,7 @@
 
 	if(held_item)
 		to_chat(src, SPAN_DANGER("You are already holding the [held_item]"))
+		balloon_alert(src, "already holding!")
 		return 1
 
 	for(var/obj/item/I in view(1,src))
@@ -594,6 +595,7 @@
 			return held_item
 
 	to_chat(src, SPAN_DANGER("There is nothing of interest to take."))
+	balloon_alert(src, "nothing to take!")
 	return 0
 
 /mob/living/simple_animal/parrot/proc/steal_from_mob()
@@ -606,6 +608,7 @@
 
 	if(held_item)
 		to_chat(src, SPAN_DANGER("You are already holding the [held_item]"))
+		balloon_alert(src, "already holding!")
 		return 1
 
 	var/obj/item/stolen_item = null
@@ -624,6 +627,7 @@
 				return held_item
 
 	to_chat(src, SPAN_DANGER("There is nothing of interest to take."))
+	balloon_alert(src, "nothing to take!")
 	return 0
 
 /mob/living/simple_animal/parrot/verb/drop_held_item_player()
@@ -648,6 +652,7 @@
 
 	if(!held_item)
 		to_chat(usr, SPAN_DANGER("You have nothing to drop!"))
+		balloon_alert(src, "nothing to drop!")
 		return 0
 
 	if(!drop_gently)
@@ -681,6 +686,7 @@
 					icon_state = "parrot_sit"
 					return
 	to_chat(src, SPAN_DANGER("There is no perch nearby to sit on."))
+	balloon_alert(src, "no perch!")
 	return
 
 /*
