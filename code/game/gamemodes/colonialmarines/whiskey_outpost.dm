@@ -462,12 +462,14 @@
 		return
 	if(user.lying || user.stat)
 		return
-	if(ismaintdrone(usr) || \
-		istype(usr, /mob/living/carbon/Xenomorph))
-		to_chat(usr, SPAN_DANGER("You don't have the dexterity to do this!"))
+	if(ismaintdrone(user) || \
+		istype(user, /mob/living/carbon/Xenomorph))
+		to_chat(user, SPAN_DANGER("You don't have the dexterity to do this!"))
+		balloon_alert(user, "not dexterous!")
 		return
 	if(working)
 		to_chat(user, SPAN_DANGER("Wait for it to recharge first."))
+		balloon_alert(user, "wait a bit!")
 		return
 
 	var/remove_max = 10
@@ -591,10 +593,12 @@
 
 	if(activated)
 		to_chat(user, "Toss it to get supplies!")
+		balloon_alert(user, "toss it!")
 		return
 
 	if(!is_ground_level(user.z))
 		to_chat(user, "You have to be on the ground to use this or it won't transmit.")
+		balloon_alert(user, "must be on the ground!")
 		return
 
 	activated = 1

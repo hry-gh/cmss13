@@ -61,6 +61,7 @@ YOU TO 200 DAMAGE. I ASK NOT FOR MY OWN MEDIC EGOSTROKING, BUT FOR THE GOOD OF T
 		return
 	if(!skillcheck(user, SKILL_MEDICAL, SKILL_MEDICAL_MEDIC))
 		to_chat(user, SPAN_WARNING("You don't know how to [description_verb] [user == target ? "yourself" : target] with \the [suturing_item]!"))
+		balloon_alert(user, "don't know how!")
 		return
 
 	INVOKE_ASYNC(src, PROC_REF(suture), suturing_item, user, target, target.get_limb(check_zone(user.zone_selected))) //do_after sleeps.
@@ -72,12 +73,15 @@ YOU TO 200 DAMAGE. I ASK NOT FOR MY OWN MEDIC EGOSTROKING, BUT FOR THE GOOD OF T
 
 	if(!target_limb || target_limb.status & LIMB_DESTROYED)
 		to_chat(user, SPAN_WARNING("[user == target ? "You have" : "\The [target] has"] no [target_limb.display_name]!"))
+		target.balloon_alert(user, "no limb!")
 		return
 	if(target_limb.status & (LIMB_ROBOT|LIMB_SYNTHSKIN))
 		to_chat(user, SPAN_WARNING("You can't repair a robotic limb with \the [suturing_item]!"))
+		target.balloon_alert(user, "robotic!")
 		return
 	if(target_limb.get_incision_depth())
 		to_chat(user, SPAN_WARNING("[user == target ? "Your" : "\The [target]'s"] [target_limb.display_name] has been cut open and needs to be closed surgically!"))
+		target.balloon_alert(user, "cut open!")
 		return
 
 	//Figure out how much damage we can suture.
@@ -86,9 +90,11 @@ YOU TO 200 DAMAGE. I ASK NOT FOR MY OWN MEDIC EGOSTROKING, BUT FOR THE GOOD OF T
 	switch(suturable_damage) //SEND_SIGNAL returns 0 by default if there's no signal to answer.
 		if(CANNOT_SUTURE) //Datum exists, no suturable damage types.
 			to_chat(user, SPAN_WARNING("There are no [description_wounds] on [user == target ? "your" : "\the [target]'s"] [target_limb.display_name]."))
+			target.balloon_alert(user, "no wounds!")
 			return
 		if(FULLY_SUTURED) //Datum exist, all suturable damage types have been fully sutured.
 			to_chat(user, SPAN_WARNING("The [description_wounds] on [user == target ? "your" : "\the [target]'s"] [target_limb.display_name] have already been treated."))
+			target.balloon_alert(user, "wounds treated!")
 			return
 		if(0) //No datum.
 			//Stitch in 10 damage increments. Balance between flexibility, spam, performance, and opportunities for people to mess about during do_afters.
@@ -98,6 +104,7 @@ YOU TO 200 DAMAGE. I ASK NOT FOR MY OWN MEDIC EGOSTROKING, BUT FOR THE GOOD OF T
 				suturable_damage += min(10, target_limb.burn_dam * 0.5)
 			if(!suturable_damage) //This stuff would be much tidier if datum stuff is moved to the limb.
 				to_chat(user, SPAN_WARNING("There are no [description_wounds] on [user == target ? "your" : "\the [target]'s"] [target_limb.display_name]."))
+				balloon_alert(user, "no wounds!")
 				return
 
 	//Select user feedback and get a time-per-point mult.
@@ -150,6 +157,7 @@ YOU TO 200 DAMAGE. I ASK NOT FOR MY OWN MEDIC EGOSTROKING, BUT FOR THE GOOD OF T
 	if(!do_after(user, suture_time, INTERRUPT_ALL, BUSY_ICON_FRIENDLY, target, INTERRUPT_MOVED, BUSY_ICON_MEDICAL)\
 		|| target_limb.status & (LIMB_DESTROYED|LIMB_ROBOT|LIMB_SYNTHSKIN) || target_limb.get_incision_depth())
 		to_chat(user, SPAN_WARNING("You were interrupted before you could finish!"))
+		balloon_alert(user, "interrupted!")
 		return
 
 	//Add the sutures.

@@ -32,6 +32,7 @@
 
 	if(!skillcheckexplicit(user, SKILL_ANTAG, SKILL_ANTAG_AGENT))
 		to_chat(user, SPAN_WARNING("This pamphlet is written in code-speak! You don't quite understand it."))
+		balloon_alert(user, "can't read it!")
 		return
 
 	. = ..()

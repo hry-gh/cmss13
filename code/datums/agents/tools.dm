@@ -93,6 +93,7 @@
 		var/amount_to_add = min(P.amount, max_points - points)
 
 		to_chat(user, SPAN_NOTICE("You insert [P] into [src]."))
+		balloon_alert(user, "[amount_to_add] points added")
 
 		if(P.use(amount_to_add))
 			points += amount_to_add

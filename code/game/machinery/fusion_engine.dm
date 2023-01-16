@@ -78,17 +78,21 @@
 /obj/structure/machinery/power/fusion_engine/attack_hand(mob/user)
 	if(!ishuman(user))
 		to_chat(user, SPAN_WARNING("You have no idea how to use that.")) //No ayylamos
+		balloon_alert(user, "not trained!")
 		return FALSE
 	add_fingerprint(user)
 	switch(buildstate)
 		if(1)
 			to_chat(user, SPAN_INFO("Use a blowtorch, then wirecutters, then wrench to repair it."))
+			balloon_alert(user, "use a blowtorch!")
 			return FALSE
 		if(2)
 			to_chat(user, SPAN_NOTICE("Use a wirecutters, then wrench to repair it."))
+			balloon_alert(user, "use wirecutters!")
 			return FALSE
 		if(3)
 			to_chat(user, SPAN_NOTICE("Use a wrench to repair it."))
+			balloon_alert(user, "use a wrench!")
 			return FALSE
 	if(is_on)
 		visible_message("[icon2html(src, viewers(src))] [SPAN_WARNING("<b>[src]</b> beeps softly and the humming stops as [usr] shuts off the generator.")]")
@@ -101,15 +105,18 @@
 
 	if(!fusion_cell)
 		to_chat(user, SPAN_NOTICE("The reactor requires a fuel cell before you can turn it on."))
+		balloon_alert(user, "needs a fuel cell!")
 		return FALSE
 
 	if(!powernet)
 		if(!connect_to_network())
 			to_chat(user, SPAN_WARNING("Power network not found, make sure the engine is connected to a cable."))
+			balloon_alert(user, "no network!")
 			return FALSE
 
 	if(fusion_cell.fuel_amount <= 10)
 		to_chat(user, "[icon2html(src, user)] [SPAN_WARNING("<b>[src]</b>: Fuel levels critically low.")]")
+		balloon_alert(user, "fuel levels low!")
 	visible_message("[icon2html(src, viewers(src))] [SPAN_WARNING("<b>[src]</b> beeps loudly as [user] turns the generator on and begins the process of fusion...")]")
 	fuel_rate = 0.01
 	is_on = 1
@@ -123,6 +130,7 @@
 	if(istype(O, /obj/item/fuelCell))
 		if(is_on)
 			to_chat(user, SPAN_WARNING("The [src] needs to be turned off first."))
+			balloon_alert(user, "must be turned off!")
 			return TRUE
 		if(!fusion_cell)
 			if(user.drop_inv_item_to_loc(O, src))
@@ -132,10 +140,12 @@
 			return TRUE
 		else
 			to_chat(user, SPAN_WARNING("You need to remove the fuel cell from [src] first."))
+			balloon_alert(user, "remove the fuel cell!")
 			return TRUE
 	else if(iswelder(O))
 		if(!HAS_TRAIT(O, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
+			balloon_alert(user, "needs a stronger blowtorch!")
 			return
 		if(buildstate == 1)
 			var/obj/item/tool/weldingtool/WT = O
@@ -143,11 +153,15 @@
 				if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 					user.visible_message(SPAN_NOTICE("[user] fumbles around figuring out [src]'s internals."),
 					SPAN_NOTICE("You fumble around figuring out [src]'s internals."))
+					balloon_alert(user, "figuring out the internals...")
 					var/fumbling_time = 50
-					if(!do_after(user, fumbling_time, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD)) return
+					if(!do_after(user, fumbling_time, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
+						balloon_alert(user, "interrupted!")
+						return
 				playsound(loc, 'sound/items/weldingtool_weld.ogg', 25)
 				user.visible_message(SPAN_NOTICE("[user] starts welding [src]'s internal damage."),
 				SPAN_NOTICE("You start welding [src]'s internal damage."))
+				balloon_alert(user, "you start welding...")
 				if(do_after(user, 200 * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 					if(buildstate != 1 || is_on || !WT.isOn())
 						return FALSE
@@ -157,19 +171,27 @@
 					SPAN_NOTICE("You weld [src]'s internal damage."))
 					update_icon()
 					return TRUE
+				else
+					balloon_alert(user, "interrupted!")
+					return FALSE
 			else
 				to_chat(user, SPAN_WARNING("You need more welding fuel to complete this task."))
+				balloon_alert(user, "need more welding fuel!")
 				return FALSE
 	else if(HAS_TRAIT(O, TRAIT_TOOL_WIRECUTTERS))
 		if(buildstate == 2 && !is_on)
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				user.visible_message(SPAN_NOTICE("[user] fumbles around figuring out [src]'s wiring."),
 				SPAN_NOTICE("You fumble around figuring out [src]'s wiring."))
+				balloon_alert(user, "figuring out the wiring...")
 				var/fumbling_time = 50
-				if(!do_after(user, fumbling_time, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD)) return
+				if(!do_after(user, fumbling_time, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
+					balloon_alert(user, "interrupted!")
+					return
 			playsound(loc, 'sound/items/Wirecutter.ogg', 25, 1)
 			user.visible_message(SPAN_NOTICE("[user] starts securing [src]'s wiring."),
 			SPAN_NOTICE("You start securing [src]'s wiring."))
+			balloon_alert(user, "start securing wiring...")
 			if(do_after(user, 120 * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 12))
 				if(buildstate != 2 || is_on)
 					return FALSE
@@ -179,16 +201,23 @@
 				SPAN_NOTICE("You secure [src]'s wiring."))
 				update_icon()
 				return TRUE
+			else
+				balloon_alert(user, "interrupted!")
+				return FALSE
 	else if(HAS_TRAIT(O, TRAIT_TOOL_WRENCH))
 		if(buildstate == 3 && !is_on)
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				user.visible_message(SPAN_NOTICE("[user] fumbles around figuring out [src]'s tubing and plating."),
 				SPAN_NOTICE("You fumble around figuring out [src]'s tubing and plating."))
+				balloon_alert(user, "figuring out the tubing...")
 				var/fumbling_time = 50
-				if(!do_after(user, fumbling_time, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD)) return
+				if(!do_after(user, fumbling_time, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
+					balloon_alert(user, "interrupted!")
+					return
 			playsound(loc, 'sound/items/Ratchet.ogg', 25, 1)
 			user.visible_message(SPAN_NOTICE("[user] starts repairing [src]'s tubing and plating."),
 			SPAN_NOTICE("You start repairing [src]'s tubing and plating."))
+			balloon_alert(user, "start repairing...")
 			if(do_after(user, 150 * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 				if(buildstate != 3 || is_on)
 					return FALSE
@@ -199,24 +228,34 @@
 				SPAN_NOTICE("You repair [src]'s tubing and plating."))
 				update_icon()
 				return TRUE
+			else
+				balloon_alert(user, "interrupted!")
+				return FALSE
 	else if(HAS_TRAIT(O, TRAIT_TOOL_CROWBAR))
 		if(buildstate)
 			to_chat(user, SPAN_WARNING("You must repair the generator before working with its fuel cell."))
+			balloon_alert(user, "remove the fuel cell!")
 			return
 		if(is_on)
 			to_chat(user, SPAN_WARNING("You must turn off the generator before working with its fuel cell."))
+			balloon_alert(user, "turn it off!")
 			return
 		if(!fusion_cell)
 			to_chat(user, SPAN_WARNING("There is no cell to remove."))
+			balloon_alert(user, "no cell!")
 		else
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				user.visible_message(SPAN_WARNING("[user] fumbles around figuring out [src]'s fuel receptacle."),
 				SPAN_WARNING("You fumble around figuring out [src]'s fuel receptacle."))
+				balloon_alert(user, "figuring out the receptacle...")
 				var/fumbling_time = 50
-				if(!do_after(user, fumbling_time, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD)) return
+				if(!do_after(user, fumbling_time, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
+					balloon_alert(user, "interrupted!")
+					return
 			playsound(loc, 'sound/items/Crowbar.ogg', 25, 1)
 			user.visible_message(SPAN_NOTICE("[user] starts prying [src]'s fuel receptacle open."),
 			SPAN_NOTICE("You start prying [src]'s fuel receptacle open."))
+			balloon_alert(user, "start opening the receptacle...")
 			if(do_after(user, 100 * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 				if(buildstate != 0 || is_on || !fusion_cell)
 					return FALSE
@@ -227,6 +266,9 @@
 				fusion_cell = null
 				update_icon()
 				return TRUE
+			else
+				balloon_alert(user, "interrupted!")
+				return FALSE
 	else
 		return ..()
 

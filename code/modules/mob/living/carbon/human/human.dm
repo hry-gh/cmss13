@@ -954,6 +954,7 @@
 	if(!lastpuke)
 		lastpuke = 1
 		to_chat(src, SPAN_WARNING("You feel nauseous..."))
+		balloon_alert(src, "feeling nauseous...")
 		addtimer(CALLBACK(GLOBAL_PROC, PROC_REF(to_chat), src, "You feel like you are about to throw up!"), 15 SECONDS)
 		addtimer(CALLBACK(src, PROC_REF(do_vomit)), 25 SECONDS)
 

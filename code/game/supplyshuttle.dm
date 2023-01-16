@@ -233,6 +233,7 @@ var/datum/controller/supply/supply_controller = new()
 		return
 	if(!allowed(user))
 		to_chat(user, SPAN_WARNING("Access denied."))
+		balloon_alert(user, "access denied!")
 		return TRUE
 	tgui_interact(user)
 	return
@@ -708,6 +709,7 @@ var/datum/controller/supply/supply_controller = new()
 	if(!is_mainship_level(z)) return
 	if(!allowed(user))
 		to_chat(user, SPAN_DANGER("Access Denied."))
+		balloon_alert(user, "access denied!")
 		return
 
 	if(..())

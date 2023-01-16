@@ -27,6 +27,7 @@
 
 	if(M.dir != user.dir || M.loc != get_step(user, user.dir))
 		to_chat(user, SPAN_WARNING("You must be behind your target!"))
+		balloon_alert(user, "must be behind target!")
 		return
 
 	user.visible_message(SPAN_DANGER("[user] grabs [M] and smothers their face with [src]."), SPAN_DANGER("You cover [M]'s face with [src]."))

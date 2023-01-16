@@ -17,6 +17,7 @@
 
 		if(!do_after(user, hack_speed, INTERRUPT_ALL, BUSY_ICON_HOSTILE, target, INTERRUPT_ALL))
 			to_chat(user, SPAN_WARNING("You decide not to hack [target]."))
+			balloon_alert(user, "interrupted!")
 			return
 
 		user.visible_message(SPAN_DANGER("[user] hacks open [target]."), SPAN_NOTICE("You hack open [target]."))

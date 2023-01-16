@@ -127,6 +127,7 @@
 
 	if(!allowed(user))
 		to_chat(user, SPAN_WARNING("Access Denied."))
+		balloon_alert(user, "access denied!")
 		return
 
 	use_power(5)

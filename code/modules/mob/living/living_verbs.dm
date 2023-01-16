@@ -9,6 +9,7 @@
 
 	if(is_mob_incapacitated(TRUE))
 		to_chat(src, SPAN_WARNING("You can't resist in your current state."))
+		balloon_alert(src, "incapacitated!")
 		return
 
 	resisting = TRUE

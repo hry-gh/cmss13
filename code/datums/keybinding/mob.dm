@@ -17,6 +17,7 @@
 	var/mob/M = user.mob
 	if(!M.pulling)
 		to_chat(user, SPAN_NOTICE("You are not pulling anything."))
+		balloon_alert(user, "not pulling!")
 	else
 		M.stop_pulling()
 	return TRUE
@@ -69,6 +70,7 @@
 	var/obj/item/I = M.get_held_item()
 	if(!I)
 		to_chat(user, SPAN_WARNING("You have nothing to drop in your hand!"))
+		balloon_alert(user, "nothing to drop!")
 	else
 		user.mob.drop_held_item(I)
 	return TRUE

@@ -106,11 +106,13 @@
 					return
 			if(user.get_active_hand())
 				to_chat(user, SPAN_WARNING("You can't unstrap \the [back_item] from [xeno] with your hands full."))
+				balloon_alert(user, "hands full!")
 				return
 			user.visible_message(SPAN_NOTICE("\The [user] starts unstrapping \the [back_item] from [xeno]"), \
 			SPAN_NOTICE("You start unstrapping \the [back_item] from [xeno]."), null, 5, CHAT_TYPE_FLUFF_ACTION)
 			if(!do_after(user, HUMAN_STRIP_DELAY * user.get_skill_duration_multiplier(), INTERRUPT_ALL, BUSY_ICON_GENERIC, xeno, INTERRUPT_MOVED, BUSY_ICON_GENERIC))
 				to_chat(user, SPAN_WARNING("You were interrupted!"))
+				balloon_alert(user, "interrupted!")
 				return
 
 			if(user.get_active_hand())

@@ -69,4 +69,5 @@
 		return ..()
 	WT.remove_noz()
 	to_chat(user, SPAN_WARNING("\The [I]'s magnetic harness snaps it back onto \the [WT]!"))
+	I.balloon_alert(user, "snaps back!")
 	WT.update_icon()

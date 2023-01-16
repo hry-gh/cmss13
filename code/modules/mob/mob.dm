@@ -261,6 +261,7 @@
 			qdel(W)
 		else if(!disable_warning)
 			to_chat(src, SPAN_WARNING("You are unable to equip that.")) //Only print if del_on_fail is false
+			balloon_alert(src, "unable to equip!")
 		return FALSE
 
 	var/start_loc = W.loc
@@ -285,12 +286,14 @@
 /mob/proc/equip_to_slot_timed(obj/item/W, slot, redraw_mob = 1, permanent = 0, start_loc, del_on_fail = 0, disable_warning = 0)
 	if(!do_after(src, W.time_to_equip, INTERRUPT_ALL, BUSY_ICON_GENERIC))
 		to_chat(src, SPAN_WARNING("You stop putting on \the [W]!"))
+		balloon_alert(src, "interrupted!")
 		return
 	if(!W.mob_can_equip(src, slot, disable_warning)) // we have to do these checks again as circumstances may have changed during the do_after
 		if(del_on_fail)
 			qdel(W)
 		else if(!disable_warning)
 			to_chat(src, SPAN_WARNING("You are unable to equip that.")) //Only print if del_on_fail is false
+			balloon_alert(src, "unable to equip!")
 		return
 	equip_to_slot(W, slot) //This proc should not ever fail.
 	if(permanent)
@@ -814,6 +817,7 @@ note dizziness decrements automatically in the mob's Life() proc.
 	if(!valid_objects)
 		if(self)
 			to_chat(src, "You have nothing stuck in your body that is large enough to remove.")
+			balloon_alert(src, "nothing to remove!")
 		else
 			to_chat(usr, "[src] has nothing stuck in their wounds that is large enough to remove.")
 		remove_verb(src, /mob/proc/yank_out_object)
@@ -823,11 +827,13 @@ note dizziness decrements automatically in the mob's Life() proc.
 	if(self)
 		if(get_active_hand())
 			to_chat(src, SPAN_WARNING("You need an empty hand for this!"))
+			balloon_alert(src, "need an empty hand!")
 			return FALSE
 		to_chat(src, SPAN_WARNING("You attempt to get a good grip on [selection] in your body."))
 	else
 		if(get_active_hand())
 			to_chat(usr, SPAN_WARNING("You need an empty hand for this!"))
+			balloon_alert(src, "need an empty hand!")
 			return FALSE
 		to_chat(usr, SPAN_WARNING("You attempt to get a good grip on [selection] in [src]'s body."))
 

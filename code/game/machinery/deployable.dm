@@ -36,9 +36,11 @@
 			src.icon_state = "barrier[src.locked]"
 			if (src.locked == 1.0)
 				to_chat(user, "Barrier lock toggled on.")
+				balloon_alert(user, "lock on!")
 				return
 			else if (src.locked == 0.0)
 				to_chat(user, "Barrier lock toggled off.")
+				balloon_alert(user, "lock off!")
 				return
 		return
 	else if (HAS_TRAIT(W, TRAIT_TOOL_WRENCH))

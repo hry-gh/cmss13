@@ -224,6 +224,7 @@
 		var/obj/item/weapon/melee/twohanded/offhand/offhand = get_inactive_hand()
 		if(offhand && (offhand.flags_item & WIELDED))
 			to_chat(src, SPAN_WARNING("Your other hand is too busy holding \the [offhand.name]")) //So it's an offhand.
+			balloon_alert(src, "hand busy!")
 			return
 		else
 			wielded_item.unwield(src) //Get rid of it.
@@ -375,8 +376,10 @@
 
 		if(throw_type == THROW_MODE_HIGH)
 			to_chat(src, SPAN_NOTICE("You prepare to perform a high toss."))
+			balloon_alert(src, "preparing...")
 			if(!do_after(src, 1 SECONDS, INTERRUPT_ALL, BUSY_ICON_HOSTILE))
 				to_chat(src, SPAN_WARNING("You need to set up the high toss!"))
+				balloon_alert(src, "interrupted!")
 				return
 			drop_inv_item_on_ground(I, TRUE)
 			thrown_thing.throw_atom(target, thrown_thing.throw_range, SPEED_SLOW, src, spin_throw, HIGH_LAUNCH)

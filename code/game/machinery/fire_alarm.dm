@@ -98,6 +98,7 @@ FIRE ALARM
 						return
 					else
 						to_chat(user, SPAN_WARNING("You need 5 pieces of cable to do wire \the [src]."))
+						balloon_alert(user, "need 5 cable pieces!")
 						return
 				else if(HAS_TRAIT(held_object, TRAIT_TOOL_CROWBAR))
 					to_chat(user, "You pry out the circuit!")

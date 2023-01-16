@@ -40,6 +40,7 @@
 	if(istype(W, /obj/item/cell) && anchored)
 		if(charging)
 			to_chat(user, SPAN_DANGER("There is already a cell in the charger."))
+			balloon_alert(user, "already a cell!")
 			return
 		else
 			var/area/a = loc.loc // Gets our locations location, like a dream within a dream
@@ -47,6 +48,7 @@
 				return
 			if(a.power_equip == 0) // There's no APC in this area, don't try to cheat power!
 				to_chat(user, SPAN_DANGER("The [name] blinks red as you try to insert the cell!"))
+				balloon_alert(user, "no power!")
 				return
 
 			if(user.drop_inv_item_to_loc(W, src))
@@ -58,6 +60,7 @@
 	else if(HAS_TRAIT(W, TRAIT_TOOL_WRENCH))
 		if(charging)
 			to_chat(user, SPAN_DANGER("Remove the cell first!"))
+			balloon_alert(user, "remove the cell!")
 			return
 
 		anchored = !anchored

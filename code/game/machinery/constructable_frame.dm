@@ -45,16 +45,19 @@
 /obj/structure/machinery/constructable_frame/attackby(obj/item/P as obj, mob/user as mob)
 	if(P.crit_fail)
 		to_chat(user, SPAN_DANGER("This part is faulty, you cannot add this to the machine!"))
+		balloon_alert(user, "part faulty!")
 		return
 	switch(state)
 		if(CONSTRUCTION_STATE_BEGIN)
 			if(iscoil(P))
 				if(!skillcheck(user, SKILL_CONSTRUCTION, required_skill))
 					to_chat(user, SPAN_WARNING("You are not trained to build machines..."))
+					balloon_alert(user, "not trained!")
 					return
 				var/obj/item/stack/cable_coil/C = P
 				if(C.get_amount() < 5)
 					to_chat(user, SPAN_WARNING("You need five lengths of cable to add them to the frame."))
+					balloon_alert(user, "need more cable!")
 					return
 				playsound(loc, 'sound/items/Deconstruct.ogg', 25, 1)
 				user.visible_message(SPAN_NOTICE("[user] starts adding cables to [src]."),
@@ -69,6 +72,7 @@
 			else if(HAS_TRAIT(P, TRAIT_TOOL_WRENCH))
 				if(!skillcheck(user, SKILL_ENGINEER, required_dismantle_skill))
 					to_chat(user, SPAN_WARNING("You are not trained to dismantle machines..."))
+					balloon_alert(user, "not trained!")
 					return
 				playsound(src.loc, 'sound/items/Ratchet.ogg', 25, 1)
 				to_chat(user, SPAN_NOTICE(" You dismantle the frame..."))
@@ -78,6 +82,7 @@
 			if(istype(P, /obj/item/circuitboard/machine))
 				if(!skillcheck(user, SKILL_CONSTRUCTION, required_skill))
 					to_chat(user, SPAN_WARNING("You are not trained to build machines..."))
+					balloon_alert(user, "not trained!")
 					return
 				if(!do_after(user, 20 * user.get_skill_duration_multiplier(SKILL_CONSTRUCTION), INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 					return
@@ -102,6 +107,7 @@
 			else if(HAS_TRAIT(P, TRAIT_TOOL_SCREWDRIVER))
 				if(!skillcheck(user, SKILL_ENGINEER, required_dismantle_skill))
 					to_chat(user, SPAN_WARNING("You are not trained to dismantle machines..."))
+					balloon_alert("not trained!")
 					return
 				playsound(src.loc, 'sound/items/Wirecutter.ogg', 25, 1)
 				to_chat(user, SPAN_NOTICE(" You remove the cables."))
@@ -113,6 +119,7 @@
 			if(istype(P, /obj/item/tool/crowbar))
 				if(!skillcheck(user, SKILL_ENGINEER, required_dismantle_skill))
 					to_chat(user, SPAN_WARNING("You are not trained to dismantle machines..."))
+					balloon_alert(user, "not trained!")
 					return
 				if(!do_after(user, 20 * user.get_skill_duration_multiplier(SKILL_CONSTRUCTION), INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 					return
@@ -132,6 +139,7 @@
 			else if(HAS_TRAIT(P, TRAIT_TOOL_SCREWDRIVER))
 				if(!skillcheck(user, SKILL_CONSTRUCTION, required_skill))
 					to_chat(user, SPAN_WARNING("You are not trained to build machines..."))
+					balloon_alert(user, "not trained!")
 					return
 				var/component_check = 1
 				for(var/R in req_components)
@@ -152,6 +160,7 @@
 			else if(istype(P, /obj/item))
 				if(!skillcheck(user, SKILL_CONSTRUCTION, required_skill))
 					to_chat(user, SPAN_WARNING("You are not trained to build machines..."))
+					balloon_alert(user, "not trained!")
 					return
 				for(var/I in req_components)
 					if(istype(P, I) && (req_components[I] > 0))
@@ -178,5 +187,6 @@
 				to_chat(user, requirements_left)
 				if(P && P.loc != src && !istype(P, /obj/item/stack/cable_coil))
 					to_chat(user, SPAN_DANGER("You cannot add that component to the machine!"))
+					balloon_alert(user, "can't add that!")
 	update_icon()
 

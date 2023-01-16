@@ -41,6 +41,7 @@
 	if(istype(W, /obj/item/stack/sheet/metal))
 		if(stored_metal == max_metal)
 			to_chat(user, SPAN_WARNING("\The [src] is full!"))
+			balloon_alert(user, "full!")
 			return
 		var/obj/item/stack/sheet/metal/M = W
 		var/sheets_to_eat = (round((max_metal - stored_metal), 100))/100
@@ -55,6 +56,7 @@
 		if(stored_metal > max_metal)
 			stored_metal = max_metal
 		to_chat(user, SPAN_NOTICE("\The [src] processes \the [W]."))
+		balloon_alert(user, "processes the metal...")
 	else
 		return..()
 

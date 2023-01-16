@@ -101,22 +101,27 @@
 	if(user.is_mob_incapacitated()) return 0
 	if(!ishuman(user))
 		to_chat(user, SPAN_DANGER("You have no idea how to use that.")) //No xenos or mankeys
+		balloon_alert(user, "no idea how!")
 		return 0
 
 	add_fingerprint(user)
 
 	if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 		to_chat(user, SPAN_WARNING("You have no clue how this thing works..."))
+		balloon_alert(user, "not trained!")
 		return 0
 
 	if(buildstate == 1)
 		to_chat(usr, SPAN_INFO("Use a blowtorch, then wirecutters, then wrench to repair it."))
+		balloon_alert(user, "use a blowtorch!")
 		return 0
 	else if (buildstate == 2)
 		to_chat(usr, SPAN_INFO("Use a wirecutters, then wrench to repair it."))
+		balloon_alert(user, "use wirecutters!")
 		return 0
 	else if (buildstate == 3)
 		to_chat(usr, SPAN_INFO("Use a wrench to repair it."))
+		balloon_alert(user, "use a wrench!")
 		return 0
 	if(is_on)
 		visible_message("[icon2html(src, viewers(src))] [SPAN_WARNING("<b>[src]</b> beeps softly and the humming stops as [usr] shuts off the turbines.")]")
@@ -359,12 +364,14 @@
 		else if(HAS_TRAIT(I, TRAIT_TOOL_CROWBAR))
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(user, SPAN_WARNING("You have no clue how to repair [src]."))
+				balloon_alert(user, "not trained!")
 				return 0
 
 			if(repair_state == FLOODLIGHT_REPAIR_CROWBAR)
 				playsound(src.loc, 'sound/items/Crowbar.ogg', 25, 1)
 				user.visible_message(SPAN_NOTICE("[user] starts prying [src]'s maintenance hatch open."),\
 				SPAN_NOTICE("You start prying [src]'s maintenance hatch open."))
+				balloon_alert(user, "start prying the hatch...")
 				if(do_after(user, 20, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 					if(QDELETED(src) || repair_state != FLOODLIGHT_REPAIR_CROWBAR)
 						return
@@ -372,16 +379,20 @@
 					repair_state = FLOODLIGHT_REPAIR_WELD
 					user.visible_message(SPAN_NOTICE("[user] pries [src]'s maintenance hatch open."),\
 					SPAN_NOTICE("You pry [src]'s maintenance hatch open."))
+				else
+					balloon_alert(user, "interrupted!")
 			return TRUE
 
 		else if(iswelder(I))
 			if(!HAS_TRAIT(I, TRAIT_TOOL_BLOWTORCH))
 				to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
+				balloon_alert(user, "need a stronger blowtorch!")
 				return
 			var/obj/item/tool/weldingtool/WT = I
 
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(user, SPAN_WARNING("You have no clue how to repair [src]."))
+				balloon_alert(user, "not trained!")
 				return 0
 
 			if(repair_state == FLOODLIGHT_REPAIR_WELD)
@@ -389,6 +400,7 @@
 					playsound(loc, 'sound/items/weldingtool_weld.ogg', 25)
 					user.visible_message(SPAN_NOTICE("[user] starts welding [src]'s damage."),
 					SPAN_NOTICE("You start welding [src]'s damage."))
+					balloon_alert(user, "started welding damage...")
 					if(do_after(user, 40, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 						if(QDELETED(src) || !WT.isOn() || repair_state != FLOODLIGHT_REPAIR_WELD)
 							return
@@ -397,8 +409,12 @@
 						user.visible_message(SPAN_NOTICE("[user] welds [src]'s damage."),
 						SPAN_NOTICE("You weld [src]'s damage."))
 						return 1
+					else
+						balloon_alert(user, "interrupted!")
+						return FALSE
 				else
 					to_chat(user, SPAN_WARNING("You need more welding fuel to complete this task."))
+					balloon_alert(user, "need more welding fuel!")
 			return TRUE
 
 		else if(iscoil(I))
@@ -414,6 +430,7 @@
 				playsound(loc, 'sound/items/Deconstruct.ogg', 25, 1)
 				user.visible_message(SPAN_NOTICE("[user] starts replacing [src]'s damaged cables."),\
 				SPAN_NOTICE("You start replacing [src]'s damaged cables."))
+				balloon_alert(user, "start replacing the cables...")
 				if(do_after(user, 20, INTERRUPT_ALL, BUSY_ICON_GENERIC))
 					if(QDELETED(src) || repair_state != FLOODLIGHT_REPAIR_CABLE)
 						return
@@ -422,6 +439,9 @@
 						repair_state = FLOODLIGHT_REPAIR_SCREW
 						user.visible_message(SPAN_NOTICE("[user] starts replaces [src]'s damaged cables."),\
 						SPAN_NOTICE("You replace [src]'s damaged cables."))
+				else
+					balloon_alert(user, "interrupted!")
+					return FALSE
 			return TRUE
 
 
@@ -432,8 +452,10 @@
 	if(ishuman(user))
 		if(damaged)
 			to_chat(user, SPAN_WARNING("[src] is damaged."))
+			balloon_alert("damaged!")
 		else if(!is_lit)
 			to_chat(user, SPAN_WARNING("Nothing happens. Looks like it's powered elsewhere."))
+			balloon_alert(user, "nothing happens!")
 		return 0
 	..()
 

@@ -28,12 +28,15 @@
 
 			if(M.head && (M.head.flags_inventory & COVERMOUTH) || M.wear_mask && (M.wear_mask.flags_inventory & COVERMOUTH) && !(M.wear_mask.flags_inventory & ALLOWCPR))
 				to_chat(M, SPAN_NOTICE("<B>Remove your mask!</B>"))
+				balloon_alert(M, "remove your mask!")
 				return 0
 			if(head && (head.flags_inventory & COVERMOUTH) || wear_mask && (wear_mask.flags_inventory & COVERMOUTH) && !(wear_mask.flags_inventory & ALLOWCPR))
 				to_chat(M, SPAN_NOTICE("<B>Remove [src.gender==MALE?"his":"her"] mask!</B>"))
+				balloon_alert(M, "remove their mask!")
 				return 0
 			if(cpr_attempt_timer >= world.time)
 				to_chat(M, SPAN_NOTICE("<B>CPR is already being performed on [src]!</B>"))
+				balloon_alert(M, "cpr in progress!")
 				return 0
 
 			//CPR
@@ -42,6 +45,7 @@
 
 			M.visible_message(SPAN_NOTICE("<b>[M]</b> starts performing <b>CPR</b> on <b>[src]</b>."),
 				SPAN_HELPFUL("You start <b>performing CPR</b> on <b>[src]</b>."))
+			M.balloon_alert_to_viewers("starts performing cpr...")
 
 			cpr_attempt_timer = world.time + HUMAN_STRIP_DELAY * M.get_skill_duration_multiplier(SKILL_MEDICAL)
 			if(do_after(M, HUMAN_STRIP_DELAY * M.get_skill_duration_multiplier(SKILL_MEDICAL), INTERRUPT_ALL, BUSY_ICON_GENERIC, src, INTERRUPT_MOVED, BUSY_ICON_MEDICAL))
@@ -58,9 +62,11 @@
 						revive_grace_period += 7 SECONDS
 						M.visible_message(SPAN_NOTICE("<b>[M]</b> performs <b>CPR</b> on <b>[src]</b>."),
 							SPAN_HELPFUL("You perform <b>CPR</b> on <b>[src]</b>."))
+						M.balloon_alert_to_viewers("performs cpr")
 					else
 						M.visible_message(SPAN_NOTICE("<b>[M]</b> fails to perform CPR on <b>[src]</b>."),
 							SPAN_HELPFUL("You <b>fail</b> to perform <b>CPR</b> on <b>[src]</b>. Incorrect rhythm. Do it <b>slower</b>."))
+						M.balloon_alert_to_viewers("fails to perform cpr!")
 					cpr_cooldown = world.time + 7 SECONDS
 			cpr_attempt_timer = 0
 			return 1

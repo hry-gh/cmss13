@@ -158,10 +158,12 @@ GLOBAL_LIST_EMPTY(jelly_awards)
 	var/obj/item/card/id/card = user.wear_id
 	if(!card)
 		to_chat(user, SPAN_WARNING("You must have an authenticated ID Card to award medals."))
+		balloon_alert(user, "need an id!")
 		return
 
 	if(!((card.paygrade in GLOB.co_paygrades) || (card.paygrade in GLOB.highcom_paygrades)))
 		to_chat(user, SPAN_WARNING("Only a Senior Officer can award medals!"))
+		balloon_alert(user, "must be a higher rank!")
 		return
 
 	if(!card.registered_ref)

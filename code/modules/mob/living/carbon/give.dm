@@ -12,13 +12,16 @@
 		return
 	if(giver.mob_flags & GIVING)
 		to_chat(giver, SPAN_WARNING("You are already giving an item to someone!"))
+		giver.balloon_alert(giver, "already giving!")
 		return
 	var/obj/item/I
 	if(!giver.hand && giver.r_hand == null)
 		to_chat(giver, SPAN_WARNING("You don't have anything in your right hand to give to [name]."))
+		giver.balloon_alert(giver, "nothing to give!")
 		return
 	if(giver.hand && giver.l_hand == null)
 		to_chat(giver, SPAN_WARNING("You don't have anything in your left hand to give to [name]."))
+		giver.balloon_alert(giver, "nothing to give!")
 		return
 	if(!ishuman(src) || !ishuman(giver))
 		return
@@ -30,9 +33,11 @@
 		return
 	if(lying)
 		to_chat(giver, SPAN_WARNING("[src] can't hold that while lying down."))
+		balloon_alert(giver, "lying down!")
 		return
 	if(r_hand && l_hand)
 		to_chat(giver, SPAN_WARNING("[src]'s hands are full."))
+		balloon_alert(giver, "hands full!")
 		return
 	giver.mob_flags |= GIVING
 	if(tgui_alert(src, "[giver] wants to give you \a [I]?", "You are being offered an item", list("No", "Yes"), 10 SECONDS) == "Yes")
@@ -42,18 +47,26 @@
 		if(!Adjacent(giver))
 			to_chat(giver, SPAN_WARNING("You need to stay in reaching distance while giving an object."))
 			to_chat(src, SPAN_WARNING("[giver] moved too far away."))
+			giver.balloon_alert(src, "you moved!")
+			balloon_alert(src, "they moved!")
 			return
 		if((giver.hand && giver.l_hand != I) || (!giver.hand && giver.r_hand != I))
 			to_chat(giver, SPAN_WARNING("You need to keep the item in your active hand."))
 			to_chat(src, SPAN_WARNING("[giver] seem to have given up on giving [I] to you."))
+			giver.balloon_alert(giver, "interrupted!")
+			balloon_alert(giver, "interrupted!")
 			return
 		if(lying)
 			to_chat(src, SPAN_WARNING("You can't hold that while lying down."))
 			to_chat(giver, SPAN_WARNING("[src] can't hold that while lying down."))
+			giver.balloon_alert(src, "lying down!")
+			balloon_alert(giver, "lying down!")
 			return
 		if(r_hand && l_hand)
 			to_chat(src, SPAN_WARNING("Your hands are full."))
 			to_chat(giver, SPAN_WARNING("[src]'s hands are full."))
+			giver.balloon_alert(src, "hands full!")
+			balloon_alert(giver, "hands full!")
 			return
 		if(giver.drop_held_item())
 			if(put_in_hands(I))

@@ -50,6 +50,7 @@
 /obj/item/device/tracker/proc/select_object(var/mob/user)
 	if(!LAZYLEN(objects_of_interest))
 		to_chat(user, SPAN_WARNING("There are nothing of interest to track."))
+		balloon_alert(user, "nothing to track!")
 		return
 
 	var/list/object_choices = list()
@@ -63,6 +64,7 @@
 
 	if(!length(object_choices))
 		to_chat(user, SPAN_WARNING("There are nothing of interest to track."))
+		balloon_alert(user, "nothing to track!")
 		return
 
 	tracked_object = tgui_input_list(usr, "What Object of Interest do you want to track?", "Object type", object_choices)

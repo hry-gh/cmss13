@@ -108,6 +108,7 @@
 		if(!damaged) return
 		if(!HAS_TRAIT(WT, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
+			balloon_alert(user, "must be stronger!")
 			return
 		if(WT.remove_fuel(0, user))
 			playsound(src.loc, 'sound/items/weldingtool_weld.ogg', 25)
@@ -125,6 +126,7 @@
 				return 1
 		else
 			to_chat(user, SPAN_WARNING("You need more welding fuel to complete this task."))
+			balloon_alert(user, "need more fuel!")
 			return 0
 	..()
 	return 0
@@ -132,19 +134,23 @@
 /obj/structure/machinery/hydro_floodlight/attack_hand(mob/user as mob)
 	if(ishuman(user))
 		to_chat(user, SPAN_WARNING("Nothing happens. Looks like it's powered elsewhere."))
+		balloon_alert(user, "nothing happens")
 		return 0
 	else if(!is_lit)
 		to_chat(user, SPAN_WARNING("Why bother? It's just some weird metal thing."))
+		balloon_alert(user, "not bright!")
 		return 0
 	else
 		if(damaged)
 			to_chat(user, SPAN_WARNING("It's already damaged."))
+			balloon_alert(user, "already damaged!")
 			return 0
 		else
 			if(isXenoLarva(user))
 				return //Larvae can't do shit
 			if(user.get_active_hand())
 				to_chat(user, SPAN_WARNING("You need your claws empty for this!"))
+				balloon_alert(user, "needs empty claws!")
 				return FALSE
 			user.visible_message(SPAN_DANGER("[user] starts to slash and claw away at [src]!"),
 			SPAN_DANGER("You start slashing and clawing at [src]!"))

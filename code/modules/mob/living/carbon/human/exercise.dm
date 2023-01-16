@@ -67,6 +67,7 @@ Verbs related to getting fucking jacked, bro
 		stamina.apply_damage(staminaloss)
 		if(stamina.current_stamina < 10)
 			to_chat(src, SPAN_WARNING("You slump down to the floor, too tired to keep going."))
+			balloon_alert(src, "too tired!")
 			return
 
 /mob/living/carbon/human/proc/can_do_pushup()
@@ -75,6 +76,7 @@ Verbs related to getting fucking jacked, bro
 
 	if(!resting || buckled)
 		to_chat(src, SPAN_WARNING("How do you think you'll be able to do a pushup standing up? Get down to the floor!"))
+		balloon_alert(src, "lay down!")
 		return FALSE
 
 	var/list/extremities = list("l_hand", "r_hand", "l_foot", "r_foot", "l_arm", "r_arm", "l_leg", "r_leg")
@@ -89,10 +91,12 @@ Verbs related to getting fucking jacked, bro
 
 	if(stamina.current_stamina < (stamina.max_stamina / 10))
 		to_chat(src, SPAN_WARNING("You feel far too weak to do a pushup!"))
+		balloon_alert(src, "too weak!")
 		return FALSE
 
 	if(!isturf(loc))
 		to_chat(src, SPAN_WARNING("You cannot do that here!"))
+		balloon_alert(src, "not here!")
 		return FALSE
 
 	return TRUE

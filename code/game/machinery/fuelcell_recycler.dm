@@ -26,10 +26,12 @@
 				start_processing()
 		else
 			to_chat(user, SPAN_NOTICE("The recycler is full!"))
+			balloon_alert(user, "full!")
 			return
 		update_icon()
 	else
 		to_chat(user, SPAN_NOTICE("You can't see how you'd use [I] with [src]..."))
+		balloon_alert(user, "incorrect item!")
 		return
 
 /obj/structure/machinery/fuelcell_recycler/attack_hand(mob/M)

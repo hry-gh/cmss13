@@ -148,10 +148,12 @@
 	if(istype(W, /obj/item/reagent_container/glass))
 		if(beaker)
 			to_chat(user, SPAN_WARNING("A beaker is already loaded into the machine."))
+			balloon_alert(user, "beaker already loaded!")
 			return
 
 		if(istype(W, /obj/item/reagent_container/glass/bucket))
 			to_chat(user, SPAN_WARNING("That's too big to fit!"))
+			balloon_alert(user, "too big!")
 			return
 
 		beaker =  W

@@ -66,6 +66,7 @@ var/list/alldepartments = list()
 			updateUsrDialog()
 		else
 			to_chat(user, SPAN_NOTICE("There is already something in \the [src]."))
+			balloon_alert(user, "already a paper!")
 
 	else if(istype(O, /obj/item/card/id))
 

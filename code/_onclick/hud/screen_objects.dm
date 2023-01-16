@@ -158,6 +158,7 @@
 		return 1
 	if(!isgun(user.get_held_item()))
 		to_chat(user, "You need your gun in your active hand to do that!")
+		balloon_alert(user, "must be in active hand!")
 		return 1
 	user.AllowTargetMove()
 	gun_click_time = world.time
@@ -189,6 +190,7 @@
 		return 1
 	if(!isgun(user.get_held_item()))
 		to_chat(user, "You need your gun in your active hand to do that!")
+		balloon_alert(user, "must be in active hand!")
 		return 1
 	user.AllowTargetRun()
 	gun_click_time = world.time
@@ -219,6 +221,7 @@
 		return 1
 	if(!isgun(user.get_held_item()))
 		to_chat(user, "You need your gun in your active hand to do that!")
+		balloon_alert(user, "must be in active hand!")
 		return 1
 	user.AllowTargetClick()
 	gun_click_time = world.time
@@ -587,6 +590,7 @@
 	if(mods["shift"])
 		var/area/current_area = get_area(user)
 		to_chat(user, SPAN_NOTICE("You are currently at: <b>[current_area.name]</b>."))
+		balloon_alert(user, "[current_area.name]")
 		return
 	else if(mods["alt"])
 		earpiece.switch_tracker_target()
@@ -616,9 +620,11 @@
 		return
 	if(!user.hive)
 		to_chat(user, SPAN_WARNING("You don't belong to a hive!"))
+		balloon_alert(user, "no hive!")
 		return FALSE
 	if(!user.hive.living_xeno_queen)
 		to_chat(user, SPAN_WARNING("Without a queen your psychic link is broken!"))
+		balloon_alert(user, "no queen!")
 		return FALSE
 	if(user.burrow || user.is_mob_incapacitated() || user.buckled)
 		return FALSE
@@ -637,9 +643,11 @@
 	if(mods["shift"])
 		var/area/current_area = get_area(user)
 		to_chat(user, SPAN_NOTICE("You are currently at: <b>[current_area.name]</b>."))
+		balloon_alert(user, "[current_area.name]")
 		return
 	if(!user.hive)
 		to_chat(user, SPAN_WARNING("You don't belong to a hive!"))
+		balloon_alert(user, "no hive!")
 		return FALSE
 	if(mods["alt"])
 		var/list/options = list()
@@ -659,6 +667,7 @@
 		return
 	if(!user.hive.living_xeno_queen)
 		to_chat(user, SPAN_WARNING("Your hive doesn't have a living queen!"))
+		balloon_alert(user, "no queen!")
 		return FALSE
 	if(user.burrow || user.is_mob_incapacitated() || user.buckled)
 		return FALSE

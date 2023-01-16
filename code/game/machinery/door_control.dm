@@ -163,6 +163,7 @@
 /obj/structure/machinery/door_control/proc/use_button(mob/living/user, var/force = FALSE)
 	if(inoperable())
 		to_chat(user, SPAN_WARNING("[src] doesn't seem to be working."))
+		balloon_alert(user, "not working!")
 		return
 
 	if(!allowed(user) && (wires & 1) && !force )
@@ -247,6 +248,7 @@
 /obj/structure/machinery/door_control/railings/use_button(mob/living/user, var/force = FALSE)
 	if(inoperable())
 		to_chat(user, SPAN_WARNING("[src] doesn't seem to be working."))
+		balloon_alert(user, "not working!")
 		return
 
 	if(busy)
@@ -304,6 +306,7 @@
 /obj/structure/machinery/door_control/airlock/use_button(mob/living/user, var/force = FALSE)
 	if(inoperable())
 		to_chat(user, SPAN_WARNING("\The [src] doesn't seem to be working."))
+		balloon_alert(user, "not working!")
 		return
 
 	use_power(5)
