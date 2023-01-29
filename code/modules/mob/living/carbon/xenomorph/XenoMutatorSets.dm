@@ -250,27 +250,27 @@
 
 	if(is_ventcrawling)
 		to_chat(src, SPAN_WARNING("This place is too constraining to take a strain."))
-		bubble_alert(src, "too tight!")
+		balloon_alert(src, "too tight!")
 		return FALSE
 
 	if(!isturf(loc))
 		to_chat(src, SPAN_WARNING("You can't take a strain here."))
-		bubble_alert(src, "not here!")
+		balloon_alert(src, "not here!")
 		return FALSE
 
 	if(handcuffed || legcuffed)
 		to_chat(src, SPAN_WARNING("The restraints are too restricting to allow you to take a strain."))
-		bubble_alert(src, "restrainec!")
+		balloon_alert(src, "restrainec!")
 		return FALSE
 
 	if(health < maxHealth)
 		to_chat(src, SPAN_WARNING("You must be at full health to take a strain."))
-		bubble_alert(src, "must be full health!")
+		balloon_alert(src, "must be full health!")
 		return FALSE
 
 	if(agility || fortify || crest_defense || stealth)
 		to_chat(src, SPAN_WARNING("You cannot take a strain while in this stance."))
-		bubble_alert(src, "not in this stance!")
+		balloon_alert(src, "not in this stance!")
 		return FALSE
 
 	return TRUE

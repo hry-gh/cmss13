@@ -145,16 +145,16 @@
 	if(!permissive)
 		if(is_mob_incapacitated() || lying || buckled || evolving || !isturf(loc))
 			to_chat(src, SPAN_WARNING("You cannot do this in your current state."))
-			bubble_alert(src, "incapacitated!")
+			balloon_alert(src, "incapacitated!")
 			return FALSE
 		else if(caste_type != XENO_CASTE_QUEEN && observed_xeno)
 			to_chat(src, SPAN_WARNING("You cannot do this in your current state."))
-			bubble_alert(src, "incapacitated!")
+			balloon_alert(src, "incapacitated!")
 			return FALSE
 	else
 		if(is_mob_incapacitated() || buckled || evolving)
 			to_chat(src, SPAN_WARNING("You cannot do this in your current state."))
-			bubble_alert(src, "incapacitated!")
+			balloon_alert(src, "incapacitated!")
 			return FALSE
 
 	return TRUE
@@ -163,13 +163,13 @@
 /mob/living/carbon/xenomorph/proc/check_plasma(value)
 	if(stat)
 		to_chat(src, SPAN_WARNING("You cannot do this in your current state."))
-		bubble_alert(src, "incapacitated!")
+		balloon_alert(src, "incapacitated!")
 		return FALSE
 
 	if(value)
 		if(plasma_stored < value)
 			to_chat(src, SPAN_WARNING("You do not have enough plasma to do this. You require [value] plasma but have only [plasma_stored] stored."))
-			bubble_alert(src, "insufficient plasma!")
+			balloon_alert(src, "insufficient plasma!")
 			return FALSE
 	return TRUE
 
@@ -402,7 +402,7 @@
 				victim.adjust_effect(2, STUN)
 	else
 		to_chat(src, SPAN_WARNING("There's nothing in your belly that needs regurgitating."))
-		bubble_alert(src, "stomach empty!")
+		balloon_alert(src, "stomach empty!")
 
 /mob/living/carbon/xenomorph/proc/check_alien_construction(turf/current_turf, check_blockers = TRUE, silent = FALSE, check_doors = TRUE)
 	var/has_obstacle
@@ -411,23 +411,23 @@
 			var/obj/effect/build_blocker/bb = O
 			if(!silent)
 				to_chat(src, SPAN_WARNING("This is too close to a [bb.linked_structure]!"))
-				bubble_alert(src, "too close!")
+				balloon_alert(src, "too close!")
 			return
 		if(check_doors)
 			if(istype(O, /obj/structure/machinery/door))
 				if(!silent)
 					to_chat(src, SPAN_WARNING("\The [O] is blocking the resin! There's not enough space to build that here."))
-					bubble_alert(src, "resin blocked!")
+					balloon_alert(src, "resin blocked!")
 				return
 		if(istype(O, /obj/item/clothing/mask/facehugger))
 			if(!silent)
 				to_chat(src, SPAN_WARNING("There is a little one here already. Best move it."))
-				bubble_alert(src, "facehugger here!")
+				balloon_alert(src, "facehugger here!")
 			return
 		if(istype(O, /obj/effect/alien/egg))
 			if(!silent)
 				to_chat(src, SPAN_WARNING("There's already an egg."))
-				bubble_alert(src, "already an egg!")
+				balloon_alert(src, "already an egg!")
 			return
 		if(istype(O, /obj/structure/mineral_door) || istype(O, /obj/effect/alien/resin))
 			has_obstacle = TRUE
@@ -709,7 +709,7 @@
 			to_chat(src, SPAN_XENONOTICE("The [tracked_marker.mark_meaning.name] resin mark has ceased to exist."))
 		else
 			to_chat(src, SPAN_XENONOTICE("You stop tracking the [tracked_marker.mark_meaning.name] resin mark."))
-		balloon_alert(src, stopped_tracking)
+		balloon_alert(src, "stopped tracking")
 	if(tracked_marker)
 		tracked_marker.xenos_tracking -= src
 	tracked_marker = null

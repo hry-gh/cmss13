@@ -85,21 +85,21 @@
 		var/obj/item/stack/S = I
 		if(!(S.stack_id in materials_required))
 			to_chat(user, SPAN_WARNING("\The [name] does not require [I.name]."))
-			balloon_alert(user, "not needed!")
+			user.balloon_alert(user, "not needed!")
 			return
 		if(!materials_required[S.stack_id])
 			to_chat(user, SPAN_WARNING("\The [name] has enough [I.name]."))
-			balloon_alert(user, "has enough!")
+			user.balloon_alert(user, "has enough!")
 			return
 		to_chat(user, SPAN_NOTICE("You begin adding \the [I.name] to \the [name]."))
-		balloon_alert(user, "begin adding...")
+		user.balloon_alert(user, "begin adding...")
 		if(!do_after(user, 40, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
-			balloon_alert(user, "interrupted!")
+			user.balloon_alert(user, "interrupted!")
 			return
 		//double-check amount required
 		if(!materials_required[S.stack_id])
 			to_chat(user, SPAN_WARNING("\The [name] has enough [I.name]."))
-			balloon_alert(user, "has enough!")
+			user.balloon_alert(user, "has enough!")
 			return
 		var/amount_to_use = min(S.amount, materials_required[S.stack_id])
 		materials_required[S.stack_id] -= amount_to_use
@@ -107,24 +107,24 @@
 	else if(I.type in extras_required)
 		if(!extras_required[I.type])
 			to_chat(user, SPAN_WARNING("\The [name] has enough [I.name]."))
-			balloon_alert(user, "has enough!")
+			user.balloon_alert(user, "has enough!")
 			return
 		to_chat(user, SPAN_NOTICE("You begin adding \the [I.name] to \the [name]."))
-		balloon_alert(user, "begin adding...")
+		user.balloon_alert(user, "begin adding...")
 		if(!do_after(user, 40, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
-			balloon_alert(user, "interrupted!")
+			user.balloon_alert(user, "interrupted!")
 			return
 		//double-check amount required
 		if(!extras_required[I.type])
 			to_chat(user, SPAN_WARNING("\The [name] has enough [I.name]."))
-			balloon_alert(user, "has enough!")
+			user.balloon_alert(user, "has enough!")
 			return
 		user.temp_drop_inv_item(I)
 		extras_required[I.type]--
 		qdel(I)
 	else
 		to_chat(user, SPAN_WARNING("\The [name] does not require [I.name]."))
-		balloon_alert(user, "not needed!")
+		user.balloon_alert(user, "not needed!")
 		return
 	check_completion()
 
