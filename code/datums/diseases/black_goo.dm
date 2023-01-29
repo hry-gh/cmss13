@@ -136,7 +136,7 @@
 	if(.)
 		playsound(loc, 'sound/weapons/bladeslice.ogg', 25, 1, 5)
 
-	if(isHumanStrict(target))
+	if(ishuman_strict(target))
 		var/mob/living/carbon/human/human = target
 
 		if(locate(/datum/disease/black_goo) in human.viruses)
@@ -149,7 +149,7 @@
 				to_chat(user, SPAN_XENOWARNING("<b>You sense your target is now infected.</b>"))
 				target.balloon_alert(user, "infected...")
 
-	if(isSynth(target))
+	if(issynth(target))
 		target.apply_effect(2, SLOW)
 	else
 		target.apply_effect(2, SUPERSLOW)

@@ -9,7 +9,7 @@
 		return
 
 	var/mob/living/carbon/human/T = src
-	if(!isYautja(T))
+	if(!isyautja(T))
 		return
 
 	var/list/options = list()
@@ -81,7 +81,7 @@
 		to_chat(src, SPAN_DANGER("You're already hunting something."))
 		return
 
-	if(!isYautja(src))
+	if(!isyautja(src))
 		to_chat(src, SPAN_WARNING("How did you get this verb?"))
 		return
 
@@ -89,7 +89,7 @@
 	// We only target living humans and xenos
 	var/list/target_list = list()
 	for(var/mob/living/prey in view(7, usr.client))
-		if((isHumanStrict(prey) || isXeno(prey)) && prey.stat != DEAD)
+		if((ishuman_strict(prey) || isxeno(prey)) && prey.stat != DEAD)
 			target_list += prey
 
 	var/mob/living/carbon/M = tgui_input_list(usr, "Target", "Choose a prey.", target_list)
@@ -130,7 +130,7 @@
 		to_chat(src, SPAN_DANGER("You're not hunting anything right now."))
 		return
 
-	if(!isYautja(src))
+	if(!isyautja(src))
 		to_chat(src, SPAN_WARNING("How did you get this verb?"))
 		return
 
@@ -153,13 +153,13 @@
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
-	if(!isYautja(src))
+	if(!isyautja(src))
 		to_chat(src, SPAN_WARNING("How did you get this verb?"))
 		return
 
 	var/list/target_list = list()
 	for(var/mob/living/carbon/target in view(7, usr.client))
-		if((isHumanStrict(target) || isXeno(target)) && target.stat != DEAD)
+		if((ishuman_strict(target) || isxeno(target)) && target.stat != DEAD)
 			target_list += target
 
 	var/mob/living/carbon/T = tgui_input_list(usr, "Target", "Choose a target.", target_list)
@@ -192,13 +192,13 @@
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
-	if(!isYautja(src))
+	if(!isyautja(src))
 		to_chat(src, SPAN_WARNING("How did you get this verb?"))
 		return
 
 	var/list/target_list = list()
 	for(var/mob/living/carbon/target in view(7, usr.client))
-		if((isHumanStrict(target) || isXeno(target)) && target.stat != DEAD)
+		if((ishuman_strict(target) || isxeno(target)) && target.stat != DEAD)
 			if(target.hunter_data.honored)
 				target_list += target
 
@@ -232,16 +232,16 @@
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
-	if(!isYautja(src))
+	if(!isyautja(src))
 		to_chat(src, SPAN_WARNING("How did you get this verb?"))
 		return
 
 	var/list/target_list = list()
 	for(var/mob/living/carbon/target in view(7, usr.client))
-		if((isHumanStrict(target) || isXeno(target)) && target.stat != DEAD)
+		if((ishuman_strict(target) || isxeno(target)) && target.stat != DEAD)
 			target_list += target
 
-	if(isYautja(src) && src.hunter_data.thrall)
+	if(isyautja(src) && src.hunter_data.thrall)
 		target_list += src.hunter_data.thrall
 
 	var/mob/living/carbon/T = tgui_input_list(usr, "Target", "Choose a target.", target_list)
@@ -274,18 +274,18 @@
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
-	if(!isYautja(src))
+	if(!isyautja(src))
 		to_chat(src, SPAN_WARNING("How did you get this verb?"))
 		return
 
 	var/list/target_list = list()
 	for(var/mob/living/carbon/target in view(7, usr.client))
-		if((isHumanStrict(target) || isXeno(target)) && target.stat != DEAD)
+		if((ishuman_strict(target) || isxeno(target)) && target.stat != DEAD)
 			if(target.job != "Predalien" && target.job != "Predalien Larva")
 				if(target.hunter_data.dishonored)
 					target_list += target
 
-	if(isYautja(src) && src.hunter_data.thrall)
+	if(isyautja(src) && src.hunter_data.thrall)
 		target_list += src.hunter_data.thrall
 
 	var/mob/living/carbon/T = tgui_input_list(usr, "Target", "Choose a target.", target_list)
@@ -317,13 +317,13 @@
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
-	if(!isYautja(src))
+	if(!isyautja(src))
 		to_chat(src, SPAN_WARNING("How did you get this verb?"))
 		return
 
 	var/list/target_list = list()
 	for(var/mob/living/carbon/target in view(7, usr.client))
-		if((isHumanStrict(target) && target.stat != DEAD))
+		if((ishuman_strict(target) && target.stat != DEAD))
 			target_list += target
 
 	var/mob/living/carbon/T = tgui_input_list(usr, "Target", "Choose a target.", target_list)
@@ -349,13 +349,13 @@
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
-	if(!isYautja(src))
+	if(!isyautja(src))
 		to_chat(src, SPAN_WARNING("How did you get this verb?"))
 		return
 
 	var/list/target_list = list()
 	for(var/mob/living/carbon/target in view(7, usr.client))
-		if((isHumanStrict(target) && target.stat != DEAD))
+		if((ishuman_strict(target) && target.stat != DEAD))
 			if(target.hunter_data.gear)
 				target_list += target
 
@@ -387,7 +387,7 @@
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
-	if(!isYautja(src))
+	if(!isyautja(src))
 		to_chat(src, SPAN_WARNING("How did you get this verb?"))
 		return
 
@@ -400,7 +400,7 @@
 	// We only target living humans
 	var/list/target_list = list()
 	for(var/mob/living/carbon/target in view(7, usr.client))
-		if(isHumanStrict(target) && target.stat != DEAD)
+		if(ishuman_strict(target) && target.stat != DEAD)
 			target_list += target
 
 	var/mob/living/carbon/T = tgui_input_list(usr, "Target", "Choose a target.", target_list)
@@ -433,7 +433,7 @@
 		to_chat(src, SPAN_DANGER("You're not able to do that right now."))
 		return
 
-	if(!isYautja(src))
+	if(!isyautja(src))
 		to_chat(src, SPAN_WARNING("How did you get this verb?"))
 		return
 
@@ -441,11 +441,11 @@
 	// We only target living humans
 	var/list/target_list = list()
 	for(var/mob/living/carbon/target in view(7, usr.client))
-		if(isHumanStrict(target) && target.stat != DEAD)
+		if(ishuman_strict(target) && target.stat != DEAD)
 			if(target.hunter_data.thralled)
 				target_list += target
 
-	if(isYautja(src) && src.hunter_data.thrall)
+	if(isyautja(src) && src.hunter_data.thrall)
 		target_list += src.hunter_data.thrall
 
 	var/mob/living/carbon/T = tgui_input_list(usr, "Target", "Choose a target.", target_list)

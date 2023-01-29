@@ -12,7 +12,7 @@
 		balloon_alert(src, "now not examining on click")
 		to_chat(src, SPAN_NOTICE(" You will no longer examine things you click on."))
 
-/mob/dead/observer/click(var/atom/A, var/list/mods)
+/mob/dead/observer/click(atom/A, list/mods)
 	if(..())
 		return 1
 
@@ -26,33 +26,39 @@
 				return
 			if(alert(src, "Are you sure you want to re-enter your corpse?", "Confirm", "Yes", "No") == "Yes")
 				reenter_corpse()
-				return 1
+				return TRUE
 
 		if(ismob(A) || isVehicle(A))
-			if(isXeno(A) && SSticker.mode.check_xeno_late_join(src)) //if it's a xeno and all checks are alright, we are gonna try to take their body
-				var/mob/living/carbon/Xenomorph/X = A
+			if(isxeno(A) && SSticker.mode.check_xeno_late_join(src)) //if it's a xeno and all checks are alright, we are gonna try to take their body
+				var/mob/living/carbon/xenomorph/X = A
 				if(X.stat == DEAD || is_admin_level(X.z) || X.aghosted)
 					balloon_alert(src, "cannot join as [X]!")
 					to_chat(src, SPAN_WARNING("You cannot join as [X]."))
+					ManualFollow(X)
 					return
+
 				if(!SSticker.mode.xeno_bypass_timer)
+					if((!islarva(X) && X.away_timer < XENO_LEAVE_TIMER) || (islarva(X) && X.away_timer < XENO_LEAVE_TIMER_LARVA))
+						var/to_wait = XENO_LEAVE_TIMER - X.away_timer
+						if(islarva(X))
+							to_wait = XENO_LEAVE_TIMER_LARVA - X.away_timer
+						if(to_wait > 60 SECONDS) // don't spam for clearly non-AFK xenos
+							to_chat(src, SPAN_WARNING("That player hasn't been away long enough. Please wait [to_wait] second\s longer."))
+						ManualFollow(A)
+						return FALSE
+
 					var/deathtime = world.time - timeofdeath
 					if(deathtime < 2.5 MINUTES)
 						var/time_until_rejoin = deathtime - 2.5 MINUTES
 						balloon_alert(src, "must wait [DisplayTimeText(time_until_rejoin)]!")
 						to_chat(src, SPAN_WARNING("You have been dead for [DisplayTimeText(deathtime)]."))
 						to_chat(src, SPAN_WARNING("You must wait 2.5 minutes before rejoining the game!"))
+						ManualFollow(A)
 						return FALSE
-					if((!isXenoLarva(X) && X.away_timer < XENO_LEAVE_TIMER) || (isXenoLarva(X) && X.away_timer < XENO_LEAVE_TIMER_LARVA))
-						var/to_wait = XENO_LEAVE_TIMER - X.away_timer
-						if(isXenoLarva(X))
-							to_wait = XENO_LEAVE_TIMER_LARVA - X.away_timer
-						balloon_alert(src, "must wait [DisplayTimeText(to_wait)]!")
-						to_chat(src, SPAN_WARNING("That player hasn't been away long enough. Please wait [to_wait] second\s longer."))
-						return FALSE
+
 				if(alert(src, "Are you sure you want to transfer yourself into [X]?", "Confirm Transfer", "Yes", "No") != "Yes")
 					return FALSE
-				if(((!isXenoLarva(X) && X.away_timer < XENO_LEAVE_TIMER) || (isXenoLarva(X) && X.away_timer < XENO_LEAVE_TIMER_LARVA)) || X.stat == DEAD) // Do it again, just in case
+				if(((!islarva(X) && X.away_timer < XENO_LEAVE_TIMER) || (islarva(X) && X.away_timer < XENO_LEAVE_TIMER_LARVA)) || X.stat == DEAD) // Do it again, just in case
 					to_chat(src, SPAN_WARNING("That xenomorph can no longer be controlled. Please try another."))
 					return FALSE
 				SSticker.mode.transfer_xeno(src, X)
@@ -123,8 +129,8 @@
 */
 
 /* This allows Observers to click on disconnected Larva and become them, but not all Larva are clickable due to hiding
-/mob/living/carbon/Xenomorph/Larva/attack_ghost(mob/user as mob)
-	if(!istype(src, /mob/living/carbon/Xenomorph/Larva))
+/mob/living/carbon/xenomorph/larva/attack_ghost(mob/user as mob)
+	if(!istype(src, /mob/living/carbon/xenomorph/larva))
 		return
 
 	// if(src.key || src.mind || !src.client.is_afk())

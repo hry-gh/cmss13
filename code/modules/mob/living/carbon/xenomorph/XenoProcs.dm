@@ -1,5 +1,5 @@
 //Send a message to all xenos. Mostly used in the deathgasp display
-/proc/xeno_message(var/message = null, var/size = 3, var/hivenumber = XENO_HIVE_NORMAL)
+/proc/xeno_message(message = null, size = 3, hivenumber = XENO_HIVE_NORMAL)
 	if(!message)
 		return
 
@@ -19,7 +19,7 @@
 				to_chat(M, SPAN_XENODANGER("<span class=\"[fontsize_style]\"> [message]</span>"))
 
 //Sends a maptext alert to our currently selected squad. Does not make sound.
-/proc/xeno_maptext(var/text = "", var/title_text = "", var/hivenumber = XENO_HIVE_NORMAL)
+/proc/xeno_maptext(text = "", title_text = "", hivenumber = XENO_HIVE_NORMAL)
 	if(text == "" || !hivenumber)
 		return //Logic
 
@@ -29,12 +29,12 @@
 			if(M && istype(M) && !M.stat && M.client && M.ally_of_hivenumber(hivenumber)) //Only living and connected xenos
 				M.play_screen_text("<span class='langchat' style=font-size:16pt;text-align:center valign='top'><u>[title_text]</u></span><br>" + text, /atom/movable/screen/text/screen_text/command_order, "#b491c8")
 
-/proc/xeno_message_all(var/message = null, var/size = 3)
+/proc/xeno_message_all(message = null, size = 3)
 	xeno_message(message, size)
 
 //Adds stuff to your "Status" pane -- Specific castes can have their own, like carrier hugger count
 //Those are dealt with in their caste files.
-/mob/living/carbon/Xenomorph/get_status_tab_items()
+/mob/living/carbon/xenomorph/get_status_tab_items()
 	. = ..()
 
 	. += "Name: [name]"
@@ -141,7 +141,7 @@
 	. += ""
 
 //A simple handler for checking your state. Used in pretty much all the procs.
-/mob/living/carbon/Xenomorph/proc/check_state(var/permissive = 0)
+/mob/living/carbon/xenomorph/proc/check_state(permissive = 0)
 	if(!permissive)
 		if(is_mob_incapacitated() || lying || buckled || evolving || !isturf(loc))
 			to_chat(src, SPAN_WARNING("You cannot do this in your current state."))
@@ -160,7 +160,7 @@
 	return TRUE
 
 //Checks your plasma levels and gives a handy message.
-/mob/living/carbon/Xenomorph/proc/check_plasma(value)
+/mob/living/carbon/xenomorph/proc/check_plasma(value)
 	if(stat)
 		to_chat(src, SPAN_WARNING("You cannot do this in your current state."))
 		bubble_alert(src, "incapacitated!")
@@ -173,19 +173,19 @@
 			return FALSE
 	return TRUE
 
-/mob/living/carbon/Xenomorph/proc/use_plasma(value)
+/mob/living/carbon/xenomorph/proc/use_plasma(value)
 	plasma_stored = max(plasma_stored - value, 0)
 	for(var/X in actions)
 		var/datum/action/A = X
 		A.update_button_icon()
 
-/mob/living/carbon/Xenomorph/proc/gain_plasma(value)
+/mob/living/carbon/xenomorph/proc/gain_plasma(value)
 	plasma_stored = min(plasma_stored + value, plasma_max)
 	for(var/X in actions)
 		var/datum/action/A = X
 		A.update_button_icon()
 
-/mob/living/carbon/Xenomorph/proc/gain_health(value)
+/mob/living/carbon/xenomorph/proc/gain_health(value)
 	if(bruteloss == 0 && fireloss == 0)
 		return
 
@@ -210,24 +210,24 @@
 		A.update_button_icon()
 
 
-/mob/living/carbon/Xenomorph/proc/gain_armor_percent(value)
+/mob/living/carbon/xenomorph/proc/gain_armor_percent(value)
 	armor_integrity = min(armor_integrity + value, 100)
 
 
 //Strip all inherent xeno verbs from your caste. Used in evolution.
-/mob/living/carbon/Xenomorph/proc/remove_inherent_verbs()
+/mob/living/carbon/xenomorph/proc/remove_inherent_verbs()
 	if(inherent_verbs)
 		remove_verb(src, inherent_verbs)
 
 //Add all your inherent caste verbs and procs. Used in evolution.
-/mob/living/carbon/Xenomorph/proc/add_inherent_verbs()
+/mob/living/carbon/xenomorph/proc/add_inherent_verbs()
 	if(inherent_verbs)
 		add_verb(src, inherent_verbs)
 
 
 //Adds or removes a delay to movement based on your caste. If speed = 0 then it shouldn't do much.
 //Runners are -2, -4 is BLINDLINGLY FAST, +2 is fat-level
-/mob/living/carbon/Xenomorph/movement_delay()
+/mob/living/carbon/xenomorph/movement_delay()
 	. = ..()
 
 	. += ability_speed_modifier
@@ -241,8 +241,6 @@
 	var/obj/effect/alien/weeds/W = locate(/obj/effect/alien/weeds) in loc
 	if (W)
 		if (W.linked_hive.hivenumber == hivenumber)
-			if(weedwalking_activated)
-				. -= 1.5
 			. *= 0.95
 
 	var/obj/effect/alien/resin/sticky/fast/FR = locate(/obj/effect/alien/resin/sticky/fast) in loc
@@ -262,10 +260,10 @@
 	move_delay = .
 
 
-/mob/living/carbon/Xenomorph/show_inv(mob/user)
+/mob/living/carbon/xenomorph/show_inv(mob/user)
 	return
 
-/mob/living/carbon/Xenomorph/proc/pounced_mob(var/mob/living/L)
+/mob/living/carbon/xenomorph/proc/pounced_mob(mob/living/L)
 	// This should only be called back by a mob that has pounce, so no need to check
 	var/datum/action/xeno_action/activable/pounce/pounceAction = get_xeno_action_by_type(src, /datum/action/xeno_action/activable/pounce)
 
@@ -289,7 +287,7 @@
 				playsound(H, "bonk", 75, FALSE) //bonk
 				return
 
-			if(isYautja(H))
+			if(isyautja(H))
 				if(H.check_shields(0, "the pounce", 1))
 					visible_message(SPAN_DANGER("[H] blocks the pounce of [src] with the combistick!"), SPAN_XENODANGER("[H] blocks your pouncing form with the combistick!"), null, 5)
 					apply_effect(3, WEAKEN)
@@ -302,7 +300,7 @@
 					apply_effect(3, WEAKEN)
 					throwing = FALSE
 					return
-			if(isColonySynthetic(H) && prob(60))
+			if(iscolonysynthetic(H) && prob(60))
 				visible_message(SPAN_DANGER("[H] withstands being pounced and slams down [src]!"),
 					SPAN_XENODANGER("[H] throws you down after withstanding the pounce!"), null, 5)
 				apply_effect(1.5, WEAKEN)
@@ -330,10 +328,10 @@
 
 	throwing = FALSE //Reset throwing since something was hit.
 
-/mob/living/carbon/Xenomorph/proc/pounced_mob_wrapper(var/mob/living/L)
+/mob/living/carbon/xenomorph/proc/pounced_mob_wrapper(mob/living/L)
 	pounced_mob(L)
 
-/mob/living/carbon/Xenomorph/proc/pounced_obj(var/obj/O)
+/mob/living/carbon/xenomorph/proc/pounced_obj(obj/O)
 	var/datum/action/xeno_action/activable/pounce/pounceAction = get_xeno_action_by_type(src, /datum/action/xeno_action/activable/pounce)
 
 	// Unconscious or dead, or not throwing but used pounce
@@ -352,10 +350,10 @@
 		if(!istype(O, /obj/structure/surface/table) && !istype(O, /obj/structure/surface/rack))
 			O.hitby(src) //This resets throwing.
 
-/mob/living/carbon/Xenomorph/proc/pounced_obj_wrapper(var/obj/O)
+/mob/living/carbon/xenomorph/proc/pounced_obj_wrapper(obj/O)
 	pounced_obj(O)
 
-/mob/living/carbon/Xenomorph/proc/pounced_turf(var/turf/T)
+/mob/living/carbon/xenomorph/proc/pounced_turf(turf/T)
 	if(!T.density)
 		for(var/mob/M in T)
 			pounced_mob(M)
@@ -363,11 +361,11 @@
 	else
 		turf_launch_collision(T)
 
-/mob/living/carbon/Xenomorph/proc/pounced_turf_wrapper(var/turf/T)
+/mob/living/carbon/xenomorph/proc/pounced_turf_wrapper(turf/T)
 	pounced_turf(T)
 
 //Bleuugh
-/mob/living/carbon/Xenomorph/proc/empty_gut()
+/mob/living/carbon/xenomorph/proc/empty_gut()
 	if(stomach_contents.len)
 		for(var/atom/movable/S in stomach_contents)
 			stomach_contents.Remove(S)
@@ -378,7 +376,7 @@
 		for(var/atom/movable/A in contents)
 			A.forceMove(get_true_turf(src))
 
-/mob/living/carbon/Xenomorph/proc/toggle_nightvision()
+/mob/living/carbon/xenomorph/proc/toggle_nightvision()
 	see_in_dark = 12
 	sight |= SEE_MOBS
 	if(lighting_alpha == LIGHTING_PLANE_ALPHA_VISIBLE)
@@ -389,7 +387,7 @@
 		lighting_alpha = LIGHTING_PLANE_ALPHA_VISIBLE
 	update_sight()
 
-/mob/living/carbon/Xenomorph/proc/regurgitate(mob/living/victim, stuns = FALSE)
+/mob/living/carbon/xenomorph/proc/regurgitate(mob/living/victim, stuns = FALSE)
 	if(stomach_contents.len)
 		if(victim)
 			stomach_contents.Remove(victim)
@@ -406,7 +404,7 @@
 		to_chat(src, SPAN_WARNING("There's nothing in your belly that needs regurgitating."))
 		bubble_alert(src, "stomach empty!")
 
-/mob/living/carbon/Xenomorph/proc/check_alien_construction(var/turf/current_turf, var/check_blockers = TRUE, var/silent = FALSE, var/check_doors = TRUE)
+/mob/living/carbon/xenomorph/proc/check_alien_construction(turf/current_turf, check_blockers = TRUE, silent = FALSE, check_doors = TRUE)
 	var/has_obstacle
 	for(var/obj/O in current_turf)
 		if(check_blockers && istype(O, /obj/effect/build_blocker))
@@ -462,7 +460,7 @@
 
 	return TRUE
 
-/mob/living/carbon/Xenomorph/drop_held_item()
+/mob/living/carbon/xenomorph/drop_held_item()
 	var/obj/item/clothing/mask/facehugger/F = get_active_hand()
 	if(istype(F))
 		var/turf/TU = loc
@@ -472,7 +470,7 @@
 
 	. = ..()
 
-/mob/living/carbon/Xenomorph/proc/get_diagonal_step(atom/movable/A, direction)
+/mob/living/carbon/xenomorph/proc/get_diagonal_step(atom/movable/A, direction)
 	if(!A)
 		return FALSE
 	switch(direction)
@@ -483,7 +481,7 @@
 
 
 //Welp
-/mob/living/carbon/Xenomorph/proc/xeno_jitter(var/jitter_time = 25)
+/mob/living/carbon/xenomorph/proc/xeno_jitter(jitter_time = 25)
 	set waitfor = 0
 
 	pixel_x = old_x + rand(-3, 3)
@@ -491,17 +489,17 @@
 	jitter_time--
 
 	if(jitter_time)
-		addtimer(CALLBACK(src, TYPE_PROC_REF(/mob/living/carbon/Xenomorph, xeno_jitter), jitter_time), 1) // The fuck, use a processing SS, TODO FIXME AHH
+		addtimer(CALLBACK(src, TYPE_PROC_REF(/mob/living/carbon/xenomorph, xeno_jitter), jitter_time), 1) // The fuck, use a processing SS, TODO FIXME AHH
 	else
 		//endwhile - reset the pixel offsets to zero
 		pixel_x = old_x
 		pixel_y = old_y
 
 //When the Queen's pheromones are updated, or we add/remove a leader, update leader pheromones
-/mob/living/carbon/Xenomorph/proc/handle_xeno_leader_pheromones()
+/mob/living/carbon/xenomorph/proc/handle_xeno_leader_pheromones()
 	if(!hive)
 		return
-	var/mob/living/carbon/Xenomorph/Queen/Q = hive.living_xeno_queen
+	var/mob/living/carbon/xenomorph/queen/Q = hive.living_xeno_queen
 	if(!Q || !Q.ovipositor || hive_pos == NORMAL_XENO || !Q.current_aura || Q.loc.z != loc.z) //We are no longer a leader, or the Queen attached to us has dropped from her ovi, disabled her pheromones or even died
 		leader_aura_strength = 0
 		leader_current_aura = ""
@@ -514,7 +512,7 @@
 		balloon_alert(src, "new pheromones")
 	hud_set_pheromone()
 
-/mob/living/carbon/Xenomorph/proc/nocrit(var/wowave)
+/mob/living/carbon/xenomorph/proc/nocrit(wowave)
 	if(SSticker?.mode?.hardcore)
 		nocrit = TRUE
 		if(wowave < 15)
@@ -527,7 +525,7 @@
 
 
 // Handle queued actions.
-/mob/living/carbon/Xenomorph/proc/handle_queued_action(atom/A)
+/mob/living/carbon/xenomorph/proc/handle_queued_action(atom/A)
 	if(!queued_action || !istype(queued_action) || !(queued_action in actions))
 		return
 
@@ -540,8 +538,8 @@
 		client.mouse_pointer_icon = initial(client.mouse_pointer_icon) // Reset our mouse pointer when we no longer have an action queued.
 
 // Called when pulling something and attacking yourself with the pull
-/mob/living/carbon/Xenomorph/proc/pull_power(var/mob/M)
-	if(isXenoWarrior(src) && !ripping_limb && M.stat != DEAD)
+/mob/living/carbon/xenomorph/proc/pull_power(mob/M)
+	if(iswarrior(src) && !ripping_limb && M.stat != DEAD)
 		if(M.status_flags & XENO_HOST)
 			to_chat(src, SPAN_XENOWARNING("This would harm the embryo!"))
 			M.balloon_alert(src, "living embryo!")
@@ -553,7 +551,7 @@
 
 
 // Warrior Rip Limb - called by pull_power()
-/mob/living/carbon/Xenomorph/proc/rip_limb(var/mob/M)
+/mob/living/carbon/xenomorph/proc/rip_limb(mob/M)
 	if(!istype(M, /mob/living/carbon/human))
 		return FALSE
 
@@ -621,7 +619,7 @@
 	return TRUE
 
 // Vent Crawl
-/mob/living/carbon/Xenomorph/proc/vent_crawl()
+/mob/living/carbon/xenomorph/proc/vent_crawl()
 	set name = "Crawl through Vent"
 	set desc = "Enter an air vent and crawl through the pipe system."
 	set category = "Alien"
@@ -631,7 +629,7 @@
 	if(pipe)
 		handle_ventcrawl(pipe)
 
-/mob/living/carbon/Xenomorph/proc/attempt_tackle(var/mob/M, var/tackle_mult = 1, var/tackle_min_offset = 0, var/tackle_max_offset = 0, var/tackle_bonus = 0)
+/mob/living/carbon/xenomorph/proc/attempt_tackle(mob/M, tackle_mult = 1, tackle_min_offset = 0, tackle_max_offset = 0, tackle_bonus = 0)
 	var/datum/tackle_counter/TC = LAZYACCESS(tackle_counter, M)
 	if(!TC)
 		TC = new(tackle_min + tackle_min_offset, tackle_max + tackle_max_offset, tackle_chance*tackle_mult)
@@ -648,7 +646,7 @@
 	else
 		reset_tackle(M)
 
-/mob/living/carbon/Xenomorph/proc/tackle_handle_lying_changed(mob/M)
+/mob/living/carbon/xenomorph/proc/tackle_handle_lying_changed(mob/M)
 	SIGNAL_HANDLER
 	// Infected mobs do not have their tackle counter reset if
 	// they get knocked down or get up from a knockdown
@@ -657,7 +655,7 @@
 
 	reset_tackle(M)
 
-/mob/living/carbon/Xenomorph/proc/reset_tackle(var/mob/M)
+/mob/living/carbon/xenomorph/proc/reset_tackle(mob/M)
 	var/datum/tackle_counter/TC = LAZYACCESS(tackle_counter, M)
 	if (TC)
 		qdel(TC)
@@ -665,7 +663,7 @@
 		UnregisterSignal(M, COMSIG_MOB_KNOCKED_DOWN)
 
 
-/mob/living/carbon/Xenomorph/burn_skin(burn_amount)
+/mob/living/carbon/xenomorph/burn_skin(burn_amount)
 	if(burrow)
 		return FALSE
 
@@ -677,10 +675,10 @@
 	updatehealth()
 	return TRUE
 
-/mob/living/carbon/Xenomorph/get_role_name()
+/mob/living/carbon/xenomorph/get_role_name()
 	return caste_type
 
-/proc/get_pheromone_aura_strength(var/aura)
+/proc/get_pheromone_aura_strength(aura)
 	switch(aura)
 		if(-INFINITY to 0.9)
 			return "Very Weak"
@@ -693,7 +691,7 @@
 		if(4.0 to INFINITY)
 			return "Very Strong"
 
-/mob/living/carbon/Xenomorph/proc/start_tracking_resin_mark(obj/effect/alien/resin/marker/target)
+/mob/living/carbon/xenomorph/proc/start_tracking_resin_mark(obj/effect/alien/resin/marker/target)
 	if(!target)
 		to_chat(src, SPAN_XENONOTICE("This resin mark no longer exists!"))
 		return
@@ -703,7 +701,7 @@
 	to_chat(src, SPAN_INFO("shift click the compass to watch the mark, alt click to stop tracking"))
 	balloon_alert(src, "started tracking")
 
-/mob/living/carbon/Xenomorph/proc/stop_tracking_resin_mark(destroyed, var/silent = FALSE) //tracked_marker shouldnt be nulled outside this PROC!! >:C
+/mob/living/carbon/xenomorph/proc/stop_tracking_resin_mark(destroyed, silent = FALSE) //tracked_marker shouldnt be nulled outside this PROC!! >:C
 	var/atom/movable/screen/mark_locator/ML = hud_used.locate_marker
 	ML.overlays.Cut()
 	if(!silent)
