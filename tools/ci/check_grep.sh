@@ -205,6 +205,38 @@ if $grep '\.proc/' $code_x_515 ; then
     st=1
 fi;
 
+if [ "$pcre2_support" -eq 1 ]; then
+	section "regexes requiring PCRE2"
+	part "long list formatting"
+	if $grep -PU '^(\t)[\w_]+ = list\(\n\1\t{2,}' code/**/*.dm; then
+		echo -e "${RED}ERROR: Long list overindented, should be two tabs.${NC}"
+		st=1
+	fi;
+	if $grep -PU '^(\t)[\w_]+ = list\(\n\1\S' code/**/*.dm; then
+		echo -e "${RED}ERROR: Long list underindented, should be two tabs.${NC}"
+		st=1
+	fi;
+	if $grep -PU '^(\t)[\w_]+ = list\([^\s)]+( ?= ?[\w\d]+)?,\n' code/**/*.dm; then
+		echo -e "${RED}ERROR: First item in a long list should be on the next line.${NC}"
+		st=1
+	fi;
+	if $grep -PU '^(\t)[\w_]+ = list\(\n(\1\t\S+( ?= ?[\w\d]+)?,\n)*\1\t[^\s,)]+( ?= ?[\w\d]+)?\n' code/**/*.dm; then
+		echo -e "${RED}ERROR: Last item in a long list should still have a comma.${NC}"
+		st=1
+	fi;
+	if $grep -PU '^(\t)[\w_]+ = list\(\n(\1\t[^\s)]+( ?= ?[\w\d]+)?,\n)*\1\t[^\s)]+( ?= ?[\w\d]+)?\)' code/**/*.dm; then
+		echo -e "${RED}ERROR: The ) in a long list should be on a new line.${NC}"
+		st=1
+	fi;
+	if $grep -PU '^(\t)[\w_]+ = list\(\n(\1\t[^\s)]+( ?= ?[\w\d]+)?,\n)+\1\t\)' code/**/*.dm; then
+		echo -e "${RED}ERROR: The ) in a long list should match identation of the opening list line.${NC}"
+		st=1
+	fi;
+else
+	echo -e "${RED}pcre2 not supported, skipping checks requiring pcre2"
+	echo -e "if you want to run these checks install ripgrep with pcre2 support.${NC}"
+fi
+
 if [ $st = 0 ]; then
 	echo
 	echo -e "${GREEN}No errors found using grep!${NC}"
