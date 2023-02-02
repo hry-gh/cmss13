@@ -142,6 +142,7 @@
 	if(iswelder(O))
 		if(!HAS_TRAIT(O, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
+			balloon_alert(user, "needs a stronger blowtorch!")
 			return
 		if(buildstate == 1 && !is_on)
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
@@ -169,6 +170,7 @@
 		if(buildstate == 2 && !is_on)
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(user, SPAN_WARNING("You have no clue how to repair this thing."))
+				balloon_alert(user, "untrained!")
 				return 0
 			playsound(loc, 'sound/items/Wirecutter.ogg', 25, 1)
 			user.visible_message(SPAN_NOTICE("[user] starts securing [src]'s wiring."),
@@ -186,10 +188,12 @@
 		if(buildstate == 3 && !is_on)
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(user, SPAN_WARNING("You have no clue how to repair this thing."))
+				balloon_alert(user, "untrained!")
 				return 0
 			playsound(loc, 'sound/items/Ratchet.ogg', 25, 1)
 			user.visible_message(SPAN_NOTICE("[user] starts repairing [src]'s tubing and plating."),
 			SPAN_NOTICE("You start repairing [src]'s tubing and plating."))
+			balloon_alert(user, "start repairing...")
 			if(do_after(user, 150 * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 				if(buildstate != 3 || is_on)
 					return FALSE
@@ -198,8 +202,11 @@
 				user.count_niche_stat(STATISTICS_NICHE_REPAIR_GENERATOR)
 				user.visible_message(SPAN_NOTICE("[user] repairs [src]'s tubing and plating."),
 				SPAN_NOTICE("You repair [src]'s tubing and plating."))
+				balloon_alert(user, "repaired")
 				update_icon()
 				return TRUE
+			else
+				balloon_alert(user, "interrupted!")
 	else
 		return ..() //Deal with everything else, like hitting with stuff
 
@@ -329,10 +336,12 @@
 		if(HAS_TRAIT(I, TRAIT_TOOL_SCREWDRIVER))
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(user, SPAN_WARNING("You have no clue how to repair [src]."))
+				balloon_alert(user, "untrained!")
 				return 0
 
 			if(repair_state == FLOODLIGHT_REPAIR_UNSCREW)
 				playsound(loc, 'sound/items/Screwdriver.ogg', 25, 1)
+				balloon_alert(user, "start unscrewing...")
 				user.visible_message(SPAN_NOTICE("[user] starts unscrewing [src]'s maintenance hatch."), \
 				SPAN_NOTICE("You start unscrewing [src]'s maintenance hatch."))
 				if(do_after(user, 20, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
@@ -342,9 +351,13 @@
 					repair_state = FLOODLIGHT_REPAIR_CROWBAR
 					user.visible_message(SPAN_NOTICE("[user] unscrews [src]'s maintenance hatch."), \
 					SPAN_NOTICE("You unscrew [src]'s maintenance hatch."))
+					balloon_alert(user, "unscrewed")
+				else
+					balloon_alert(user, "interrupted!")
 
 			else if(repair_state == FLOODLIGHT_REPAIR_SCREW)
 				playsound(loc, 'sound/items/Screwdriver.ogg', 25, 1)
+				balloon_alert(user, "screwing closed...")
 				user.visible_message(SPAN_NOTICE("[user] starts screwing [src]'s maintenance hatch closed."), \
 				SPAN_NOTICE("You start screwing [src]'s maintenance hatch closed."))
 				if(do_after(user, 20, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
@@ -356,9 +369,12 @@
 					health = initial(health)
 					user.visible_message(SPAN_NOTICE("[user] screws [src]'s maintenance hatch closed."), \
 					SPAN_NOTICE("You screw [src]'s maintenance hatch closed."))
+					balloon_alert(user, "closed")
 					if(is_lit)
 						SetLuminosity(lum_value)
 					update_icon()
+				else
+					balloon_alert(user, "interrupted!")
 			return TRUE
 
 		else if(HAS_TRAIT(I, TRAIT_TOOL_CROWBAR))
@@ -421,11 +437,13 @@
 			var/obj/item/stack/cable_coil/C = I
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(user, SPAN_WARNING("You have no clue how to repair [src]."))
+				balloon_alert(user, "not trained!")
 				return 0
 
 			if(repair_state == FLOODLIGHT_REPAIR_CABLE)
 				if(C.get_amount() < 2)
 					to_chat(user, SPAN_WARNING("You need two coils of wire to replace the damaged cables."))
+					balloon_alert(user, "more wire!")
 					return
 				playsound(loc, 'sound/items/Deconstruct.ogg', 25, 1)
 				user.visible_message(SPAN_NOTICE("[user] starts replacing [src]'s damaged cables."),\

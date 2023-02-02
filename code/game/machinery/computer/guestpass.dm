@@ -63,6 +63,7 @@
 				updateUsrDialog()
 		else
 			to_chat(user, SPAN_WARNING("There is already ID card inside."))
+			balloon_alert(user, "already an id!")
 
 /obj/structure/machinery/computer/guestpass/attack_remote(mob/user as mob)
 	return attack_hand(user)

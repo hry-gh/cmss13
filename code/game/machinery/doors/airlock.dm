@@ -88,6 +88,7 @@ GLOBAL_LIST_INIT(airlock_wire_descriptions, list(
 				return
 		else if(user.hallucination > 50 && prob(10) && operating == 0)
 			to_chat(user, SPAN_DANGER("<B>You feel a powerful shock course through your body!</B>"))
+			balloon_alert(user, "shocked!!")
 			user.halloss += 10
 			user.stunned += 10
 			return
@@ -587,11 +588,14 @@ GLOBAL_LIST_INIT(airlock_wire_descriptions, list(
 
 		if(not_weldable)
 			to_chat(user, SPAN_WARNING("\The [src] would require something a lot stronger than \the [W] to weld!"))
+			balloon_alert(user, "not weldable!")
 			return
 		if(!W.isOn())
 			to_chat(user, SPAN_WARNING("\The [W] needs to be on!"))
+			balloon_alert(user, "must be on!")
 			return
 		if(W.remove_fuel(0,user))
+			balloon_alert_to_viewers("starts welding...")
 			user.visible_message(SPAN_NOTICE("[user] starts working on \the [src] with \the [W]."), \
 			SPAN_NOTICE("You start working on \the [src] with \the [W]."), \
 			SPAN_NOTICE("You hear welding."))
@@ -606,11 +610,13 @@ GLOBAL_LIST_INIT(airlock_wire_descriptions, list(
 
 	else if(HAS_TRAIT(C, TRAIT_TOOL_SCREWDRIVER))
 		if(no_panel)
+			balloon_alert(user, "no panel!")
 			to_chat(user, SPAN_WARNING("\The [src] has no panel to open!"))
 			return
 
 		panel_open = !panel_open
 		to_chat(user, SPAN_NOTICE("You [panel_open ? "open" : "close"] [src]'s panel."))
+		balloon_alert(user, panel_open ? "opened" : "closed")
 		update_icon()
 		return
 
@@ -627,18 +633,23 @@ GLOBAL_LIST_INIT(airlock_wire_descriptions, list(
 				var/obj/item/attachable/bayonet/a_bayonet = G.attachments[slot]
 				if(arePowerSystemsOn())
 					to_chat(user, SPAN_WARNING("The airlock's motors resist your efforts to force it."))
+					balloon_alert(user, "motors resist!")
 				else if(locked)
 					to_chat(user, SPAN_WARNING("The airlock's bolts prevent it from being forced."))
+					balloon_alert(user, "bolted!")
 				else if(welded)
 					to_chat(user, SPAN_WARNING("The airlock is welded shut."))
+					balloon_alert(user, "welded!")
 				else if(!operating)
 					spawn(0)
 						if(density)
 							to_chat(user, SPAN_NOTICE("You start forcing the airlock open with [a_bayonet]."))
+							balloon_alert(user, "forcing open...")
 							if(do_after(user, a_bayonet.pry_delay, INTERRUPT_ALL, BUSY_ICON_FRIENDLY))
 								open(1)
 						else
 							to_chat(user, SPAN_NOTICE("You start forcing the airlock shut with [a_bayonet]."))
+							balloon_alert(user, "forcing shut...")
 							if(do_after(user, a_bayonet.pry_delay, INTERRUPT_ALL, BUSY_ICON_FRIENDLY))
 								close(1)
 
@@ -646,9 +657,11 @@ GLOBAL_LIST_INIT(airlock_wire_descriptions, list(
 		if(C.pry_capable == IS_PRY_CAPABLE_CROWBAR && panel_open && welded)
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(user, SPAN_WARNING("You don't seem to know how to deconstruct machines."))
+				balloon_alert(user, "don't know how!")
 				return
 			if(width > 1)
 				to_chat(user, SPAN_WARNING("Large doors seem impossible to disassemble."))
+				balloon_alert(user, "doesn't seem likely!")
 				return
 			playsound(loc, 'sound/items/Crowbar.ogg', 25, 1)
 			user.visible_message("[user] starts removing the electronics from the airlock assembly.", "You start removing electronics from the airlock assembly.")
@@ -695,12 +708,15 @@ GLOBAL_LIST_INIT(airlock_wire_descriptions, list(
 
 		else if(arePowerSystemsOn() && C.pry_capable != IS_PRY_CAPABLE_FORCE)
 			to_chat(user, SPAN_WARNING("The airlock's motors resist your efforts to force it."))
+			balloon_alert(user, "motors resist!")
 
 		else if(locked)
 			to_chat(user, SPAN_WARNING("The airlock's bolts prevent it from being forced."))
+			balloon_alert(user, "bolted!")
 
 		else if(welded)
 			to_chat(user, SPAN_WARNING("The airlock is welded shut."))
+			balloon_alert(user, "bolted!")
 
 		else if(C.pry_capable == IS_PRY_CAPABLE_FORCE)
 			return FALSE //handled by the item's afterattack

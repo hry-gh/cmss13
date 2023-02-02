@@ -151,6 +151,7 @@
 /obj/structure/machinery/computer/pod/old/syndicate/attack_hand(mob/user as mob)
 	if(!allowed(user))
 		to_chat(user, SPAN_DANGER("Access Denied"))
+		balloon_alert(user, "access denied!")
 		return
 	else
 		..()

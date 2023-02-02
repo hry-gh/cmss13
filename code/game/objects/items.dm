@@ -271,6 +271,7 @@ cases. Override_icon_state should be a list.*/
 
 	if(anchored)
 		to_chat(user, "[src] is anchored to the ground.")
+		balloon_alert(user, "anchored!")
 		return
 
 	if(!Adjacent(user)) // needed because of alt-click

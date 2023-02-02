@@ -96,39 +96,49 @@
 		//YES, it's hardcoded... saves a var/can_be_washed for every single clothing item.
 		if ( istype(W,/obj/item/clothing/suit/space ) )
 			to_chat(user, "This item does not fit.")
+			balloon_alert(user, "doesn't fit!")
 			return
 		if ( istype(W,/obj/item/clothing/suit/syndicatefake ) )
 			to_chat(user, "This item does not fit.")
+			balloon_alert(user, "doesn't fit!")
 			return
 // if ( istype(W,/obj/item/clothing/suit/powered ) )
 // to_chat(user, "This item does not fit.")
 // return
 		if ( istype(W,/obj/item/clothing/suit/cyborg_suit ) )
 			to_chat(user, "This item does not fit.")
+			balloon_alert(user, "doesn't fit!")
 			return
 		if ( istype(W,/obj/item/clothing/suit/bomb_suit ) )
 			to_chat(user, "This item does not fit.")
+			balloon_alert(user, "doesn't fit!")
 			return
 		if ( istype(W,/obj/item/clothing/suit/armor ) )
 			to_chat(user, "This item does not fit.")
+			balloon_alert(user, "doesn't fit!")
 			return
 		if ( istype(W,/obj/item/clothing/suit/armor ) )
 			to_chat(user, "This item does not fit.")
+			balloon_alert(user, "doesn't fit!")
 			return
 		if ( istype(W,/obj/item/clothing/mask/gas ) )
 			to_chat(user, "This item does not fit.")
+			balloon_alert(user, "doesn't fit!")
 			return
 		if ( istype(W,/obj/item/clothing/mask/cigarette ) )
 			to_chat(user, "This item does not fit.")
+			balloon_alert(user, "doesn't fit!")
 			return
 		if ( istype(W,/obj/item/clothing/head/syndicatefake ) )
 			to_chat(user, "This item does not fit.")
+			balloon_alert(user, "doesn't fit!")
 			return
 // if ( istype(W,/obj/item/clothing/head/powered ) )
 // to_chat(user, "This item does not fit.")
 // return
 		if ( istype(W,/obj/item/clothing/head/helmet ) )
 			to_chat(user, "This item does not fit.")
+			balloon_alert(user, "doesn't fit!")
 			return
 
 		if(contents.len < 5)
@@ -161,6 +171,7 @@
 			state = 1
 		if(5)
 			to_chat(user, SPAN_DANGER("The [src] is busy."))
+			balloon_alert(user, "busy!")
 		if(6)
 			state = 7
 		if(7)

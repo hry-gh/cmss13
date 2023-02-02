@@ -61,9 +61,11 @@
 		if(!locked)
 			open = !open
 			to_chat(user, SPAN_NOTICE("Maintenance panel is now [src.open ? "opened" : "closed"]."))
+			balloon_alert(user, "[open ? "opened" : "closed"]")
 	else if(iswelder(W))
 		if(!HAS_TRAIT(W, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
+			balloon_alert(user, "needs a stronger blowtorch!")
 			return
 		if(health < maxhealth)
 			if(open)
@@ -71,8 +73,10 @@
 				user.visible_message(SPAN_DANGER("[user] repairs [src]!"),SPAN_NOTICE("You repair [src]!"))
 			else
 				to_chat(user, SPAN_NOTICE("Unable to repair with the maintenance panel closed."))
+				balloon_alert(user, "must be opened!")
 		else
 			to_chat(user, SPAN_NOTICE("[src] does not need a repair."))
+			balloon_alert(user, "already fully repaired!")
 	else
 		if(hasvar(W,"force") && hasvar(W,"damtype"))
 			switch(W.damtype)

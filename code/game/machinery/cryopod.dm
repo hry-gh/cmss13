@@ -386,6 +386,7 @@ GLOBAL_LIST_INIT(frozen_items, list(SQUAD_MARINE_1 = list(), SQUAD_MARINE_2 = li
 		var/obj/item/grab/G = W
 		if(occupant)
 			to_chat(user, SPAN_WARNING("[src] is occupied."))
+			balloon_alert(user, "occupied!")
 			return
 
 		if(!isliving(G.grabbed_thing))
@@ -396,10 +397,12 @@ GLOBAL_LIST_INIT(frozen_items, list(SQUAD_MARINE_1 = list(), SQUAD_MARINE_2 = li
 
 		if(M.stat == DEAD) //This mob is dead
 			to_chat(user, SPAN_WARNING("[src] immediately rejects [M]. \He passed away!"))
+			balloon_alert(user, "deceased!")
 			return
 
 		if(isxeno(M))
 			to_chat(user, SPAN_WARNING("There is no way [src] will accept [M]!"))
+			balloon_alert(user, "incompatible!")
 			return
 
 		if(M.client)
@@ -418,6 +421,7 @@ GLOBAL_LIST_INIT(frozen_items, list(SQUAD_MARINE_1 = list(), SQUAD_MARINE_2 = li
 			if(!M || !G || !G.grabbed_thing) return
 			if(occupant)
 				to_chat(user, SPAN_WARNING("[src] is occupied."))
+				balloon_alert(user, "occupied!")
 				return
 
 			go_in_cryopod(M)

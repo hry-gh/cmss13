@@ -39,10 +39,12 @@
 			playsound(loc, 'sound/effects/slosh.ogg', 25, 1)
 		else
 			to_chat(user, SPAN_NOTICE("This [callme] is out of water!"))
+			balloon_alert(user, "out of water!")
 	else if(istype(I, /obj/item/key))
 		to_chat(user, "Hold [I] in one of your hands while you drive this [callme].")
 	else if(istype(I, /obj/item/storage/bag/trash))
 		to_chat(user, SPAN_NOTICE("You hook the trashbag onto the [callme]."))
+		balloon_alert(user, "trashbag attached")
 		user.drop_held_item()
 		I.forceMove(src)
 		mybag = I
@@ -68,6 +70,7 @@
 		step(src, direction)
 	else
 		to_chat(user, SPAN_NOTICE("You'll need the keys in one of your hands to drive this [callme]."))
+		balloon_alert(user, "requires keys!")
 
 
 /obj/structure/bed/chair/janicart/send_buckling_message(mob/M, mob/user)

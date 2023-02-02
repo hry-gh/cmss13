@@ -405,6 +405,7 @@ Buildable meters
 	for(var/obj/structure/pipes/M in src.loc)
 		if((M.valid_directions & pipe_dir)) // matches at least one direction on either type of pipe & same connection type
 			to_chat(user, SPAN_WARNING("There is already a pipe of the same type at this location."))
+			balloon_alert(user, "same pipe!")
 			return 1
 	// no conflicts found
 
@@ -648,6 +649,7 @@ Buildable meters
 		return ..()
 	if(!locate(/obj/structure/pipes/standard/, src.loc))
 		to_chat(user, SPAN_WARNING("You need to fasten it to a pipe."))
+		balloon_alert(user, "must be fastened!")
 		return 1
 	new/obj/structure/machinery/meter( src.loc )
 	playsound(src.loc, 'sound/items/Ratchet.ogg', 25, 1)

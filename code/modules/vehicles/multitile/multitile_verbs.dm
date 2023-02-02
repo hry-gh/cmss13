@@ -280,6 +280,7 @@
 
 	if(V.nickname)
 		to_chat(user, SPAN_WARNING("Vehicle already has a \"[V.nickname]\" nickname."))
+		balloon_alert(user, "already nicknamed!")
 		return
 
 	var/new_nickname = stripped_input(user, "Enter a unique IC name or a callsign to add to your vehicle's name. [MAX_NAME_LEN] characters maximum. \n\nIMPORTANT! This is an IC nickname/callsign for your vehicle and you will be punished for putting in meme names.\nSINGLE USE ONLY.", "Name your vehicle", null, MAX_NAME_LEN)
@@ -294,10 +295,12 @@
 	//post-checks
 	if(V.seats[seat] != user) //check that we are still in seat
 		to_chat(user, SPAN_WARNING("You need to be buckled to vehicle seat to do this."))
+		balloon_alert(user, "must be buckled!")
 		return
 
 	if(V.nickname) //check again if second VC was faster.
 		to_chat(user, SPAN_WARNING("The other crewman beat you to it!"))
+		balloon_alert(user, "already nicknamed!")
 		return
 
 	V.nickname = new_nickname
@@ -368,6 +371,7 @@
 
 	if(V.health < initial(V.health) * 0.5)
 		to_chat(user, SPAN_WARNING("\The [V]'s hull is too damaged to operate!"))
+		balloon_alert(user, "too damaged!")
 
 	for(var/obj/item/hardpoint/special/firing_port_weapon/FPW in V.hardpoints)
 		if(FPW.allowed_seat == seat)

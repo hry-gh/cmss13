@@ -76,12 +76,14 @@
 /obj/structure/bed/chair/attackby(obj/item/I, mob/user)
 	if(HAS_TRAIT(I, TRAIT_TOOL_WRENCH) && stacked_size)
 		to_chat(user, SPAN_NOTICE("You'll need to unstack the chairs before you can take one apart."))
+		balloon_alert(user, "unstack them!")
 		return FALSE
 	if(istype(I, /obj/item/weapon/melee/twohanded/folded_metal_chair) && picked_up_item)
 		if(I.flags_item & WIELDED)
 			return ..()
 		if(locate(/mob/living) in loc)
 			to_chat(user, SPAN_NOTICE("There's someone in the way!"))
+			balloon_alert(user, "someone in the way!")
 			return FALSE
 		user.drop_inv_item_to_loc(I, src)
 		stacked_size++
@@ -98,6 +100,7 @@
 
 		if(stacked_size > 8)
 			to_chat(user, SPAN_WARNING("The stack of chairs looks unstable!"))
+			balloon_alert_to_viewers(user, "looks unstable!")
 			if(prob(sqrt(50 * stacked_size)))
 				stack_collapse()
 				return FALSE
@@ -110,6 +113,7 @@
 			return TRUE
 		if(!stacked_size)
 			to_chat(user, SPAN_WARNING("\The [PC] can only grab stacks of chairs."))
+			balloon_alert(user, "must be stacked!")
 			return TRUE
 		//skill reduces the chance of collapse
 		if(stacked_size > 8 && prob(50 / user.skills.get_skill_level(SKILL_POWERLOADER)))
@@ -440,10 +444,12 @@
 /obj/structure/bed/chair/dropship/passenger/shuttle_chair/attackby(obj/item/W, mob/living/user)
 	if(HAS_TRAIT(W, TRAIT_TOOL_WRENCH) && chair_state == DROPSHIP_CHAIR_BROKEN)
 		to_chat(user, SPAN_WARNING("\The [src] appears to be broken and needs welding."))
+		balloon_alert(user, "broken!")
 		return
 	else if((iswelder(W) && chair_state == DROPSHIP_CHAIR_BROKEN))
 		if(!HAS_TRAIT(W, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
+			balloon_alert(user, "needs a stronger blowtorch!")
 			return
 		var/obj/item/tool/weldingtool/C = W
 		if(C.remove_fuel(0,user))
@@ -481,10 +487,12 @@
 					return
 			if(DROPSHIP_CHAIR_BROKEN)
 				to_chat(user, SPAN_WARNING("\The [src] appears to be broken and needs welding."))
+				balloon_alert(user, "broken!")
 				return
 	else if((iswelder(W) && chair_state == DROPSHIP_CHAIR_BROKEN))
 		if(!HAS_TRAIT(W, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
+			balloon_alert(user, "needs a stronger blowtorch!")
 			return
 		var/obj/item/tool/weldingtool/C = W
 		if(C.remove_fuel(0,user))
@@ -554,10 +562,12 @@
 			return
 		if(!T.allow_construction)
 			to_chat(user, SPAN_WARNING("[src] must be assembled on a proper surface!"))
+			balloon_alert(user, "needs a proper surface!")
 			return
 		for(var/atom/movable/AM in T.contents)
 			if(AM.density || istype(AM, /obj/structure/bed))
 				to_chat(user, SPAN_WARNING("You can't unfold the chair here, [AM] blocks the way."))
+				balloon_alert(user, "blocked!")
 				return
 		var/obj/O = new placed_object(T)
 		O.dir = user.dir

@@ -67,17 +67,21 @@
 		return
 	if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 		to_chat(user, SPAN_WARNING("You don't know how to configure [src]."))
+		balloon_alert(user, "don't know how!")
 		return
 	if(configuration)
 		to_chat(user, SPAN_WARNING("[src] already has an item for configuration! Eject that first!"))
+		balloon_alert(user, "eject item!")
 		return
 	if(istype(B, /obj/item/explosive) || istype(B, /obj/item/mortar_shell) || istype(B, /obj/item/ammo_magazine/rocket/custom))
 		user.drop_held_item(B)
 		B.forceMove(src)
 		configuration = B
 		to_chat(user, SPAN_NOTICE("You configure \the [src] to simulate [B]."))
+		balloon_alert(user, "configured")
 	else
 		to_chat(user, "\The [src] is not compatible with [B].")
+		balloon_alert(user, "incompatible!")
 
 /obj/structure/machinery/computer/demo_sim/attack_hand(mob/user as mob)
 	if(..())
@@ -160,9 +164,11 @@
 		simulation = SAFEPICK(GLOB.simulator_cameras)
 	if(!simulation)
 		to_chat(user, SPAN_WARNING("GPU damaged! Unable to start simulation."))
+		balloon_alert(user, "damaged!")
 		return
 	if(user.client.view != world_view_size)
 		to_chat(user, SPAN_WARNING("You're too busy looking at something else."))
+		balloon_alert(user, "busy!")
 		return
 	user.reset_view(simulation)
 	looking_at_simulation = TRUE

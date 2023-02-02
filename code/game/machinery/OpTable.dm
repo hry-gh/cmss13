@@ -75,6 +75,7 @@
 	if(anes_tank)
 		user.put_in_active_hand(anes_tank)
 		to_chat(user, SPAN_NOTICE("You remove \the [anes_tank] from \the [src]."))
+		balloon_alert(user, "tank removed")
 		anes_tank = null
 
 // Removing marines connected to anesthetic
@@ -92,30 +93,37 @@
 
 	if(H.loc != loc)
 		to_chat(user, SPAN_WARNING("The patient needs to be on the table first."))
+		balloon_alert(user, "must be on table!")
 		return
 
 	if(!anes_tank)
 		to_chat(user, SPAN_WARNING("There is no anesthetic tank connected to the table, load one first."))
+		balloon_alert(user, "no anaesthetic tank!")
 		return
+	balloon_alert(user, "connecting to anaesthetic...")
 	H.visible_message(SPAN_NOTICE("[user] begins to connect [H] to the anesthetic system."))
 	if(!do_after(user, 25, INTERRUPT_NO_NEEDHAND, BUSY_ICON_FRIENDLY))
 		to_chat(user, SPAN_NOTICE("You stop placing the mask on [H]'s face."))
+		balloon_alert(user, "interrupted!")
 		return
 
 	if(H.buckled || buckled_mob || H.loc != loc)
 		return
 
 	if(!anes_tank)
+		balloon_alert(user, "no anaesthetic tank!")
 		to_chat(user, SPAN_WARNING("There is no anesthetic tank connected to the table, load one first."))
 		return
 	if(H.wear_mask)
 		var/obj/item/mask = H.wear_mask
 		if(mask.flags_inventory & CANTSTRIP)
+			balloon_alert(user, "can't remove mask!")
 			to_chat(user, SPAN_DANGER("You can't remove their mask!"))
 			return
 		H.drop_inv_item_on_ground(mask)
 	var/obj/item/clothing/mask/breath/medical/B = new()
 	if(!H.equip_if_possible(B, WEAR_FACE, TRUE))
+		balloon_alert(user, "can't put on face!")
 		to_chat(user, SPAN_DANGER("You can't fit the gas mask over their face!"))
 		return
 	H.update_inv_wear_mask()
@@ -128,6 +136,7 @@
 		return
 	var/mob/living/carbon/human/H = target
 	H.internal = anes_tank
+	balloon_alert_to_viewers("anaesthetic activated")
 	H.visible_message(SPAN_NOTICE("[user] fits the mask over [H]'s face and turns on the anesthetic."))
 	to_chat(H, SPAN_INFO("You begin to feel sleepy."))
 	H.setDir(SOUTH)
@@ -143,6 +152,7 @@
 		var/obj/item/M = H.wear_mask
 		H.drop_inv_item_on_ground(M)
 		qdel(M)
+		balloon_alert_to_viewers("anaesthetic deactivated")
 		if(ishuman(user)) //Checks for whether a xeno is unbuckling from the operating table
 			H.visible_message(SPAN_NOTICE("[user] turns off the anesthetic and removes the mask from [H]."))
 		else
@@ -251,17 +261,20 @@
 			user.drop_inv_item_to_loc(W, src)
 			anes_tank = W
 			to_chat(user, SPAN_NOTICE("You connect \the [anes_tank] to \the [src]."))
+			balloon_alert(user, "tank connected")
 			return
 	if (istype(W, /obj/item/grab) && ishuman(user))
 		var/obj/item/grab/G = W
 		if(buckled_mob)
 			to_chat(user, SPAN_WARNING("The table is already occupied!"))
+			balloon_alert(user, "already occupied!")
 			return
 		var/mob/living/carbon/human/M
 		if(ishuman(G.grabbed_thing))
 			M = G.grabbed_thing
 			if(M.buckled)
 				to_chat(user, SPAN_WARNING("Unbuckle first!"))
+				balloon_alert(user, "unbuckle!")
 				return
 		else if(istype(G.grabbed_thing,/obj/structure/closet/bodybag/cryobag))
 			var/obj/structure/closet/bodybag/cryobag/C = G.grabbed_thing

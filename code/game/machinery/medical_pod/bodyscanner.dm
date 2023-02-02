@@ -149,17 +149,21 @@
 		return
 	if(inoperable())
 		to_chat(user, SPAN_WARNING("This console is not functional."))
+		balloon_alert(user, "not functional!")
 		return
 	if(!connected || (connected.inoperable()))
 		to_chat(user, SPAN_WARNING("This console is not connected to a functioning body scanner."))
+		balloon_alert(user, "not connected!")
 		return
 
 	if(!connected.occupant)
 		to_chat(user, SPAN_WARNING("No lifeform detected."))
+		balloon_alert(user, "no occupant!")
 		return
 
 	if(!ishuman(connected.occupant))
 		to_chat(user, SPAN_WARNING("This device can only scan compatible lifeforms."))
+		balloon_alert(user, "incompatible!")
 		return
 
 	var/mob/living/carbon/human/H = connected.occupant

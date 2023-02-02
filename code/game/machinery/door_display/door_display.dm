@@ -309,6 +309,7 @@
 	. = ..()
 	if(!allowed(user))
 		to_chat(user, SPAN_WARNING("Access denied!"))
+		balloon_alert(user, "access denied!")
 
 	tgui_interact(user)
 

@@ -226,9 +226,11 @@
 			tgui_interact(user)
 		else
 			to_chat(user, SPAN_ALERT("A report is already in progress."))
+			balloon_alert(user, "report in progress!")
 
 	else if (istype(O, /obj/item/paper/) && current_menu == "main")
 		to_chat(user, SPAN_ALERT("This console only accepts authentic incident reports. Copies are invalid."))
+		balloon_alert(user, "must be original!")
 
 	else if (istype(O, /obj/item/grab))
 		var/obj/item/grab/grab = O

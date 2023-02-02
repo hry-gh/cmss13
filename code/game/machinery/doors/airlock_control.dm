@@ -256,6 +256,7 @@
 	add_fingerprint(usr)
 	if(!allowed(user))
 		to_chat(user, SPAN_DANGER("Access Denied"))
+		balloon_alert(user, "access denied!")
 
 	else if(radio_connection)
 		var/datum/signal/signal = new

@@ -125,6 +125,7 @@
 
 	if(blocked)
 		to_chat(user, SPAN_WARNING("\The [src] is welded solid!"))
+		balloon_alert(user, "welded!")
 		return
 
 	var/alarmed = lockdown
@@ -137,13 +138,16 @@
 		return
 	if(user.is_mob_incapacitated() || (!user.canmove && !isRemoteControlling(user)) || (get_dist(src, user) > 1  && !isRemoteControlling(user)))
 		to_chat(user, "Sorry, you must remain able bodied and close to \the [src] in order to use it.")
+		balloon_alert(user, "interrupted!")
 		return
 	if(density && (inoperable())) //can still close without power
 		to_chat(user, "\The [src] is not functioning, you'll have to force it open manually.")
+		balloon_alert(user, "not functioning!")
 		return
 
 	if(alarmed && density && lockdown && !allowed(user))
 		to_chat(user, SPAN_WARNING("Access denied.  Please wait for authorities to arrive, or for the alert to clear."))
+		balloon_alert(user, "access denied!")
 		return
 	else
 		user.visible_message(SPAN_NOTICE("\The [src] [density ? "open" : "close"]s for \the [user]."),\
@@ -178,6 +182,7 @@
 		var/obj/item/tool/weldingtool/W = C
 		if(W.remove_fuel(0, user))
 			blocked = !blocked
+			balloon_alert_to_viewers(blocked ? "welded" : "unwelded")
 			user.visible_message(SPAN_DANGER("\The [user] [blocked ? "welds" : "unwelds"] \the [src] with \a [W]."),\
 			"You [blocked ? "weld" : "unweld"] \the [src] with \the [W].",\
 			"You hear something being welded.")
@@ -189,11 +194,13 @@
 			return
 
 		if(blocked)
+			balloon_alert_to_viewers("pry failed!")
 			user.visible_message(SPAN_DANGER("\The [user] pries at \the [src] with \a [C], but \the [src] is welded in place!"),\
 			"You try to pry \the [src] [density ? "open" : "closed"], but it is welded in place!",\
 			"You hear someone struggle and metal straining.")
 			return
 
+		balloon_alert_to_viewers("being forced open...")
 		user.visible_message(SPAN_DANGER("\The [user] starts to force \the [src] [density ? "open" : "closed"] with \a [C]!"),\
 				SPAN_NOTICE("You start forcing \the [src] [density ? "open" : "closed"] with \the [C]!"),\
 				"You hear metal strain.")
@@ -212,6 +219,7 @@
 	else
 		if(blocked)
 			to_chat(user, SPAN_DANGER("\The [src] is welded solid!"))
+			balloon_alert(user, "welded!")
 			return
 	if(istype(C, /obj/item/weapon/zombie_claws))
 		if(operating)
@@ -219,6 +227,7 @@
 		user.visible_message(SPAN_DANGER("\The zombie starts to force \the [src] [density ? "open" : "closed"] with it's claws!!!"),\
 				"You start forcing \the [src] [density ? "open" : "closed"] with your claws!",\
 				"You hear metal strain.")
+		balloon_alert_to_viewers("being forced open...")
 		if(do_after(user, 150, INTERRUPT_ALL, BUSY_ICON_HOSTILE))
 			user.visible_message(SPAN_DANGER("\The [user] forces \the [ blocked ? "welded" : "" ] [src] [density ? "open" : "closed"] with \a [C]!"),\
 			"You force \the [ blocked ? "welded" : "" ] [src] [density ? "open" : "closed"] with \the [C]!",\

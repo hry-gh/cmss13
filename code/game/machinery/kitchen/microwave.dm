@@ -88,8 +88,10 @@
 		else
 			if(broken == 2)
 				to_chat(user, SPAN_DANGER("It's broken! Use a screwdriver and a wrench to fix it!"))
+				balloon_alert(user, "broken!")
 			else
 				to_chat(user, SPAN_DANGER("It's broken! Use a wrench to fix it!"))
+				balloon_alert(user, "broken!")
 			return 1
 	else if(HAS_TRAIT(O, TRAIT_TOOL_WRENCH))
 		. = ..()
@@ -111,12 +113,15 @@
 				flags_atom = OPENCONTAINER
 		else //Otherwise bad luck!!
 			to_chat(user, SPAN_DANGER("It's dirty! Clean it with a spray cleaner!"))
+			balloon_alert(user, "dirty!")
 			return 1
 	else if(operating)
 		to_chat(user, SPAN_DANGER("It's running!"))
+		balloon_alert(user, "running!")
 	else if(is_type_in_list(O,acceptable_items))
 		if (contents.len>=max_n_of_items)
 			to_chat(user, SPAN_DANGER("This [src] is full of ingredients, you cannot put more."))
+			balloon_alert(user, "full!")
 			return 1
 		if(istype(O, /obj/item/stack) && O:get_amount() > 1) // This is bad, but I can't think of how to change it
 			var/obj/item/stack/S = O
@@ -138,12 +143,14 @@
 		for (var/datum/reagent/R in O.reagents.reagent_list)
 			if (!(R.id in acceptable_reagents))
 				to_chat(user, SPAN_DANGER("Your [O] contains components unsuitable for cookery."))
+				balloon_alert(user, "")
 				return 1
 		//G.reagents.trans_to(src,G.amount_per_transfer_from_this)
 	else if(istype(O,/obj/item/grab))
 		return 1
 	else
 		to_chat(user, SPAN_DANGER("You have no idea what you can cook with this [O]."))
+		balloon_alert(user, "seems useless!")
 		return 1
 	src.updateUsrDialog()
 

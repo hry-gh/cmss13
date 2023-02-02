@@ -28,6 +28,7 @@
 		var/obj/item/device/clue_scanner/S = O
 		if(!S.print_list)
 			to_chat(user, SPAN_WARNING("There are no prints stored in \the [S]!"))
+			balloon_alert(user, "no prints stored!")
 			return
 
 		if(usr.drop_held_item())
@@ -44,14 +45,17 @@
 /obj/structure/machinery/computer/secure_data/attack_hand(mob/user as mob)
 	if(..() || inoperable())
 		to_chat(user, SPAN_INFO("It does not appear to be working."))
+		balloon_alert(user, "not working!")
 		return
 
 	if(!allowed(usr))
 		to_chat(user, SPAN_WARNING("Access denied."))
+		balloon_alert(user, "access denied!")
 		return
 
 	if(!is_mainship_level(z))
 		to_chat(user, SPAN_DANGER("<b>Unable to establish a connection</b>: \black You're too far away from the station!"))
+		balloon_alert(user, "unable to establish connection!")
 		return
 	var/dat
 

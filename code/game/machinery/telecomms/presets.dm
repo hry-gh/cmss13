@@ -101,6 +101,7 @@
 /obj/structure/machinery/telecomms/relay/preset/tower/toggle_state(mob/user)
 	if(!toggled && (inoperable() || (health <= initial(health) / 2)))
 		to_chat(user, SPAN_WARNING("\The [src.name] needs repairs to be turned back on!"))
+		balloon_alert(user, "needs repairs!")
 		return
 	..()
 
@@ -116,19 +117,23 @@
 	if(iswelder(I))
 		if(!HAS_TRAIT(I, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
+			balloon_alert(user, "needs a stronger blowtorch!")
 			return
 		if(user.action_busy)
 			return
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_TRAINED))
 			to_chat(user, SPAN_WARNING("You're not trained to repair [src]..."))
+			balloon_alert(user, "not trained!")
 			return
 		var/obj/item/tool/weldingtool/WT = I
 
 		if(health >= initial(health))
 			to_chat(user, SPAN_WARNING("[src] doesn't need repairs."))
+			balloon_alert(user, "doesn't need repairs!")
 			return
 
 		if(WT.remove_fuel(0, user))
+			user.balloon_alert_to_viewers("begins repairing...")
 			user.visible_message(SPAN_NOTICE("[user] begins repairing damage to [src]."),
 			SPAN_NOTICE("You begin repairing the damage to [src]."))
 			playsound(src.loc, 'sound/items/Welder2.ogg', 25, 1)
@@ -148,6 +153,7 @@
 		return ..()
 	if(on)
 		to_chat(user, SPAN_WARNING("\The [src.name] blinks and beeps incomprehensibly as it operates, better not touch this..."))
+		balloon_alert(user, "seems complicated")
 		return
 	toggle_state(user) // just flip dat switch
 
@@ -211,18 +217,22 @@ GLOBAL_LIST_EMPTY(all_static_telecomms_towers)
 		return
 	if(toggle_cooldown > world.time) //cooldown only to prevent spam toggling
 		to_chat(user, SPAN_WARNING("\The [src]'s processors are still cooling! Wait before trying to flip the switch again."))
+		balloon_alert(user, "wait a bit!")
 		return
 	var/current_state = on
 	if(!do_after(user, 20, INTERRUPT_NO_NEEDHAND|BEHAVIOR_IMMOBILE, BUSY_ICON_FRIENDLY, src))
 		return
 	if(current_state != on)
 		to_chat(user, SPAN_NOTICE("\The [src] is already turned [on ? "on" : "off"]!"))
+		balloon_alert(user, "already [on ? "on" : "off"]")
 		return
 	if(stat & NOPOWER)
 		to_chat(user, SPAN_WARNING("\The [src] makes a small plaintful beep, and nothing happens. It seems to be out of power."))
+		balloon_alert(user, "out of power!")
 		return FALSE
 	if(toggle_cooldown > world.time) //cooldown only to prevent spam toggling
 		to_chat(user, SPAN_WARNING("\The [src]'s processors are still cooling! Wait before trying to flip the switch again."))
+		balloon_alert(user, "wait a bit!")
 		return
 	toggle_state(user) // just flip dat switch
 	var/turf/commloc = get_turf(src)
@@ -239,11 +249,13 @@ GLOBAL_LIST_EMPTY(all_static_telecomms_towers)
 	if(HAS_TRAIT(I, TRAIT_TOOL_MULTITOOL))
 		if(inoperable() || (health <= initial(health) * 0.5))
 			to_chat(user, SPAN_WARNING("\The [src.name] needs repairs to have frequencies added to its software!"))
+			balloon_alert(user, "needs repairs!")
 			return
 		var/choice = tgui_input_list(user, "What do you wish to do?", "TC-3T comms tower", list("Wipe communication frequencies", "Add your faction's frequencies"))
 		if(choice == "Wipe frequencies")
 			freq_listening = null
 			to_chat(user, SPAN_NOTICE("You wipe the preexisting frequencies from \the [src]."))
+			balloon_alert(user, "frequencies wiped")
 			return
 		else if(choice == "Add your faction's frequencies")
 			if(!do_after(user, 10, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
@@ -259,10 +271,12 @@ GLOBAL_LIST_EMPTY(all_static_telecomms_towers)
 					freq_listening |= PMC_FREQS
 				if(FACTION_YAUTJA)
 					to_chat(user, SPAN_WARNING("You decide to leave the human machine alone."))
+					balloon_alert(user, "left it alone!")
 					return
 				else
 					freq_listening |= DEPT_FREQS
 			to_chat(user, SPAN_NOTICE("You add your faction's communication frequencies to \the [src]'s comm list."))
+			balloon_alert(user, "frequencies added")
 			return
 	. = ..()
 

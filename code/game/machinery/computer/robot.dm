@@ -25,6 +25,7 @@
 		return
 	if (src.z > 6)
 		to_chat(user, SPAN_DANGER("<b>Unable to establish a connection</b>: \black You're too far away from the station!"))
+		balloon_alert(user, "unable to connect!")
 		return
 	user.set_interaction(src)
 	var/dat

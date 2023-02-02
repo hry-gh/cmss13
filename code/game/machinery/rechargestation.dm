@@ -258,6 +258,7 @@
 
 		if(occupant)
 			to_chat(user, SPAN_NOTICE("The [name] is already occupied!"))
+			balloon_alert(user, "occupied!")
 			return
 
 		visible_message(SPAN_NOTICE("[user] starts putting [G.grabbed_thing] into the sleeper."), null, null, 3)
@@ -265,12 +266,15 @@
 		if(do_after(user, 20, INTERRUPT_ALL, BUSY_ICON_GENERIC))
 			if(occupant)
 				to_chat(user, SPAN_NOTICE("The sleeper is already occupied!"))
+				balloon_alert(user, "occupied!")
 				return
 			if(!G || !G.grabbed_thing) return
 			var/mob/M = G.grabbed_thing
 			user.stop_pulling()
 			move_mob_inside(M)
 			add_fingerprint(user)
+		else
+			balloon_alert(user, "interrupted!")
 
 #ifdef OBJECTS_PROXY_SPEECH
 // Transfers speech to occupant

@@ -25,21 +25,25 @@
 	if(allowed)
 		if(charging)
 			to_chat(user, SPAN_DANGER("\A [charging] is already charging here."))
+			balloon_alert(user, "in use!")
 			return
 		// Checks to make sure he's not in space doing it, and that the area got proper power.
 		var/area/a = get_area(src)
 		if(!isarea(a) || (a.power_equip == 0 && !a.unlimited_power))
 			to_chat(user, SPAN_DANGER("\The [name] blinks red as you try to insert the item!"))
+			balloon_alert(user, "blinks red!")
 			return
 		if(istype(G, /obj/item/device/defibrillator))
 			var/obj/item/device/defibrillator/D = G
 			if(D.ready)
 				to_chat(user, SPAN_WARNING("It won't fit, put the paddles back into \the [D] first!"))
+				balloon_alert(user, "won't fit!")
 				return
 		if(istype(G, /obj/item/tool/portadialysis))
 			var/obj/item/tool/portadialysis/P = G
 			if(P.attached)
 				to_chat(user, SPAN_WARNING("It won't fit, detach it from [P.attached] first!"))
+				balloon_alert(user, "won't fit!")
 				return
 		if(user.drop_inv_item_to_loc(G, src))
 			charging = G
@@ -48,9 +52,11 @@
 	else if(HAS_TRAIT(G, TRAIT_TOOL_WRENCH))
 		if(charging)
 			to_chat(user, SPAN_DANGER("Remove \the [charging] first!"))
+			balloon_alert(user, "item charging!")
 			return
 		anchored = !anchored
 		to_chat(user, "You [anchored ? "attached" : "detached"] the recharger.")
+		balloon_alert([anchored ? "attached" : "detached"])
 		playsound(loc, 'sound/items/Ratchet.ogg', 25, 1)
 
 /obj/structure/machinery/recharger/attack_hand(mob/user as mob)

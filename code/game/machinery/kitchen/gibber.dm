@@ -78,6 +78,7 @@
 		return
 	if(operating)
 		to_chat(user, SPAN_DANGER("It's locked and running"))
+		balloon_alert(user, "working!")
 		return
 	else
 		startgibbing(user)
@@ -85,6 +86,7 @@
 /obj/structure/machinery/gibber/attackby(obj/item/grab/G as obj, mob/user as mob)
 	if(occupant)
 		to_chat(user, SPAN_WARNING("The gibber is full, empty it first!"))
+		balloon_alert(user, "full!")
 		return
 
 	if(HAS_TRAIT(G, TRAIT_TOOL_WRENCH))
@@ -93,24 +95,30 @@
 
 	if(!(istype(G, /obj/item/grab)) )
 		to_chat(user, SPAN_WARNING("This item is not suitable for the gibber!"))
+		balloon_alert(user, "not suitable!")
 		return
 
 	if( !iscarbon(G.grabbed_thing) && !istype(G.grabbed_thing, /mob/living/simple_animal) )
 		to_chat(user, SPAN_WARNING("This item is not suitable for the gibber!"))
+		balloon_alert(user, "not suitable!")
 		return
 	var/mob/living/M = G.grabbed_thing
 	if(user.grab_level < GRAB_AGGRESSIVE && !istype(G.grabbed_thing, /mob/living/carbon/xenomorph))
 		to_chat(user, SPAN_WARNING("You need a better grip to do that!"))
+		balloon_alert(user, "need a better grip!")
 		return
 
 	if(M.abiotic(1))
 		to_chat(user, SPAN_WARNING("Subject may not have abiotic items on."))
+		balloon_alert(user, "no abiotic items!")
 		return
 
+	balloon_alert_to_viewers("being loaded...")
 	user.visible_message(SPAN_DANGER("[user] starts to put [M] into the gibber!"))
 	add_fingerprint(user)
 	if(do_after(user, 3 SECONDS * user.get_skill_duration_multiplier(SKILL_DOMESTIC), INTERRUPT_ALL, BUSY_ICON_HOSTILE) && G && G.grabbed_thing && !occupant)
 		user.visible_message(SPAN_DANGER("[user] stuffs [M] into the gibber!"))
+		balloon_alert_to_viewers("loaded")
 		M.forceMove(src)
 		occupant = M
 		update_icon()
@@ -148,6 +156,7 @@
 		return
 	use_power(1000)
 	visible_message(SPAN_DANGER("You hear a loud squelchy grinding sound."))
+	balloon_alert_to_viewers("contents ground")
 	operating = 1
 	update_icon()
 

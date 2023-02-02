@@ -73,6 +73,7 @@
 	if(HAS_TRAIT(O, TRAIT_TOOL_SCREWDRIVER))
 		panel_open = !panel_open
 		to_chat(user, "You [panel_open ? "open" : "close"] the maintenance panel.")
+		balloon_alert(user, panel_open ? "opened" : "closed")
 		overlays.Cut()
 		if(panel_open)
 			overlays += image(icon, icon_panel)
@@ -86,6 +87,7 @@
 
 	if(!ispowered)
 		to_chat(user, SPAN_NOTICE("\The [src] is unpowered and useless."))
+		balloon_alert(user, "unpowered!")
 		return
 
 	if(accept_check(O))
@@ -109,9 +111,11 @@
 				SPAN_NOTICE("You load \the [src] with \the [P]."))
 			if(P.contents.len > 0)
 				to_chat(user, SPAN_NOTICE("Some items are refused."))
+				balloon_alert(user, "refused!")
 
 	else if(!(O.flags_item & NOBLUDGEON)) //so we can spray, scan, c4 the machine.
 		to_chat(user, SPAN_NOTICE("\The [src] smartly refuses [O]."))
+		balloon_alert(used, "refused!")
 		return 1
 
 /obj/structure/machinery/smartfridge/attack_remote(mob/user)
@@ -120,6 +124,7 @@
 /obj/structure/machinery/smartfridge/attack_hand(mob/user)
 	if(!ispowered)
 		to_chat(user, SPAN_WARNING("[src] has no power."))
+		balloon_alert(user, "unpowered!")
 		return
 	if(!COOLDOWN_FINISHED(src, electrified_cooldown))
 		if(shock(user, 100))
@@ -264,13 +269,16 @@
 		if("vend")
 			if(inoperable())
 				to_chat(user, SPAN_WARNING("\The [src] has no power."))
+				balloon_alert(user, "unpowered!")
 				return FALSE
 			if(is_secure_fridge)
 				if(locked == FRIDGE_LOCK_COMPLETE)
 					to_chat(usr, SPAN_DANGER("Access denied."))
+					balloon_alert(user, "access denied!")
 					return FALSE
 				if(!allowed(usr) && locked == FRIDGE_LOCK_ID)
 					to_chat(usr, SPAN_DANGER("Access denied."))
+					balloon_alert(user, "access denied!")
 					return FALSE
 			var/index=params["index"]
 			var/amount=params["amount"]
@@ -298,13 +306,16 @@
 		if("transfer")
 			if(inoperable())
 				to_chat(user, SPAN_WARNING("\The [src] has no power."))
+				balloon_alert(user, "no power!")
 				return FALSE
 			if(is_secure_fridge)
 				if(locked == FRIDGE_LOCK_COMPLETE)
-					to_chat(usr, SPAN_DANGER("Access denied."))
+					to_chat(user, SPAN_DANGER("Access denied."))
+					balloon_alert(user, "access denied!")
 					return FALSE
 				if(!allowed(usr) && locked == FRIDGE_LOCK_ID)
-					to_chat(usr, SPAN_DANGER("Access denied."))
+					to_chat(usre, SPAN_DANGER("Access denied."))
+					balloon_alert(user, "access denied!")
 					return FALSE
 			var/index=params["index"]
 			var/amount=params["amount"]
@@ -334,10 +345,12 @@
 				return FALSE
 			if(!skillcheck(usr, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(usr, SPAN_WARNING("You don't understand anything about this wiring..."))
+				balloon_alert(user, "not trained!")
 				return FALSE
 			var/obj/item/held_item = user.get_held_item()
 			if (!held_item || !HAS_TRAIT(held_item, TRAIT_TOOL_WIRECUTTERS))
 				to_chat(user, SPAN_WARNING("You need wirecutters!"))
+				balloon_alert(user, "need wirecutters!")
 				return TRUE
 
 			var/wire = params["wire"]
@@ -348,10 +361,12 @@
 				return FALSE
 			if(!skillcheck(usr, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(usr, SPAN_WARNING("You don't understand anything about this wiring..."))
+				balloon_alert(user, "not trained!")
 				return FALSE
 			var/obj/item/held_item = user.get_held_item()
 			if (!held_item || !HAS_TRAIT(held_item, TRAIT_TOOL_WIRECUTTERS))
 				to_chat(user, SPAN_WARNING("You need wirecutters!"))
+				balloon_alert(user, "need wirecutters!")
 				return TRUE
 			var/wire = params["wire"]
 			mend(wire)
@@ -361,10 +376,12 @@
 				return FALSE
 			if(!skillcheck(usr, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(usr, SPAN_WARNING("You don't understand anything about this wiring..."))
+				balloon_alert(user, "not trained!")
 				return FALSE
 			var/obj/item/held_item = user.get_held_item()
 			if (!held_item || !HAS_TRAIT(held_item, TRAIT_TOOL_MULTITOOL))
 				to_chat(user, "You need multitool!")
+				balloon_alert(user, "need a multitool!")
 				return TRUE
 			var/wire = params["wire"]
 			if (isWireCut(wire))

@@ -47,6 +47,7 @@
 		if(open)
 			if(cell)
 				to_chat(user, "There is already a power cell inside.")
+				balloon_alert(user, "already a cell!")
 				return
 			else
 				// insert cell
@@ -57,8 +58,10 @@
 						C.add_fingerprint(usr)
 
 						user.visible_message(SPAN_NOTICE("[user] inserts a power cell into [src]."), SPAN_NOTICE("You insert the power cell into [src]."))
+						balloon_alert_to_viewers("cell inserted")
 		else
 			to_chat(user, "The hatch must be open to insert a power cell.")
+			balloon_alert(user, "hatch must be open!")
 			return
 	else if(HAS_TRAIT(I, TRAIT_TOOL_SCREWDRIVER))
 		open = !open

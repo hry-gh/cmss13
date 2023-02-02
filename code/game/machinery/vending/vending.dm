@@ -166,21 +166,26 @@
 /obj/structure/machinery/vending/attackby(obj/item/W, mob/user)
 	if(is_tipped_over)
 		to_chat(user, "Tip it back upright first!")
+		balloon_alert(user, "must be upright!")
 		return FALSE
 
 	if(HAS_TRAIT(W, TRAIT_TOOL_SCREWDRIVER))
 		if(stat == WORKING)
 			src.panel_open = !src.panel_open
 			to_chat(user, "You [src.panel_open ? "open" : "close"] the maintenance panel.")
+			balloon_alert(user, panel_open ? "opened" : "closed")
 			update_icon()
 			return TRUE
 		else if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You do not understand how to repair the broken [src]."))
+			balloon_alert(user, "not trained!")
 			return FALSE
 		else if(stat & BROKEN)
 			to_chat(user, SPAN_NOTICE("You start to unscrew \the [src]'s broken panel."))
+			balloon_alert(user, "unscrewing...")
 			if(!do_after(user, 3 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 				to_chat(user, SPAN_WARNING("You stop unscrewing \the [src]'s broken panel."))
+				balloon_alert(user, "interrupted!")
 				return FALSE
 			to_chat(user, SPAN_NOTICE("You unscrew \the [src]'s broken panel and remove it, exposing many broken wires."))
 			stat &= ~BROKEN

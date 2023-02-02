@@ -106,6 +106,7 @@
 	else if (HAS_TRAIT(W, TRAIT_TOOL_WRENCH))
 		if (unwrenched==0)
 			playsound(src.loc, 'sound/items/Ratchet.ogg', 25, 1)
+			balloon_alert_to_viewers("unfastening...")
 			to_chat(user, SPAN_NOTICE(" You begin to unfasten \the [src] from the floor..."))
 			if (do_after(user, 40, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 				user.visible_message( \
@@ -119,6 +120,7 @@
 					close_browser(usr, "pipedispenser")
 		else /*if (unwrenched==1)*/
 			playsound(src.loc, 'sound/items/Ratchet.ogg', 25, 1)
+			balloon_alert_to_viewers("fastening...")
 			to_chat(user, SPAN_NOTICE(" You begin to fasten \the [src] to the floor..."))
 			if (do_after(user, 20, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 				user.visible_message( \

@@ -117,6 +117,7 @@
 			updateDialog()
 		else
 			to_chat(user, "You must open the cover first!")
+			balloon_alert(user, "open the cover!")
 	return
 
 /obj/structure/machinery/navbeacon/attack_remote(mob/user)
@@ -132,6 +133,7 @@
 
 	if(!open && !ai) // can't alter controls if not open, unless you're an AI
 		to_chat(user, "The beacon's control cover is closed.")
+		balloon_alert(user, "cover is closed!")
 		return
 
 

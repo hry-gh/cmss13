@@ -35,6 +35,7 @@
 		return
 	if(!allowed(user))
 		to_chat(user, SPAN_WARNING("Access denied."))
+		balloon_alert(user, "access denied!")
 		return 1
 
 	user.set_interaction(src)
@@ -46,13 +47,15 @@
 		if(MATRIX.state == ASSEMBLY_LOCKED)
 			user.drop_held_item(W, src)
 			W.forceMove(src)
-			to_chat(user, SPAN_NOTICE("You swap the matrix in the dropship guidance camera system, destroying the older part in the process"))
+			to_chat(user, SPAN_NOTICE("You swap the matrix in the dropship guidance camera system, destroying the older part in the process."))
+			balloon_alert(user, "matrix swapped!")
 			upgraded = MATRIX.upgrade
 			matrixcol = MATRIX.matrixcol
 			power = MATRIX.power
 
 		else
-			to_chat(user, SPAN_WARNING("matrix is not complete!"))
+			to_chat(user, SPAN_WARNING("Matrix is not complete!"))
+			balloon_alert(user, "matrix incomplete!")
 
 /obj/structure/machinery/computer/dropship_weapons/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 0)
 	var/data[0]

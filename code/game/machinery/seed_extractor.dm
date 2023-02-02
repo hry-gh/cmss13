@@ -21,6 +21,7 @@
 
 			if(new_seed_type)
 				to_chat(user, SPAN_NOTICE("You extract some seeds from [O]."))
+				balloon_alert(user, "seeds extracted")
 				var/produce = rand(1,4)
 				for(var/i = 0;i<=produce;i++)
 					var/obj/item/seeds/seeds = new(get_turf(src))
@@ -28,10 +29,12 @@
 					seeds.update_seed()
 			else
 				to_chat(user, "[O] doesn't seem to have any usable seeds inside it.")
+				balloon_alert(user, "no useable seeds")
 			qdel(O)
 	//Grass.
 	else if(istype(O, /obj/item/stack/tile/grass))
 		var/obj/item/stack/tile/grass/S = O
 		if (S.use(1))
 			to_chat(user, SPAN_NOTICE("You extract some seeds from the grass tile."))
+			balloon_alert(user, "seeds extracted")
 			new /obj/item/seeds/grassseed(loc)

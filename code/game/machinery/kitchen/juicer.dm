@@ -51,6 +51,7 @@
 			return 0
 	if (!is_type_in_list(O, allowed_items))
 		to_chat(user, "It looks as not containing any juice.")
+		balloon_alert("no juice!")
 		return 1
 	if(user.drop_held_item())
 		O.forceMove(src)

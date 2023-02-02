@@ -81,18 +81,22 @@
 		if (!anchored)
 			anchored = TRUE
 			to_chat(user, "You anchor the [src] in place.")
+			balloon_alert(user, "anchored")
 		else
 			anchored = FALSE
 			to_chat(user, "You remove the bolts from the [src].")
+			balloon_alert(user, "unbolted")
 
 	if (HAS_TRAIT(W, TRAIT_TOOL_SCREWDRIVER))
 		if (!open)
 			if(unlocked)
 				unlocked = 0
 				to_chat(user, "You screw the battery panel in place.")
+				balloon_alert(user, "screwed into place")
 			else
 				unlocked = 1
 				to_chat(user, "You unscrew the battery panel.")
+				balloon_alert(user, "unscrewed")
 
 	if (HAS_TRAIT(W, TRAIT_TOOL_CROWBAR))
 		if(unlocked)
@@ -100,19 +104,23 @@
 				open = 0
 				overlays = null
 				to_chat(user, "You crowbar the battery panel in place.")
+				balloon_alert(user, "battery panel opened")
 			else
 				if(unlocked)
 					open = 1
 					to_chat(user, "You remove the battery panel.")
+					balloon_alert(user, "battery panel removed")
 
 	if (istype(W, /obj/item/cell))
 		if(open)
 			if(cell)
 				to_chat(user, "There is a power cell already installed.")
+				balloon_alert(user, "cell already installed!")
 			else
 				if(user.drop_inv_item_to_loc(W, src))
 					cell = W
 					to_chat(user, "You insert the power cell.")
+					balloon_alert(user, "cell inserted")
 	updateicon()
 
 //Magical floodlight that cannot be destroyed or interacted with.

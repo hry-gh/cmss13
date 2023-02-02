@@ -171,6 +171,7 @@
 		return // no
 	if(inoperable())
 		to_chat(user, SPAN_NOTICE("\The [src] is non-functional!"))
+		balloon_alert(user, "not functional!")
 		return
 	if(istype(W, /obj/item/grab))
 		var/mob/to_put_in
@@ -179,6 +180,7 @@
 			var/obj/structure/closet/bodybag/cryobag/C = G.grabbed_thing
 			if(!C.stasis_mob)
 				to_chat(user, SPAN_WARNING("\The [C] is empty!"))
+				balloon_alert(user, "empty!")
 				return
 			to_put_in = C.stasis_mob
 			C.open()
@@ -190,18 +192,23 @@
 		if(skilllock)
 			if(!skillcheck(usr, SKILL_SURGERY, skilllock))
 				to_chat(usr, SPAN_WARNING("You don't have the training to use \the [src]!"))
+				balloon_alert(user, "not trained!")
 				return
 		if(occupant)
 			to_chat(user, SPAN_WARNING("\The [src] is already occupied!"))
+			balloon_alert(user, "already occupied!")
 			return
 		if(to_put_in.abiotic())
 			to_chat(user, SPAN_WARNING("Subject cannot have abiotic items on."))
+			balloon_alert(user, "no abiotic items!")
 			return
 		if(!ishuman(to_put_in))
 			to_chat(user, SPAN_WARNING("An unsupported lifeform was detected, aborting!"))
+			balloon_alert(user, "unsupported lifeform!")
 			return
 
 		if(push_in_timer)
+			balloon_alert_to_viewers("loading...")
 			visible_message(SPAN_NOTICE("[user] starts putting [to_put_in] into \the [src]."), null, null, 3)
 			if(!do_after(usr, push_in_timer, INTERRUPT_NO_NEEDHAND, BUSY_ICON_GENERIC))
 				return
@@ -219,6 +226,7 @@
 	if(istype(W, /obj/item/stack/sheet/metal))
 		if(stored_metal == max_metal)
 			to_chat(user, SPAN_WARNING("\The [src] is full!"))
+			balloon_alert("full!")
 			return
 		var/obj/item/stack/sheet/metal/M = W
 		var/sheets_to_eat = (round((max_metal - stored_metal), 100))/100

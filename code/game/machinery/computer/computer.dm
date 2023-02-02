@@ -98,6 +98,7 @@
 	if(HAS_TRAIT(I, TRAIT_TOOL_SCREWDRIVER) && circuit)
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You don't know how to deconstruct [src]..."))
+			balloon_alert(user, "don't know how!")
 			return
 		playsound(src.loc, 'sound/items/Screwdriver.ogg', 25, 1)
 		if(do_after(user, 20, INTERRUPT_ALL, BUSY_ICON_BUILD))
@@ -109,11 +110,13 @@
 				C.forceMove(loc)
 			if (src.stat & BROKEN)
 				to_chat(user, SPAN_NOTICE("The broken glass falls out."))
+				balloon_alert(user, "glass falls out")
 				new /obj/item/shard( src.loc )
 				A.state = 3
 				A.icon_state = "3"
 			else
 				to_chat(user, SPAN_NOTICE("You disconnect the monitor."))
+				balloon_alert(user, "monitor disconnected")
 				A.state = 4
 				A.icon_state = "4"
 			M.disassemble(src)

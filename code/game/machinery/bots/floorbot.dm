@@ -83,16 +83,20 @@
 		T.use(loaded)
 		src.amount += loaded
 		to_chat(user, SPAN_NOTICE("You load [loaded] tiles into the floorbot. He now contains [src.amount] tiles."))
+		balloon_alert(user, "now has [amount] tiles")
 		src.updateicon()
 	else if(istype(W, /obj/item/card/id))
 		if(src.allowed(usr) && !open)
 			src.locked = !src.locked
 			to_chat(user, SPAN_NOTICE("You [src.locked ? "lock" : "unlock"] the [src] behaviour controls."))
+			balloon_alert(user, locked ? "locked" : "unlocked")
 		else
 			if(open)
 				to_chat(user, SPAN_WARNING("Please close the access panel before locking it."))
+				balloon_alert(user, "close panel!")
 			else
 				to_chat(user, SPAN_WARNING("Access denied."))
+				balloon_alert(user, "access denied!")
 		src.updateUsrDialog()
 	else
 		..()
@@ -344,6 +348,7 @@
 		return
 	if(src.contents.len >= 1)
 		to_chat(user, SPAN_NOTICE("That won't fit, there's already stuff inside."))
+		balloon_alert(user, "won't fit!")
 		return
 	for(var/mob/M in content_watchers)
 		storage_close(M)
@@ -355,4 +360,5 @@
 		qdel(src)
 	else
 		to_chat(user, SPAN_WARNING("You need 10 floortiles for a floorbot."))
+		balloon_alert(user, "needs 10 tiles!")
 	return

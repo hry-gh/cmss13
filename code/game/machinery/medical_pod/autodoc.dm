@@ -66,12 +66,15 @@
 	if(usr == occupant)
 		if(surgery)
 			to_chat(usr, SPAN_WARNING("There's no way you're getting out while this thing is operating on you!"))
+			balloon_alert(user, "can't get out!")
 			return FALSE
 		else
 			visible_message("[usr] engages the internal release mechanism, and climbs out of \the [src].")
+			balloon_alert_to_viewers("release engaged")
 			return TRUE
 	if(surgery)
 		visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> malfunctions as [usr] aborts the surgery in progress.")
+		balloon_alert_to_viewers("release engaged")
 		occupant.take_limb_damage(rand(30,50),rand(30,50))
 		surgery = FALSE
 		// message_staff for now, may change to message_admins later
@@ -108,6 +111,7 @@
 	..()
 	if(stat & NOPOWER)
 		visible_message("\The [src] engages the safety override, ejecting the occupant.")
+		balloon_alert_to_viewers("safety override, occupant ejected")
 		surgery = 0
 		go_out()
 		return
@@ -134,6 +138,7 @@
 	if(occupant)
 		if(occupant.stat == DEAD)
 			visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Patient has expired.")
+			balloon_alert_to_viewers("patient expired")
 			surgery = 0
 			go_out()
 			return
@@ -149,8 +154,10 @@
 				if(!filtered)
 					filtering = 0
 					visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Blood filtering complete.")
+					balloon_alert_to_viewers("blood filtering completed")
 				else if(prob(10))
 					visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> whirrs and gurgles as the dialysis module operates.")
+					balloon_alert_to_viewers("dialysis in progress...")
 					to_chat(occupant, SPAN_INFO("You feel slightly better."))
 			if(blood_transfer)
 				if(occupant.blood_volume < BLOOD_VOLUME_NORMAL)
@@ -159,38 +166,46 @@
 						visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Blood reserves depleted, switching to fresh bag.")
 					occupant.inject_blood(blood_pack, 8) // double iv stand rate
 					if(prob(10))
+						balloon_alert_to_viewers("blood infusing...")
 						visible_message("\The [src] whirrs and gurgles as it transfuses blood.")
 						to_chat(occupant, SPAN_INFO("You feel slightly less faint."))
 				else
 					blood_transfer = 0
 					visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Blood transfer complete.")
+					balloon_alert_to_viewers("blood transfer complete")
 			if(heal_brute)
 				if(occupant.getBruteLoss() > 0)
 					heal_limb(occupant, 3, 0)
 					if(prob(10))
 						visible_message("\The [src] whirrs and clicks as it stitches flesh together.")
 						to_chat(occupant, SPAN_INFO("You feel your wounds being stitched and sealed shut."))
+						balloon_alert_to_viewers("stitching in progress...")
 				else
 					heal_brute = 0
 					visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Trauma repair surgery complete.")
+					balloon_alert_to_viewers("trauma repair complete")
 			if(heal_burn)
 				if(occupant.getFireLoss() > 0)
 					heal_limb(occupant, 0, 3)
 					if(prob(10))
 						visible_message("\The [src] whirrs and clicks as it grafts synthetic skin.")
 						to_chat(occupant, SPAN_INFO("You feel your burned flesh being sliced away and replaced."))
+						balloon_alert_to_viewers("grafting in progress...")
 				else
 					heal_burn = 0
 					visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Skin grafts complete.")
+					balloon_alert_to_viewers("skin graft complete")
 			if(heal_toxin)
 				if(occupant.getToxLoss() > 0)
 					occupant.apply_damage(-3, TOX)
 					if(prob(10))
 						visible_message("\The [src] whirrs and gurgles as it chelates the occupant.")
 						to_chat(occupant, SPAN_INFO("You feel slightly less ill."))
+						balloon_alert_to_viewers("chelation in progress...")
 				else
 					heal_toxin = 0
 					visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Chelation complete.")
+					balloon_alert_to_viewers("chelation complete")
 
 
 #define LIMB_SURGERY 1
@@ -301,9 +316,11 @@
 
 	if(!surgery_todo_list.len)
 		visible_message("\The [src] buzzes, no surgical procedures were queued.")
+		balloon_alert_to_viewers("no surgeries!")
 		return
 
 	visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> begins to operate, loud audible clicks lock the pod.")
+	balloon_alert_to_viewers("operation beginning...")
 	surgery = 1
 	update_icon()
 
@@ -336,10 +353,13 @@
 			if(ORGAN_SURGERY)
 				switch(S.surgery_procedure)
 					if("damage")
-						if(prob(30)) visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning organ restoration.");
+						if(prob(30))
+						visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning organ restoration.")
+						balloon_alert_to_viewers("beginning organ restoration...")
 						if(S.unneeded)
 							sleep(UNNEEDED_DELAY)
-							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.");
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.")
+							balloon_alert_to_viewers("deemed unnecessary!")
 							surgery_todo_list -= S
 							continue
 						open_incision(H,S.limb_ref)
@@ -358,6 +378,7 @@
 							S.organ_ref.rejuvenate()
 						else
 							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Organ is missing.");
+							balloon_alert_to_viewers("organ missing!")
 
 						// close them
 						if(S.limb_ref.name != "groin") // TODO: fix brute damage before closing
@@ -365,10 +386,13 @@
 						close_incision(H,S.limb_ref)
 
 					if("eyes")
-						if(prob(30)) visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning corrective eye surgery.");
+						if(prob(30))
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning corrective eye surgery.")
+							balloon_alert_to_viewers("beginning eye surgery...")
 						if(S.unneeded)
 							sleep(UNNEEDED_DELAY)
-							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.");
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.")
+							balloon_alert_to_viewers("deemed unnecessary!")
 							surgery_todo_list -= S
 							continue
 						if(istype(S.organ_ref,/datum/internal_organ/eyes))
@@ -402,10 +426,13 @@
 			if(LIMB_SURGERY)
 				switch(S.surgery_procedure)
 					if("internal")
-						if(prob(30)) visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning internal bleeding procedure.");
+						if(prob(30))
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning internal bleeding procedure.")
+							balloon_alert_to_viewers("beginning internal bleeding surgery...")
 						if(S.unneeded)
 							sleep(UNNEEDED_DELAY)
-							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.");
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.")
+							balloon_alert_to_viewers("deemed unnecessary!")
 							surgery_todo_list -= S
 							continue
 						open_incision(H,S.limb_ref)
@@ -420,10 +447,13 @@
 						close_incision(H,S.limb_ref)
 
 					if("broken")
-						if(prob(30)) visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning broken bone procedure.");
+						if(prob(30))
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning broken bone procedure.")
+							balloon_alert_to_viewers("beginning fracture surgery...")
 						if(S.unneeded)
 							sleep(UNNEEDED_DELAY)
-							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.");
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.")
+							balloon_alert_to_viewers("deemed unnecessary!")
 							surgery_todo_list -= S
 							continue
 						open_incision(H,S.limb_ref)
@@ -442,10 +472,13 @@
 						close_incision(H,S.limb_ref)
 
 					if("missing")
-						if(prob(30)) visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning limb replacement.");
+						if(prob(30))
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning limb replacement.")
+							balloon_alert_to_viewers("beginning limb replacement...")
 						if(S.unneeded)
 							sleep(UNNEEDED_DELAY)
-							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.");
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.")
+							balloon_alert_to_viewers("deemed unnecessary!")
 							surgery_todo_list -= S
 							continue
 
@@ -455,6 +488,7 @@
 
 						if(stored_metal < LIMB_METAL_AMOUNT)
 							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> croaks: Metal reserves depleted.")
+							balloon_alert_to_viewers("metal depleted!")
 							playsound(src.loc, 'sound/machines/buzz-two.ogg', 15, 1)
 							surgery_todo_list -= S
 							continue // next surgery
@@ -463,6 +497,7 @@
 
 						if(S.limb_ref.parent.status & LIMB_DESTROYED) // there's nothing to attach to
 							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> croaks: Limb attachment failed.")
+							balloon_alert_to_viewers("limb attachment failed!")
 							playsound(src.loc, 'sound/machines/buzz-two.ogg', 15, 1)
 							surgery_todo_list -= S
 							continue
@@ -482,10 +517,13 @@
 						H.UpdateDamageIcon()
 
 					if("shrapnel")
-						if(prob(30)) visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning shrapnel removal.");
+						if(prob(30))
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning shrapnel removal.")
+							balloon_alert_to_viewers("beginning shrapnel removal...")
 						if(S.unneeded)
 							sleep(UNNEEDED_DELAY)
-							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.");
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.")
+							balloon_alert_to_viewers("deemed unnecessary!")
 							surgery_todo_list -= S
 							continue
 
@@ -494,7 +532,8 @@
 							open_encased(H,S.limb_ref)
 						if(S.limb_ref.implants.len)
 							for(var/obj/item/I in S.limb_ref.implants)
-								if(!surgery) break
+								if(!surgery)
+									break
 								if(!is_type_in_list(I,known_implants))
 									sleep(REMOVE_OBJECT_MAX_DURATION*surgery_mod)
 									S.limb_ref.implants -= I
@@ -506,10 +545,13 @@
 						close_incision(H,S.limb_ref)
 
 					if("facial")
-						if(prob(30)) visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning Facial Reconstruction Surgery.");
+						if(prob(30))
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Beginning Facial Reconstruction Surgery.")
+							balloon_alert_to_viewers("beginning facial reconstruction...")
 						if(S.unneeded)
 							sleep(UNNEEDED_DELAY)
-							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.");
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure has been deemed unnecessary.")
+							balloon_alert_to_viewers("deemed unnecessary!")
 							surgery_todo_list -= S
 							continue
 						if(istype(S.limb_ref, /obj/limb/head))
@@ -520,21 +562,28 @@
 							F.owner.name = F.owner.get_visible_name()
 
 					if("open")
-						if(prob(30)) visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b>croaks: Closing surgical incision.");
+						if(prob(30))
+							visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b>croaks: Closing surgical incision.")
+							balloon_alert_to_viewers("closing surgical incision...")
 						close_encased(H,S.limb_ref)
 						close_incision(H,S.limb_ref)
 
-		if(prob(30)) visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure complete.");
+		if(prob(30))
+			visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> speaks: Procedure complete.")
+			balloon_alert_to_viewers("procedure complete")
 		surgery_todo_list -= S
 		continue
 
 	while(heal_brute||heal_burn||heal_toxin||filtering||blood_transfer)
-		if(!surgery) break
+		if(!surgery)
+			break
 		sleep(20)
-		if(prob(5)) visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> beeps as it continues working.");
+		if(prob(5))
+			visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> beeps as it continues working.")
 
 	H.pain.recalculate_pain()
 	visible_message("[icon2html(src, viewers(src))] \The <b>[src]</b> clicks and opens up having finished the requested operations.")
+	balloon_alert_to_viewers("complete")
 	surgery = 0
 	go_out()
 
@@ -640,9 +689,11 @@
 	if(!connected || (connected.inoperable()))
 		dat += "This console is not connected to a Auto-Doc or the Auto-Doc is non-functional."
 		to_chat(user, "This console seems to be powered down.")
+		balloon_alert(user, "no power!")
 	else
 		if(!skillcheck(user, SKILL_SURGERY, SKILL_SURGERY_NOVICE))
 			to_chat(user, SPAN_WARNING("You have no idea how to use this."))
+			balloon_alert(user, "not trained!")
 			return
 		var/mob/living/occupant = connected.occupant
 		dat += "<B>Overall Status:</B><BR>"

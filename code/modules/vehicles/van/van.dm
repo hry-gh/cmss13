@@ -201,7 +201,9 @@
 /obj/vehicle/multitile/van/handle_click(mob/living/user, atom/A, list/mods)
 	if(mods["shift"] && !mods["alt"])
 		if(overdrive_next > world.time)
-			to_chat(user, SPAN_WARNING("You can't activate overdrive yet! Wait [round((overdrive_next - world.time) / 10, 0.1)] seconds."))
+			var/wait_duration = round((overdrive_next - world.time) / 10, 0.1)
+			to_chat(user, SPAN_WARNING("You can't activate overdrive yet! Wait [wait_duration] seconds."))
+			balloon_alert(user, "wait [wait_duration]s")
 			return
 
 		misc_multipliers["move"] -= overdrive_speed_mult

@@ -255,6 +255,7 @@ Class Procs:
 			return TRUE
 		else if(prob(H.getBrainLoss()))
 			to_chat(user, SPAN_DANGER("You momentarily forget how to use [src]."))
+			balloon_alert(user, "don't remember how...")
 			return TRUE
 
 	src.add_fingerprint(user)

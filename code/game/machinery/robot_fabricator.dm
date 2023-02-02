@@ -28,9 +28,11 @@
 
 					to_chat(user, "You insert [count] metal sheet\s into the fabricator.")
 					src.overlays -= "fab-load-metal"
+					balloon_alert(user, "[count] added")
 					updateDialog()
 		else
 			to_chat(user, "The robot part maker is full. Please remove metal from the robot part maker in order to insert more.")
+			balloon_alert(user, "full!")
 
 /obj/structure/machinery/robotic_fabricator/attack_hand(user as mob)
 	var/dat

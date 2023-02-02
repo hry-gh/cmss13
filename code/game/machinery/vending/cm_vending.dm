@@ -149,15 +149,18 @@ GLOBAL_LIST_EMPTY(vending_products)
 /obj/structure/machinery/cm_vending/proc/hack_access(mob/user)
 	if(!hackable)
 		to_chat(user, SPAN_WARNING("[src] cannot be hacked."))
+		balloon_alert(user, "can't be hacked!")
 		return
 
 	hacked = !hacked
 	if(hacked)
 		to_chat(user, SPAN_WARNING("You have succesfully removed access restrictions in [src]."))
+		balloon_alert(user, "restrictions removed!")
 		if(user && is_mainship_level(z))
 			SSclues.create_print(get_turf(user), user, "A small piece of cut wire is found on the fingerprint.")
 	else
 		to_chat(user, SPAN_WARNING("You have restored access restrictions in [src]."))
+		balloon_alert(user, "restrictions added!")
 	return
 
 
@@ -223,22 +226,26 @@ GLOBAL_LIST_EMPTY(vending_products)
 		var/obj/item/weapon/gun/G = item_to_stock
 		if(G.in_chamber || (G.current_mag && !istype(G.current_mag, /obj/item/ammo_magazine/internal)) || (istype(G.current_mag, /obj/item/ammo_magazine/internal) && G.current_mag.current_rounds > 0) )
 			to_chat(user, SPAN_WARNING("[G] is still loaded. Unload it before you can restock it."))
+			balloon_alert(user, "still loaded!")
 			return
 		for(var/obj/item/attachable/A in G.contents) //Search for attachments on the gun. This is the easier method
 			if((A.flags_attach_features & ATTACH_REMOVABLE) && !(is_type_in_list(A, G.starting_attachment_types))) //There are attachments that are default and others that can't be removed
 				to_chat(user, SPAN_WARNING("[G] has non-standard attachments equipped. Detach them before you can restock it."))
+				balloon_alert(user, "remove non-standard attachments!")
 				return
 	//various stacks handling
 	else if(istype(item_to_stock, /obj/item/stack/folding_barricade))
 		var/obj/item/stack/folding_barricade/B = item_to_stock
 		if(B.amount != 3)
 			to_chat(user, SPAN_WARNING("[B]s are being stored in [SPAN_HELPFUL("stacks of 3")] for convenience. Add to \the [B] stack to make it a stack of 3 before restocking."))
+			balloon_alert(user, "must be a stack of 3")
 			return
 	//M94 flare packs handling
 	else if(istype(item_to_stock, /obj/item/storage/box/m94))
 		var/obj/item/storage/box/m94/flare_pack = item_to_stock
 		if(flare_pack.contents.len < flare_pack.max_storage_space)
 			to_chat(user, SPAN_WARNING("\The [item_to_stock] is not full."))
+			balloon_alert(user, "not full!")
 			return
 		var/flare_type
 		if(istype(item_to_stock, /obj/item/storage/box/m94/signal))
@@ -248,9 +255,11 @@ GLOBAL_LIST_EMPTY(vending_products)
 		for(var/obj/item/device/flashlight/flare/F in flare_pack.contents)
 			if(F.fuel < 1)
 				to_chat(user, SPAN_WARNING("Some flares in \the [F] are used."))
+				balloon_alert(user, "flares are used!")
 				return
 			if(F.type != flare_type)
 				to_chat(user, SPAN_WARNING("Some flares in \the [F] are not of the correct type."))
+				balloon_alert(user, "mismatched flares!")
 				return
 	//Machete holsters handling
 	else if(istype(item_to_stock, /obj/item/storage/large_holster/machete))
@@ -258,6 +267,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 		if(!mac)
 			if(user)
 				to_chat(user, SPAN_WARNING("\The [item_to_stock] is empty."))
+				balloon_alert(user, "empty!")
 			return FALSE
 	//Machete holsters handling
 	else if(istype(item_to_stock, /obj/item/clothing/suit/storage/marine))
@@ -265,6 +275,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 		if(AR.pockets && AR.pockets.contents.len)
 			if(user)
 				to_chat(user, SPAN_WARNING("\The [AR] has something inside it. Empty it before restocking."))
+				balloon_alert(user, "empty it!")
 			return FALSE
 	//magazines handling
 	else if(istype(item_to_stock, /obj/item/ammo_magazine))
@@ -273,10 +284,12 @@ GLOBAL_LIST_EMPTY(vending_products)
 			var/obj/item/ammo_magazine/flamer_tank/FT = item_to_stock
 			if(FT.flamer_chem != initial(FT.flamer_chem))
 				to_chat(user, SPAN_WARNING("\The [FT] contains non-standard fuel."))
+				balloon_alert(user, "has non-standard fuel!")
 				return
 		var/obj/item/ammo_magazine/A = item_to_stock
 		if(A.current_rounds < A.max_rounds)
 			to_chat(user, SPAN_WARNING("\The [A] isn't full. You need to fill it before you can restock it."))
+			balloon_alert(user, "not full!")
 			return
 	//magazine ammo boxes handling
 	else if(istype(item_to_stock, /obj/item/ammo_box/magazine))
@@ -289,20 +302,24 @@ GLOBAL_LIST_EMPTY(vending_products)
 				return
 			if(AM.current_rounds != AM.max_rounds)
 				to_chat(user, SPAN_WARNING("\The [A] isn't full. You need to fill it before you can restock it."))
+				balloon_alert(user, "not full!")
 				return
 		else if(A.contents.len < A.num_of_magazines)
 			to_chat(user, SPAN_WARNING("[A] is not full."))
+			balloon_alert(user, "not full!")
 			return
 		else
 			for(var/obj/item/ammo_magazine/M in A.contents)
 				if(M.current_rounds != M.max_rounds)
 					to_chat(user, SPAN_WARNING("Not all magazines in \the [A] are full."))
+					balloon_alert(user, "not full!")
 					return
 	//loose rounds ammo box handling
 	else if(istype(item_to_stock, /obj/item/ammo_box/rounds))
 		var/obj/item/ammo_box/rounds/A = item_to_stock
 		if(A.bullet_amount < A.max_bullet_amount)
 			to_chat(user, SPAN_WARNING("[A] is not full."))
+			balloon_alert(user, "not full!")
 			return
 	//Marine armor handling
 	else if(istype(item_to_stock, /obj/item/clothing/suit/storage/marine))
@@ -310,6 +327,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 		if(AR.pockets && AR.pockets.contents.len)
 			if(user)
 				to_chat(user, SPAN_WARNING("\The [AR] has something inside it. Empty it before restocking."))
+				balloon_alert(user, "empty it!")
 			return FALSE
 	//Marine helmet handling
 	else if(istype(item_to_stock, /obj/item/clothing/head/helmet/marine))
@@ -317,6 +335,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 		if(H.pockets && H.pockets.contents.len)
 			if(user)
 				to_chat(user, SPAN_WARNING("\The [H] has something inside it. Empty it before restocking."))
+				balloon_alert(user, "empty it!")
 			return FALSE
 	return TRUE //Item IS good to restock!
 
@@ -410,6 +429,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 	if(stat & TIPPED_OVER)
 		if(user.action_busy)
 			return
+		balloon_alert_to_viewers("picking up...")
 		user.visible_message(SPAN_NOTICE("[user] begins to heave the vending machine back into place!"),SPAN_NOTICE("You start heaving the vending machine back into place."))
 		if(do_after(user, 80, INTERRUPT_NO_NEEDHAND, BUSY_ICON_FRIENDLY))
 			user.visible_message(SPAN_NOTICE("[user] rights \the [src]!"),SPAN_NOTICE("You right \the [src]!"))
@@ -461,12 +481,14 @@ GLOBAL_LIST_EMPTY(vending_products)
 			var/turf/target_turf = get_appropriate_vend_turf(user)
 			if(vend_flags & VEND_CLUTTER_PROTECTION)
 				if(target_turf.contents.len > 25)
+					balloon_alert("too cluttered!")
 					to_chat(usr, SPAN_WARNING("The floor is too cluttered, make some space."))
 					vend_fail()
 					return FALSE
 
 			if((!user.assigned_squad && squad_tag) || (!user.assigned_squad?.omni_squad_vendor && (squad_tag && user.assigned_squad.name != squad_tag)))
 				to_chat(user, SPAN_WARNING("This machine isn't for your squad."))
+				balloon_alert(user, "not for your squad!")
 				vend_fail()
 				return FALSE
 
@@ -478,21 +500,25 @@ GLOBAL_LIST_EMPTY(vending_products)
 						if(vendor_role.Find(JOB_SQUAD_SPECIALIST))
 							// handle specalist essential gear assignment
 							if(user.job != JOB_SQUAD_SPECIALIST)
+								balloon_alert(user, "must be a specialist!")
 								to_chat(user, SPAN_WARNING("Only specialists can take specialist sets."))
 								vend_fail()
 								return FALSE
 							else if(!user.skills || user.skills.get_skill_level(SKILL_SPEC_WEAPONS) != SKILL_SPEC_ALL)
 								to_chat(user, SPAN_WARNING("You already have a specialization."))
+								balloon_alert(user, "already specialized!")
 								vend_fail()
 								return FALSE
 							var/p_name = itemspec[1]
 							if(!available_specialist_sets.Find(p_name))
 								to_chat(user, SPAN_WARNING("That set is already taken."))
+								balloon_alert(user, "set taken!")
 								vend_fail()
 								return FALSE
 							var/obj/item/card/id/ID = user.wear_id
 							if(!istype(ID) || ID.registered_ref != WEAKREF(usr))
 								to_chat(user, SPAN_WARNING("You must be wearing your [SPAN_INFO("dog tags")] to select a specialization!"))
+								balloon_alert(user, "wear your tags!")
 								return FALSE
 							var/specialist_assignment
 							switch(p_name)
@@ -521,17 +547,20 @@ GLOBAL_LIST_EMPTY(vending_products)
 						else if(vendor_role.Find(JOB_SYNTH))
 							if(user.job != JOB_SYNTH)
 								to_chat(user, SPAN_WARNING("Only USCM Synthetics may vend experimental tool tokens."))
+								balloon_alert(user, "must be a uscm synthetic!")
 								vend_fail()
 								return FALSE
 
 					if(!handle_vend(src, itemspec, user))
 						to_chat(user, SPAN_WARNING("You can't buy things from this category anymore."))
+						balloon_alert(user, "can't buy!")
 						vend_fail()
 						return FALSE
 
 			if(use_points || use_snowflake_points)
 				if(!handle_points(user, itemspec))
 					to_chat(user, SPAN_WARNING("Not enough points."))
+					balloon_alert(user, "not enough points!")
 					vend_fail()
 					return FALSE
 			else
@@ -586,26 +615,34 @@ GLOBAL_LIST_EMPTY(vending_products)
 	// Repairing process
 	if(stat & TIPPED_OVER)
 		to_chat(user, SPAN_WARNING("You need to set [src] back upright first."))
+		balloon_alert(user, "must be upright!")
 		return
 	if(HAS_TRAIT(W, TRAIT_TOOL_SCREWDRIVER))
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You do not understand how to repair the broken [src]."))
+			balloon_alert(user, "not trained!")
 			return FALSE
 		else if(stat & MAINT)
 			to_chat(user, SPAN_NOTICE("You start to unscrew \the [src]'s broken panel."))
+			balloon_alert(user, "unscrewing...")
 			if(!do_after(user, 3 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 				to_chat(user, SPAN_WARNING("You stop unscrewing \the [src]'s broken panel."))
+				balloon_alert(user, "interrupted!")
 				return FALSE
 			to_chat(user, SPAN_NOTICE("You unscrew \the [src]'s broken panel and remove it, exposing many broken wires."))
+			balloon_alert(user, "unscrewed")
 			stat &= ~MAINT
 			stat |= REPAIR_STEP_ONE
 			return TRUE
 		else if(stat & REPAIR_STEP_FOUR)
 			to_chat(user, SPAN_NOTICE("You start to fasten \the [src]'s new panel."))
+			balloon_alert(user, "unfastening...")
 			if(!do_after(user, 3 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 				to_chat(user, SPAN_WARNING("You stop fastening \the [src]'s new panel."))
+				balloon_alert(user, "interrupted!")
 				return FALSE
 			to_chat(user, SPAN_NOTICE("You fasten \the [src]'s new panel, fully repairing the vendor."))
+			balloon_alert(user, "unfastened")
 			stat &= ~(REPAIR_STEP_FOUR|MAINT|BROKEN)
 			stat |= WORKING
 			update_icon()
@@ -617,13 +654,17 @@ GLOBAL_LIST_EMPTY(vending_products)
 	else if(HAS_TRAIT(W, TRAIT_TOOL_WIRECUTTERS))
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You do not understand how to repair the broken [src]."))
+			balloon_alert(user, "not trained!")
 			return FALSE
 		else if(stat & REPAIR_STEP_ONE)
 			to_chat(user, SPAN_NOTICE("You start to remove \the [src]'s broken wires."))
+			balloon_alert(user, "removing wires...")
 			if(!do_after(user, 3 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 				to_chat(user, SPAN_WARNING("You stop removing \the [src]'s broken wires."))
+				balloon_alert(user, "interrupted!")
 				return FALSE
 			to_chat(user, SPAN_NOTICE("You remove \the [src]'s broken broken wires."))
+			balloon_alert(user, "wires removed")
 			stat &= ~REPAIR_STEP_ONE
 			stat |= REPAIR_STEP_TWO
 			return TRUE
@@ -634,19 +675,25 @@ GLOBAL_LIST_EMPTY(vending_products)
 	else if(iswire(W))
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You do not understand how to repair the broken [src]."))
+			balloon_alert(user, "not trained!")
 			return FALSE
 		var/obj/item/stack/cable_coil/CC = W
 		if(stat & REPAIR_STEP_TWO)
 			if(CC.amount < 5)
 				to_chat(user, SPAN_WARNING("You need more cable coil to replace the removed wires."))
+				balloon_alert(user, "need more wires")
 			to_chat(user, SPAN_NOTICE("You start to replace \the [src]'s removed wires."))
+			balloon_alert(user, "replacing wires...")
 			if(!do_after(user, 3 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 				to_chat(user, SPAN_WARNING("You stop replacing \the [src]'s removed wires."))
+				balloon_alert(user, "interrupted!")
 				return FALSE
 			if(!CC || !CC.use(5))
 				to_chat(user, SPAN_WARNING("You need more cable coil to replace the removed wires."))
+				balloon_alert(user, "need more wires")
 				return FALSE
 			to_chat(user, SPAN_NOTICE("You remove \the [src]'s broken broken wires."))
+			balloon_alert(user, "replaced wires")
 			stat &= ~REPAIR_STEP_TWO
 			stat |= REPAIR_STEP_THREE
 			return TRUE
@@ -657,17 +704,21 @@ GLOBAL_LIST_EMPTY(vending_products)
 	else if(istype(W, /obj/item/stack/sheet/metal))
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You do not understand how to repair the broken [src]."))
+			balloon_alert(user, "not trained!")
 			return FALSE
 		var/obj/item/stack/sheet/metal/M = W
 		if(stat & REPAIR_STEP_THREE)
 			to_chat(user, SPAN_NOTICE("You start to construct a new panel for \the [src]."))
+			balloon_alert(user, "constructing new panel...")
 			if(!do_after(user, 3 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 				to_chat(user, SPAN_WARNING("You stop constructing a new panel for \the [src]."))
+				balloon_alert(user, "interrupted!")
 				return FALSE
 			if(!M || !M.use(1))
 				to_chat(user, SPAN_WARNING("You a sheet of metal to construct a new panel."))
 				return FALSE
 			to_chat(user, SPAN_NOTICE("You construct a new panel for \the [src]."))
+			balloon_alert(user, "panel constructed!")
 			stat &= ~REPAIR_STEP_THREE
 			stat |= REPAIR_STEP_FOUR
 			return TRUE
@@ -680,16 +731,21 @@ GLOBAL_LIST_EMPTY(vending_products)
 
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI) && !skillcheckexplicit(user, SKILL_ANTAG, SKILL_ANTAG_AGENT))
 			to_chat(user, SPAN_WARNING("You do not understand how tweak access requirements in [src]."))
+			balloon_alert(user, "not trained!")
 			return FALSE
 		if(stat != WORKING)
 			to_chat(user, SPAN_WARNING("[src] must be in working condition and powered for you to hack it."))
+			balloon_alert(user, "must be working!")
 			return FALSE
 		if(!hackable)
 			to_chat(user, SPAN_WARNING("You are unable to hack access restrictions in [src]."))
+			balloon_alert(user, "can't behacked!")
 			return FALSE
 		to_chat(user, SPAN_WARNING("You start tweaking access restrictions in [src]."))
+		balloon_alert(user, "tweaking access...")
 		if(!do_after(user, MT.hack_speed * sqrt(user.get_skill_duration_multiplier(SKILL_ENGINEER)), INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 			to_chat(user, SPAN_WARNING("You stop tweaking access restrictions in [src]."))
+			balloon_alert(user, "interrupted!")
 			return FALSE
 		hack_access(user)
 		return TRUE
@@ -704,6 +760,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 		if(!allowed(user))
 			if(display)
 				to_chat(user, SPAN_WARNING("Access denied."))
+				balloon_alert(user, "access denied!")
 				vend_fail()
 			return FALSE
 
@@ -712,18 +769,21 @@ GLOBAL_LIST_EMPTY(vending_products)
 		if(!istype(I))
 			if(display)
 				to_chat(user, SPAN_WARNING("Access denied. No ID card detected"))
+				balloon_alert(user, "no id!")
 				vend_fail()
 			return FALSE
 
 		if(I.registered_name != user.real_name)
 			if(display)
 				to_chat(user, SPAN_WARNING("Wrong ID card owner detected."))
+				balloon_alert(user, "mismatched id!")
 				vend_fail()
 			return FALSE
 
 		if(LAZYLEN(vendor_role) && !vendor_role.Find(user.job))
 			if(display)
 				to_chat(user, SPAN_WARNING("This machine isn't for you."))
+				balloon_alert(user, "not for you!")
 				vend_fail()
 			return FALSE
 	return TRUE
@@ -875,15 +935,18 @@ GLOBAL_LIST_EMPTY(vending_products)
 				var/obj/item/device/defibrillator/D = item_to_stock
 				if(!D.dcell)
 					to_chat(user, SPAN_WARNING("\The [item_to_stock] needs a cell in it to be restocked!"))
+					balloon_alert(user, "needs a cell!")
 					return
 				if(D.dcell.charge < D.dcell.maxcharge)
 					to_chat(user, SPAN_WARNING("\The [item_to_stock] needs to be fully charged to restock it!"))
+					balloon_alert(user, "must be fully charged!")
 					return
 
 			if(istype(item_to_stock, /obj/item/cell))
 				var/obj/item/cell/C = item_to_stock
 				if(C.charge < C.maxcharge)
 					to_chat(user, SPAN_WARNING("\The [item_to_stock] needs to be fully charged to restock it!"))
+					balloon_alert(user, "must be fully charged!")
 					return
 
 			if(item_to_stock.loc == user) //Inside the mob's inventory

@@ -192,6 +192,7 @@
 /obj/structure/machinery/suit_storage_unit/proc/toggle_open(mob/user as mob)
 	if(isUV)
 		to_chat(user, "<font color='red'>Unable to open unit.</font>")
+		balloon_alert(user, "unable to open!")
 		return
 	isopen = !isopen
 	update_icon()
@@ -202,6 +203,7 @@
 
 	if(isopen)
 		to_chat(user, "<font color='red'>Unit storage is not closed -- Aborting.</font>")
+		balloon_alert(user, "not closed!")
 		return
 
 	if(isUV)
@@ -209,8 +211,10 @@
 
 	if(!inserted_helmet && !inserted_mask && !inserted_suit) //shit's empty yo
 		to_chat(user, "<font color='red'>Unit storage bays empty. Nothing to disinfect -- Aborting.</font>")
+		balloon_alert(user, "empty!")
 		return
 	to_chat(user, SPAN_NOTICE("You start the Unit's cauterisation cycle."))
+	balloon_alert(user, "cauterisation started...")
 	isUV = 1
 	update_icon()
 	updateUsrDialog()
@@ -244,9 +248,11 @@
 				var/obj/item/clothing/suit/space/S = I
 				if(inserted_suit)
 					to_chat(user, SPAN_WARNING("The unit already contains a suit."))
+					balloon_alert(user, "already a suit!")
 					return
 				if(user.drop_inv_item_to_loc(S, src))
 					to_chat(user, SPAN_NOTICE("You load the [S.name] into the storage compartment."))
+					balloon_alert(user, "loaded")
 					inserted_suit = S
 					update_icon()
 					updateUsrDialog()
@@ -256,8 +262,10 @@
 				var/obj/item/clothing/head/helmet/H = I
 				if(inserted_helmet)
 					to_chat(user, SPAN_WARNING("The unit already contains a helmet."))
+					balloon_alert(user, "already a helmet!")
 					return
 				to_chat(user, SPAN_NOTICE("You load the [H.name] into the storage compartment."))
+				balloon_alert(user, "loaded")
 				if(user.drop_inv_item_to_loc(H, src))
 					inserted_helmet = H
 					update_icon()
@@ -268,8 +276,10 @@
 				var/obj/item/clothing/mask/M = I
 				if(inserted_mask)
 					to_chat(user, SPAN_WARNING("The unit already contains a mask."))
+					balloon_alert(user, "already a mask!")
 					return
 				to_chat(user, SPAN_NOTICE("You load the [M.name] into the storage compartment."))
+				balloon_alert(user, "loaded")
 				if(user.drop_inv_item_to_loc(M, src))
 					inserted_mask = M
 					update_icon()
@@ -280,8 +290,10 @@
 				var/obj/item/tank/T = I
 				if(inserted_tank)
 					to_chat(user, SPAN_WARNING("The unit already contains a tank."))
+					balloon_alert(user, "already a tank!")
 					return
 				to_chat(user, SPAN_NOTICE("You load the [T.name] into the storage compartment."))
+				balloon_alert(user, "loaded")
 				if(user.drop_inv_item_to_loc(T, src))
 					inserted_tank = T
 					update_icon()

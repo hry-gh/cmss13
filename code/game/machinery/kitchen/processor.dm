@@ -72,9 +72,11 @@
 /obj/structure/machinery/processor/attackby(obj/item/O as obj, mob/user as mob)
 	if(processing)
 		to_chat(user, SPAN_DANGER("The processor is in the process of processing."))
+		balloon_alert(user, "processing!")
 		return 1
 	if(contents.len > 0) //TODO: several items at once? several different items?
 		to_chat(user, SPAN_DANGER("Something is already in the processing chamber."))
+		balloon_alert(user, "already loaded!")
 		return 1
 	if(HAS_TRAIT(O, TRAIT_TOOL_WRENCH))
 		. = ..()
@@ -87,6 +89,7 @@
 	var/datum/food_processor_process/P = select_recipe(what)
 	if (!P)
 		to_chat(user, SPAN_DANGER("That probably won't blend."))
+		balloon_alert(user, "won't blend!")
 		return 1
 	user.visible_message("[user] put [what] into [src].", \
 		"You put the [what] into [src].")
@@ -99,8 +102,10 @@
 	if(src.processing)
 		to_chat(user, SPAN_DANGER("The processor is in the process of processing."))
 		return 1
+		balloon_alert(user, "processing!")
 	if(src.contents.len == 0)
 		to_chat(user, SPAN_DANGER("The processor is empty."))
+		balloon_alert(user, "empty!")
 		return 1
 	for(var/O in src.contents)
 		var/datum/food_processor_process/P = select_recipe(O)

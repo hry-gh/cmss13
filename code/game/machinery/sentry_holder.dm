@@ -35,18 +35,23 @@
 	if(deployed_turret)
 		if(deployment_cooldown > world.time)
 			to_chat(user, SPAN_WARNING("[src] is busy."))
+			balloon_alert(user, "busy!")
 			return //prevents spamming deployment/undeployment
 		if(deployed_turret.loc == src) //not deployed
 			if(stat & NOPOWER)
 				to_chat(user, SPAN_WARNING("[src] is non-functional."))
+				balloon_alert(user, "non-functional!")
 			else
 				to_chat(user, SPAN_NOTICE("You deploy [src]."))
+				balloon_alert(user, "deployed")
 				deploy_sentry()
 		else
 			to_chat(user, SPAN_NOTICE("You retract [src]."))
+			balloon_alert(user, "retracted")
 			undeploy_sentry()
 	else
 		to_chat(user, SPAN_WARNING("[src] is unresponsive."))
+		balloon_alert(user, "unresponsive!")
 
 /obj/structure/machinery/sentry_holder/process()
 	if(stat & NOPOWER)

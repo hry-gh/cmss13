@@ -24,31 +24,37 @@
 	else
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You stare at \the [src] cluelessly..."))
+			balloon_alert(user, "not trained!")
 			return 0
 
 	switch(construct_op)
 		if(0)
 			if(HAS_TRAIT(P, TRAIT_TOOL_SCREWDRIVER) && deconstructable)
 				to_chat(user, "You unfasten the bolts.")
+				balloon_alert(user, "unfastened")
 				playsound(src.loc, 'sound/items/Screwdriver.ogg', 25, 1)
 				construct_op ++
 		if(1)
 			if(HAS_TRAIT(P, TRAIT_TOOL_SCREWDRIVER))
 				to_chat(user, "You fasten the bolts.")
+				balloon_alert(user, "fastened")
 				playsound(src.loc, 'sound/items/Screwdriver.ogg', 25, 1)
 				construct_op --
 			if(HAS_TRAIT(P, TRAIT_TOOL_WRENCH))
 				to_chat(user, "You dislodge the external plating.")
+				balloon_alert(user, "plating dislodged")
 				playsound(src.loc, 'sound/items/Ratchet.ogg', 25, 1)
 				construct_op ++
 		if(2)
 			if(HAS_TRAIT(P, TRAIT_TOOL_WRENCH))
 				to_chat(user, "You secure the external plating.")
+				balloon_alert(user, "plating secured")
 				playsound(src.loc, 'sound/items/Ratchet.ogg', 25, 1)
 				construct_op --
 			if(HAS_TRAIT(P, TRAIT_TOOL_SCREWDRIVER))
 				playsound(src.loc, 'sound/items/Wirecutter.ogg', 25, 1)
 				to_chat(user, "You remove the cables.")
+				balloon_alert(user, "cables removed")
 				construct_op ++
 				var/obj/item/stack/cable_coil/A = new /obj/item/stack/cable_coil( user.loc )
 				A.amount = 5
@@ -58,12 +64,15 @@
 				var/obj/item/stack/cable_coil/A = P
 				if (A.use(5))
 					to_chat(user, SPAN_NOTICE("You insert the cables."))
+					balloon_alert(user, "inserted cables")
 					construct_op--
 					stat &= ~BROKEN // the machine's not borked anymore!
 				else
 					to_chat(user, SPAN_WARNING("You need five coils of wire for this."))
+					balloon_alert(user, "need more wire!")
 			if(istype(P, /obj/item/tool/crowbar))
 				to_chat(user, "You begin prying out the circuit board other components...")
+				balloon_alert(user, "begin removing components...")
 				playsound(src.loc, 'sound/items/Crowbar.ogg', 25, 1)
 				if(do_after(user, 60 * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 					to_chat(user, "You finish prying out the components.")
@@ -105,6 +114,7 @@
 	if(!ishighersilicon(user))
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You stare at \the [src] cluelessly..."))
+			balloon_alert(user, "not trained!")
 			return
 		// istype returns false if the value is null
 		var/obj/item/held_item = user.get_active_hand()

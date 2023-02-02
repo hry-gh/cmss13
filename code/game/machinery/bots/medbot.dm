@@ -180,24 +180,30 @@
 		if (src.allowed(user) && !open)
 			src.locked = !src.locked
 			to_chat(user, SPAN_NOTICE("Controls are now [src.locked ? "locked." : "unlocked."]"))
+			balloon_alert(user, locked ? "locked" : "unlocked")
 			src.updateUsrDialog()
 		else
 			if(open)
 				to_chat(user, SPAN_WARNING("Please close the access panel before locking it."))
+				balloon_alert(user, "close the panel!")
 			else
 				to_chat(user, SPAN_WARNING("Access denied."))
+				balloon_alert(user, "access denied!")
 
 	else if (istype(W, /obj/item/reagent_container/glass))
 		if(src.locked)
 			to_chat(user, SPAN_NOTICE("You cannot insert a beaker because the panel is locked."))
+			balloon_alert(user, "panel locked!")
 			return
 		if(!isnull(src.reagent_glass))
 			to_chat(user, SPAN_NOTICE("There is already a beaker loaded."))
+			balloon_alert(user, "already loaded!")
 			return
 
 		if(user.drop_inv_item_to_loc(W, src))
 			reagent_glass = W
 			to_chat(user, SPAN_NOTICE("You insert [W]."))
+			balloon_alert(user, "inserted")
 			src.updateUsrDialog()
 		return
 
@@ -480,6 +486,7 @@
 	//Making a medibot!
 	if(src.contents.len >= 1)
 		to_chat(user, SPAN_NOTICE("You need to empty [src] out first."))
+		balloon_alert(user, "must be emptied!")
 		return
 
 	var/obj/item/frame/firstaid_arm_assembly/A = new /obj/item/frame/firstaid_arm_assembly
@@ -493,5 +500,6 @@
 	qdel(S)
 	user.put_in_hands(A)
 	to_chat(user, SPAN_NOTICE("You add the robot arm to the first aid kit."))
+	balloon_alert(user, "arm added")
 	user.temp_drop_inv_item(src)
 	qdel(src)

@@ -368,8 +368,10 @@
 			occupant.reagents.add_reagent(chemical, amount, , , user)
 			var/datum/reagent/temp = chemical_reagents_list[chemical]
 			to_chat(user, SPAN_NOTICE("[occupant] now has [occupant.reagents.get_reagent_amount(chemical)] units of [temp.name] in \his bloodstream."))
+			balloon_alert("[occupant.reagents.get_reagent_amount(chemical)]u total")
 			return
 	to_chat(user, SPAN_WARNING("There's no occupant in the sleeper or the subject has too many chemicals!"))
+	balloon_alert(user, "no occupant!")
 	return
 
 
