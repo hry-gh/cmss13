@@ -221,7 +221,7 @@
 		balloon_alert(src, "taking captives")
 	else
 		to_chat(src, "You will now shoot where you target.")
-		balloon_alert(src, "now shooting")
+		balloon_alert(src, "shooting")
 		for(var/obj/item/weapon/gun/G in src)
 			G.stop_aim()
 	update_gun_icons()

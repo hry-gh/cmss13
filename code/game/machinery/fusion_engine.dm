@@ -161,7 +161,7 @@
 				playsound(loc, 'sound/items/weldingtool_weld.ogg', 25)
 				user.visible_message(SPAN_NOTICE("[user] starts welding [src]'s internal damage."),
 				SPAN_NOTICE("You start welding [src]'s internal damage."))
-				balloon_alert(user, "you start welding...")
+				balloon_alert(user, "start welding...")
 				if(do_after(user, 200 * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 					if(buildstate != 1 || is_on || !WT.isOn())
 						return FALSE

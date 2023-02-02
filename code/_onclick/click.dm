@@ -107,12 +107,12 @@
 		if(W)
 			if(W.force && (!W || !(W.flags_item & (NOBLUDGEON|ITEM_ABSTRACT))))
 				if(world.time % 3)
-					balloon_alert(src, "you won't hurt yourself!")
+					balloon_alert(src, "won't hurt yourself!")
 					to_chat(src, SPAN_NOTICE("You have the discipline not to hurt yourself."))
 				return
 		else
 			if(world.time % 3)
-				balloon_alert(src, "you won't hurt yourself!")
+				balloon_alert(src, "won't hurt yourself!")
 				to_chat(src, SPAN_NOTICE("You have the discipline not to hurt yourself."))
 			return
 

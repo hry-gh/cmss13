@@ -6,10 +6,10 @@
 	if(!client) return
 	client.inquisitive_ghost = !client.inquisitive_ghost
 	if(client.inquisitive_ghost)
-		balloon_alert(src, "now examining on click")
+		balloon_alert(src, "examining on click")
 		to_chat(src, SPAN_NOTICE(" You will now examine everything you click on."))
 	else
-		balloon_alert(src, "now not examining on click")
+		balloon_alert(src, "not examining on click")
 		to_chat(src, SPAN_NOTICE(" You will no longer examine things you click on."))
 
 /mob/dead/observer/click(atom/A, list/mods)

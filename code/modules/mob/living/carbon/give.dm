@@ -47,7 +47,7 @@
 		if(!Adjacent(giver))
 			to_chat(giver, SPAN_WARNING("You need to stay in reaching distance while giving an object."))
 			to_chat(src, SPAN_WARNING("[giver] moved too far away."))
-			giver.balloon_alert(src, "you moved!")
+			giver.balloon_alert(src, "moved!")
 			balloon_alert(src, "they moved!")
 			return
 		if((giver.hand && giver.l_hand != I) || (!giver.hand && giver.r_hand != I))
