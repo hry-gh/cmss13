@@ -101,8 +101,8 @@
 		return
 	if(src.processing)
 		to_chat(user, SPAN_DANGER("The processor is in the process of processing."))
-		return 1
 		balloon_alert(user, "processing!")
+		return 1
 	if(src.contents.len == 0)
 		to_chat(user, SPAN_DANGER("The processor is empty."))
 		balloon_alert(user, "empty!")

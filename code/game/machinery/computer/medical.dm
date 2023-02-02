@@ -34,7 +34,7 @@
 		scan = null
 	else
 		to_chat(usr, "There is nothing to remove from the console.")
-		balloon_alert(user, "nothing to remove!")
+		balloon_alert(usr, "nothing to remove!")
 	return
 
 /obj/structure/machinery/computer/med_data/attackby(obj/item/O as obj, user as mob)

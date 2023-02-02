@@ -56,7 +56,7 @@
 			return
 		anchored = !anchored
 		to_chat(user, "You [anchored ? "attached" : "detached"] the recharger.")
-		balloon_alert([anchored ? "attached" : "detached"])
+		balloon_alert(user, anchored ? "attached" : "detached")
 		playsound(loc, 'sound/items/Ratchet.ogg', 25, 1)
 
 /obj/structure/machinery/recharger/attack_hand(mob/user as mob)

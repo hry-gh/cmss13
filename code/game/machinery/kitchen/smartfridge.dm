@@ -115,7 +115,7 @@
 
 	else if(!(O.flags_item & NOBLUDGEON)) //so we can spray, scan, c4 the machine.
 		to_chat(user, SPAN_NOTICE("\The [src] smartly refuses [O]."))
-		balloon_alert(used, "refused!")
+		balloon_alert(user, "refused!")
 		return 1
 
 /obj/structure/machinery/smartfridge/attack_remote(mob/user)
@@ -314,7 +314,7 @@
 					balloon_alert(user, "access denied!")
 					return FALSE
 				if(!allowed(usr) && locked == FRIDGE_LOCK_ID)
-					to_chat(usre, SPAN_DANGER("Access denied."))
+					to_chat(user, SPAN_DANGER("Access denied."))
 					balloon_alert(user, "access denied!")
 					return FALSE
 			var/index=params["index"]

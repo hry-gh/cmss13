@@ -66,7 +66,7 @@
 	if(usr == occupant)
 		if(surgery)
 			to_chat(usr, SPAN_WARNING("There's no way you're getting out while this thing is operating on you!"))
-			balloon_alert(user, "can't get out!")
+			balloon_alert(usr, "can't get out!")
 			return FALSE
 		else
 			visible_message("[usr] engages the internal release mechanism, and climbs out of \the [src].")
