@@ -14,7 +14,7 @@
 		if(new_sheet)
 			qdel(sheet)
 		return
-	var/new_text = input(usr, "Enter new content:", "Customising [new_name]", sheet.info) as message|null
+	var/new_text = tgui_input_text(usr, "Enter new content:", "Customising [new_name]", sheet.info, multiline = TRUE, encode = FALSE, max_length = null)
 	if(!new_text)
 		if(new_sheet)
 			qdel(sheet)

@@ -242,7 +242,7 @@
 				if(!has_clan_permission(CLAN_PERMISSION_USER_MODIFY))
 					return
 
-				var/input = input(usr, "Input a new description", "Set Description", target_clan.description) as message|null
+				var/input = tgui_input_text(usr, "Input a new description", "Set Description", target_clan.description, multiline = TRUE)
 
 				if(!input || input == target_clan.description)
 					return

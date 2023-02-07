@@ -241,7 +241,7 @@ var/savefile/Banlist
 	if(!mins)
 		return
 	if(mins >= 525600) mins = 525599
-	var/reason = input(usr,"Reason? \n\nPress 'OK' to finalize the ban.","reason","Griefer") as message|null
+	var/reason = tgui_input_text(usr,"Reason? Press 'OK' to finalize the ban.", "Reason", "Griefer", multiline = TRUE)
 	if(!reason)
 		return
 	var/datum/entity/player/P = get_player_from_key(mob_key) // you may not be logged in, but I will find you and I will ban you

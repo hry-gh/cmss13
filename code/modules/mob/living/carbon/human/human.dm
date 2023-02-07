@@ -841,14 +841,14 @@
 				close_browser(src, "flavor_changes")
 				return
 			if("general")
-				var/msg = input(usr,"Update the general description of your character. This will be shown regardless of clothing, and may include OOC notes and preferences.","Flavor Text",html_decode(flavor_texts[href_list["flavor_change"]])) as message
+				var/msg = tgui_input_text(usr,"Update the general description of your character. This will be shown regardless of clothing, and may include OOC notes and preferences.","Flavor Text",html_decode(flavor_texts[href_list["flavor_change"]]), multiline = TRUE)
 				if(msg != null)
 					msg = copytext(msg, 1, MAX_MESSAGE_LEN)
 					msg = html_encode(msg)
 				flavor_texts[href_list["flavor_change"]] = msg
 				return
 			else
-				var/msg = input(usr,"Update the flavor text for your [href_list["flavor_change"]].","Flavor Text",html_decode(flavor_texts[href_list["flavor_change"]])) as message
+				var/msg = tgui_input_text(usr,"Update the flavor text for your [href_list["flavor_change"]].","Flavor Text",html_decode(flavor_texts[href_list["flavor_change"]]), multiline = TRUE)
 				if(msg != null)
 					msg = copytext(msg, 1, MAX_MESSAGE_LEN)
 					msg = html_encode(msg)

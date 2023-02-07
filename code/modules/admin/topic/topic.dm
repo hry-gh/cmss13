@@ -282,7 +282,7 @@
 		if(!mins) return
 		mins = max(5255990,mins) // 10 years
 		minutes = CMinutes + mins
-		reason = input(usr,"Reason?","reason",reason2) as message|null
+		reason = tgui_input_text(usr,"Reason?","Reason",reason2, multiline = TRUE)
 		if(!reason) return
 
 		ban_unban_log_save("[key_name(usr)] upgraded [banned_key]'s ban to a permaban. Reason: [sanitize(reason)]")
@@ -321,7 +321,7 @@
 		mins = min(525599,mins)
 		minutes = CMinutes + mins
 		duration = GetExp(minutes)
-		reason = input(usr,"Reason?","reason",reason2) as message|null
+		reason = tgui_input_text(usr,"Reason?","Reason",reason2, multiline = TRUE)
 		if(!reason) return
 
 		ban_unban_log_save("[key_name(usr)] edited [banned_key]'s ban. Reason: [sanitize(reason)] Duration: [duration]")
@@ -540,7 +540,7 @@
 		if(!mins)
 			return
 		if(mins >= 525600) mins = 525599
-		var/reason = input(usr,"Reason? \n\nPress 'OK' to finalize the ban.","reason","Griefer") as message|null
+		var/reason = tgui_input_text(usr,"Reason? Press 'OK' to finalize the ban.","Reason","Griefer", multiline = TRUE)
 		if(!reason)
 			return
 		var/datum/entity/player/P = get_player_from_key(mob_key) // you may not be logged in, but I will find you and I will ban you
@@ -1273,12 +1273,12 @@
 		var/fax_message = ""
 		switch(template_choice)
 			if("Custom")
-				var/input = input(src.owner, "Please enter a message to reply to [key_name(H)] via secure connection. NOTE: BBCode does not work, but HTML tags do! Use <br> for line breaks.", "Outgoing message from USCM", "") as message|null
+				var/input = tgui_input_text(src.owner, "Please enter a message to reply to [key_name(H)] via secure connection. NOTE: BBCode does not work, but HTML tags do! Use <br> for line breaks.", "Outgoing message from USCM", "", multiline = TRUE, encode = FALSE)
 				if(!input)
 					return
 				fax_message = "[input]"
 			if("USCM High Command", "USCM Provost General")
-				var/subject = input(src.owner, "Enter subject line", "Outgoing message from USCM", "") as message|null
+				var/subject = tgui_input_text(src.owner, "Enter subject line", "Outgoing message from USCM", "", multiline = TRUE)
 				if(!subject)
 					return
 				var/addressed_to = ""
@@ -1286,15 +1286,15 @@
 				if(address_option == "Sender")
 					addressed_to = "[H.real_name]"
 				else if(address_option == "Custom")
-					addressed_to = input(src.owner, "Enter Addressee Line", "Outgoing message from USCM", "") as message|null
+					addressed_to = tgui_input_text(src.owner, "Enter Addressee Line", "Outgoing message from USCM", "", multiline = TRUE)
 					if(!addressed_to)
 						return
 				else
 					return
-				var/message_body = input(src.owner, "Enter Message Body, use <p></p> for paragraphs", "Outgoing message from Weyland USCM", "") as message|null
+				var/message_body = tgui_input_text(src.owner, "Enter Message Body, use <p></p> for paragraphs", "Outgoing message from Weyland USCM", "", multiline = TRUE, encode = FALSE)
 				if(!message_body)
 					return
-				var/sent_by = input(src.owner, "Enter the name and rank you are sending from.", "Outgoing message from USCM", "") as message|null
+				var/sent_by = tgui_input_text(src.owner, "Enter the name and rank you are sending from.", "Outgoing message from USCM", "", multiline = TRUE)
 				if(!sent_by)
 					return
 				var/sent_title = "Office of the Provost General"
@@ -1355,12 +1355,12 @@
 		var/fax_message = ""
 		switch(template_choice)
 			if("Custom")
-				var/input = input(src.owner, "Please enter a message to reply to [key_name(H)] via secure connection. NOTE: BBCode does not work, but HTML tags do! Use <br> for line breaks.", "Outgoing message from Weyland-Yutani", "") as message|null
+				var/input = tgui_input_text(src.owner, "Please enter a message to reply to [key_name(H)] via secure connection. NOTE: BBCode does not work, but HTML tags do! Use <br> for line breaks.", "Outgoing message from Weyland-Yutani", "", multiline = TRUE, encode = FALSE)
 				if(!input)
 					return
 				fax_message = "[input]"
 			if("Template")
-				var/subject = input(src.owner, "Enter subject line", "Outgoing message from Weyland-Yutani", "") as message|null
+				var/subject = tgui_input_text(src.owner, "Enter subject line", "Outgoing message from Weyland-Yutani", "", multiline = TRUE)
 				if(!subject)
 					return
 				var/addressed_to = ""
@@ -1368,15 +1368,15 @@
 				if(address_option == "Sender")
 					addressed_to = "[H.real_name]"
 				else if(address_option == "Custom")
-					addressed_to = input(src.owner, "Enter Addressee Line", "Outgoing message from Weyland-Yutani", "") as message|null
+					addressed_to = tgui_input_text(src.owner, "Enter Addressee Line", "Outgoing message from Weyland-Yutani", "", multiline = TRUE)
 					if(!addressed_to)
 						return
 				else
 					return
-				var/message_body = input(src.owner, "Enter Message Body, use <p></p> for paragraphs", "Outgoing message from Weyland-Yutani", "") as message|null
+				var/message_body = tgui_input_text(src.owner, "Enter Message Body, use <p></p> for paragraphs", "Outgoing message from Weyland-Yutani", "", multiline = TRUE, encode = FALSE)
 				if(!message_body)
 					return
-				var/sent_by = input(src.owner, "Enter JUST the name you are sending this from", "Outgoing message from Weyland-Yutani", "") as message|null
+				var/sent_by = tgui_input_text(src.owner, "Enter JUST the name you are sending this from", "Outgoing message from Weyland-Yutani", "", multiline = TRUE)
 				if(!sent_by)
 					return
 				fax_message = generate_templated_fax(1, "WEYLAND-YUTANI CORPORATE AFFAIRS - [MAIN_SHIP_NAME]", subject, addressed_to, message_body, sent_by, "Corporate Affairs Director", "Weyland-Yutani")

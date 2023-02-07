@@ -907,13 +907,13 @@ var/const/MAX_SAVE_SLOTS = 10
 					ShowChoices(user)
 					return
 				if("general")
-					var/msg = input(usr,"Give a physical description of your character. This will be shown regardless of clothing.","Flavor Text",html_decode(flavor_texts[href_list["task"]])) as message
+					var/msg = tgui_input_text(usr,"Give a physical description of your character. This will be shown regardless of clothing.","Flavor Text",html_decode(flavor_texts[href_list["task"]]), multiline = TRUE)
 					if(msg != null)
 						msg = copytext(msg, 1, MAX_MESSAGE_LEN)
 						msg = html_encode(msg)
 					flavor_texts[href_list["task"]] = msg
 				else
-					var/msg = input(usr,"Set the flavor text for your [href_list["task"]].","Flavor Text",html_decode(flavor_texts[href_list["task"]])) as message
+					var/msg = tgui_input_text(usr,"Set the flavor text for your [href_list["task"]].","Flavor Text",html_decode(flavor_texts[href_list["task"]]), multiline = TRUE)
 					if(msg != null)
 						msg = copytext(msg, 1, MAX_MESSAGE_LEN)
 						msg = html_encode(msg)
@@ -930,7 +930,7 @@ var/const/MAX_SAVE_SLOTS = 10
 
 			switch(href_list["task"])
 				if("med_record")
-					var/medmsg = input(usr,"Set your medical notes here.","Medical Records",html_decode(med_record)) as message
+					var/medmsg = tgui_input_text(usr,"Set your medical notes here.","Medical Records",html_decode(med_record), multiline = TRUE)
 
 					if(medmsg != null)
 						medmsg = copytext(medmsg, 1, MAX_PAPER_MESSAGE_LEN)
@@ -940,7 +940,7 @@ var/const/MAX_SAVE_SLOTS = 10
 						SetRecords(user)
 
 				if("sec_record")
-					var/secmsg = input(usr,"Set your security notes here.","Security Records",html_decode(sec_record)) as message
+					var/secmsg = tgui_input_text(usr,"Set your security notes here.","Security Records",html_decode(sec_record), multiline = TRUE)
 
 					if(secmsg != null)
 						secmsg = copytext(secmsg, 1, MAX_PAPER_MESSAGE_LEN)
@@ -949,7 +949,7 @@ var/const/MAX_SAVE_SLOTS = 10
 						sec_record = secmsg
 						SetRecords(user)
 				if("gen_record")
-					var/genmsg = input(usr,"Set your employment notes here.","Employment Records",html_decode(gen_record)) as message
+					var/genmsg = tgui_input_text(usr,"Set your employment notes here.","Employment Records",html_decode(gen_record), multiline = TRUE)
 
 					if(genmsg != null)
 						genmsg = copytext(genmsg, 1, MAX_PAPER_MESSAGE_LEN)
@@ -1164,7 +1164,7 @@ var/const/MAX_SAVE_SLOTS = 10
 						return
 					predator_skin_color = new_skin_color
 				if("pred_flavor_text")
-					var/pred_flv_raw = input(user, "Choose your Predator's flavor text:", "Flavor Text", predator_flavor_text) as message
+					var/pred_flv_raw = tgui_input_text(user, "Choose your Predator's flavor text:", "Flavor Text", predator_flavor_text, multiline = TRUE)
 					if(!pred_flv_raw)
 						predator_flavor_text = ""
 						return

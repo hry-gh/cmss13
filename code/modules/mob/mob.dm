@@ -394,7 +394,7 @@
 	set src in usr
 	if(usr != src)
 		to_chat(usr, "No.")
-	var/msg = input(usr,"Set the flavor text in your 'examine' verb. Can also be used for OOC notes about your character.","Flavor Text",html_decode(flavor_text)) as message|null
+	var/msg = tgui_input_text(usr,"Set the flavor text in your 'examine' verb. Can also be used for OOC notes about your character.","Flavor Text",html_decode(flavor_text), multiline = TRUE)
 
 	if(msg != null)
 		msg = copytext(msg, 1, MAX_MESSAGE_LEN)

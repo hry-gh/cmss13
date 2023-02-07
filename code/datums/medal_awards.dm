@@ -53,7 +53,7 @@ GLOBAL_LIST_EMPTY(jelly_awards)
 		return FALSE
 
 	// Write a citation
-	var/citation = strip_html(input("What should the medal citation read?", "Medal Citation", null, null) as message|null, MAX_PAPER_MESSAGE_LEN)
+	var/citation = strip_html(tgui_input_text(usr, "What should the medal citation read?", "Medal Citation", null, null, multiline = TRUE), MAX_PAPER_MESSAGE_LEN)
 	if(!citation)
 		return FALSE
 
@@ -220,7 +220,7 @@ GLOBAL_LIST_EMPTY(jelly_awards)
 		return FALSE
 
 	// Write the pheromone
-	var/citation = strip_html(input("What should the pheromone read?", "Jelly Pheromone", null, null) as message|null, MAX_PAPER_MESSAGE_LEN)
+	var/citation = strip_html(tgui_input_text(usr, "What should the pheromone read?", "Jelly Pheromone", null, null, multiline = TRUE), MAX_PAPER_MESSAGE_LEN)
 	if(!citation)
 		return FALSE
 

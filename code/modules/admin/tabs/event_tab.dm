@@ -28,7 +28,7 @@
 
 	var/datum/custom_event_info/CEI = GLOB.custom_event_info_list[faction]
 
-	var/input = input(usr, "Enter the custom event message for \"[faction]\" category. Be descriptive. \nTo remove the event message, remove text and confirm.", "[faction] Event Message", CEI.msg) as message|null
+	var/input = tgui_input_text(usr, "Enter the custom event message for \"[faction]\" category. Be descriptive. \nTo remove the event message, remove text and confirm.", "[faction] Event Message", CEI.msg, multiline = TRUE)
 	if(isnull(input))
 		return
 
@@ -476,7 +476,7 @@
 	var/faction = tgui_input_list(usr, "Please choose faction your announcement will be shown to.", "Faction Selection", (FACTION_LIST_HUMANOID - list(FACTION_YAUTJA) + list("Everyone (-Yautja)")))
 	if(!faction)
 		return
-	var/input = input(usr, "Please enter announcement text. Be advised, this announcement will be heard both on Almayer and planetside by conscious humans of selected faction.", "What?", "") as message|null
+	var/input = tgui_input_text(usr, "Please enter announcement text. Be advised, this announcement will be heard both on Almayer and planetside by conscious humans of selected faction.", "What?", "", multiline = TRUE)
 	if(!input)
 		return
 	var/customname = input(usr, "Pick a title for the announcement. Confirm empty text for \"[faction] Update\" title.", "Title") as text|null
@@ -527,7 +527,7 @@
 	var/hivenumber = hives[hive_choice]
 
 
-	var/input = input(usr, "This should be a message from the ruler of the Xenomorph race.", "What?", "") as message|null
+	var/input = tgui_input_text(usr, "This should be a message from the ruler of the Xenomorph race.", "What?", "", multiline = TRUE)
 	if(!input)
 		return FALSE
 
@@ -551,7 +551,7 @@
 	if(!admin_holder || !(admin_holder.rights & R_MOD))
 		to_chat(src, "Only administrators may use this command.")
 		return
-	var/input = input(usr, "This is a standard message from the ship's AI. It uses Almayer General channel and won't be heard by humans without access to Almayer General channel (headset or intercom). Check with online staff before you send this. Do not use html.", "What?", "") as message|null
+	var/input = tgui_input_text(usr, "This is a standard message from the ship's AI. It uses Almayer General channel and won't be heard by humans without access to Almayer General channel (headset or intercom). Check with online staff before you send this. Do not use html.", "What?", "", multiline = TRUE)
 	if(!input)
 		return FALSE
 
@@ -601,7 +601,7 @@
 	if(!admin_holder || !(admin_holder.rights & R_MOD))
 		to_chat(src, "Only administrators may use this command.")
 		return
-	var/input = input(usr, "This is an announcement type message from the ship's AI. This will be announced to every conscious human on Almayer z-level. Be aware, this will work even if ARES unpowered/destroyed. Check with online staff before you send this.", "What?", "") as message|null
+	var/input = tgui_input_text(usr, "This is an announcement type message from the ship's AI. This will be announced to every conscious human on Almayer z-level. Be aware, this will work even if ARES unpowered/destroyed. Check with online staff before you send this.", "What?", "", multiline = TRUE)
 	if(!input)
 		return FALSE
 
@@ -625,7 +625,7 @@
 	if(!admin_holder || !(admin_holder.rights & R_MOD))
 		to_chat(src, "Only administrators may use this command.")
 		return
-	var/input = input(usr, "This is a message from the predator ship's AI. Check with online staff before you send this.", "What?", "") as message|null
+	var/input = tgui_input_text(usr, "This is a message from the predator ship's AI. Check with online staff before you send this.", "What?", "", multiline = TRUE)
 	if(!input)
 		return FALSE
 	yautja_announcement(SPAN_YAUTJABOLDBIG(input))

@@ -79,7 +79,7 @@
 	if(mentor)
 		return TRUE // No need
 
-	var/message = strip_html(input("Please enter your message:", "MentorHelp", null, null) as message|null)
+	var/message = strip_html(tgui_input_text(opener, "Please enter your message:", "MentorHelp", null, null, multiline = TRUE))
 	if(!message)
 		return FALSE
 	broadcast_unhandled(message, opener)
@@ -153,7 +153,7 @@
 	if(sender == mentor)
 		target = author
 
-	var/message = input("Please enter your message:", "Mentor Help", null, null) as message|null
+	var/message = tgui_input_text(sender, "Please enter your message:", "Mentor Help", null, null, multiline = TRUE)
 	if(message)
 		message = strip_html(message)
 		message_handlers(message, sender, target)

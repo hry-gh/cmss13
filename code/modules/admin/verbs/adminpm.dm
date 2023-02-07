@@ -69,7 +69,7 @@
 		if(length(AH.ticket_interactions) == 1) // add the admin who is currently responding to the list of people responding
 			LAZYADD(AH.opening_responders, src)
 
-	var/msg = input(src, message_prompt, "Private message to [C.admin_holder?.fakekey ? "an Administrator" : key_name(C, 0, 0)].") as message|null
+	var/msg = tgui_input_text(src, message_prompt, "Private message to [C.admin_holder?.fakekey ? "an Administrator" : key_name(C, 0, 0)].", multiline = TRUE)
 
 	if(AH)
 		LAZYREMOVE(AH.opening_responders, src)
@@ -135,7 +135,7 @@
 
 	//get message text, limit it's length.and clean/escape html
 	if(!msg)
-		msg = input(src,"Message:", "Private message to [recipient.admin_holder?.fakekey ? "an Administrator" : key_name(recipient, 0, 0)].") as message|null
+		msg = tgui_input_text(src,"Message:", "Private message to [recipient.admin_holder?.fakekey ? "an Administrator" : key_name(recipient, 0, 0)].", multiline = TRUE)
 		msg = trim(msg)
 		if(!msg)
 			return
