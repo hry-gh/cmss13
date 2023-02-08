@@ -12,6 +12,7 @@ type ListInputData = {
   message: string;
   timeout: number;
   title: string;
+  theme?: string;
 };
 
 export const ListInputModal = (props, context) => {
@@ -23,6 +24,7 @@ export const ListInputModal = (props, context) => {
     large_buttons,
     timeout,
     title,
+    theme,
   } = data;
   const [selected, setSelected] = useLocalState<number>(
     context,
@@ -111,7 +113,7 @@ export const ListInputModal = (props, context) => {
   }
 
   return (
-    <Window title={title} width={325} height={windowHeight}>
+    <Window title={title} width={325} height={windowHeight} theme={theme}>
       {timeout && <Loader value={timeout} />}
       <Window.Content
         onKeyDown={(event) => {
