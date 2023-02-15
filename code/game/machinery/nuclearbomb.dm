@@ -23,6 +23,15 @@ var/bomb_set = FALSE
 	flags_atom = FPRINT
 	var/command_lockout = FALSE //If set to TRUE, only command staff would be able to disable the nuke
 
+/obj/structure/machinery/nuclearbomb/Initialize(mapload, ...)
+	. = ..()
+
+	update_minimap_icon()
+
+/obj/structure/machinery/nuclearbomb/proc/update_minimap_icon()
+	SSminimaps.remove_marker(src)
+	SSminimaps.add_marker(src, z, MINIMAP_FLAG_ALL, "nuke[timing ? "_on" : "_off"]", 'icons/ui_icons/map_blips_large.dmi')
+
 /obj/structure/machinery/nuclearbomb/update_icon()
 	overlays.Cut()
 	if(anchored)
@@ -235,12 +244,12 @@ var/bomb_set = FALSE
 					acc += H.wear_id.GetAccess()
 				if(H.get_active_hand())
 					acc += H.get_active_hand().GetAccess()
-				if(!(ACCESS_MARINE_BRIDGE in acc))
+				if(!(ACCESS_MARINE_COMMAND in acc))
 					to_chat(usr, SPAN_DANGER("Access denied!"))
 					return
 
 				command_lockout = TRUE
-				req_one_access = list(ACCESS_MARINE_BRIDGE)
+				req_one_access = list(ACCESS_MARINE_COMMAND)
 				to_chat(usr, SPAN_DANGER("Command lockout engaged."))
 			. = TRUE
 
@@ -267,6 +276,14 @@ var/bomb_set = FALSE
 
 	update_icon()
 	add_fingerprint(usr)
+
+/obj/structure/machinery/nuclearbomb/start_processing()
+	. = ..()
+	update_minimap_icon()
+
+/obj/structure/machinery/nuclearbomb/stop_processing()
+	. = ..()
+	update_minimap_icon()
 
 /obj/structure/machinery/nuclearbomb/verb/make_deployable()
 	set category = "Object"
@@ -400,4 +417,5 @@ var/bomb_set = FALSE
 		message_staff("[src] has been unexpectedly deleted at ([x],[y],[x]). (<A HREF='?_src_=admin_holder;[HrefToken(forceGlobal = TRUE)];adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)")
 		log_game("[src] has been unexpectedly deleted at ([x],[y],[x]).")
 	bomb_set = FALSE
-	..()
+	SSminimaps.remove_marker(src)
+	return ..()

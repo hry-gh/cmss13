@@ -18,12 +18,11 @@
 	name = "communications console"
 	desc = "This can be used for various important functions."
 	icon_state = "comm"
-	req_access = list(ACCESS_MARINE_BRIDGE)
+	req_access = list(ACCESS_MARINE_COMMAND)
 	circuit = /obj/item/circuitboard/computer/communications
 	unslashable = TRUE
 	unacidable = TRUE
 
-	var/mob/living/carbon/human/current_mapviewer
 	var/prints_intercept = 1
 	var/authenticated = 0
 	var/list/messagetitle = list()
@@ -43,47 +42,32 @@
 	var/status_display_freq = "1435"
 	var/stat_msg1
 	var/stat_msg2
+
+	var/datum/tacmap/tacmap
+	var/minimap_type = MINIMAP_FLAG_USCM
+
 	processing = TRUE
 
 /obj/structure/machinery/computer/communications/Initialize()
 	. = ..()
 	start_processing()
-	SSmapview.map_machines += src
+	tacmap = new(src, minimap_type)
 
 /obj/structure/machinery/computer/communications/Destroy()
-	SSmapview.map_machines -= src
+	QDEL_NULL(tacmap)
 	return ..()
 
 /obj/structure/machinery/computer/communications/process()
 	if(..() && state != STATE_STATUSDISPLAY)
 		updateDialog()
 
-/obj/structure/machinery/computer/communications/proc/update_mapview(close = 0)
-	if (close || !current_mapviewer || !Adjacent(current_mapviewer))
-		close_browser(current_mapviewer, "marineminimap")
-		current_mapviewer = null
-		return
-	if(!populated_mapview_type_updated[TACMAP_DEFAULT])
-		overlay_tacmap(TACMAP_DEFAULT)
-	current_mapviewer << browse_rsc(populated_mapview_types[TACMAP_DEFAULT], "marine_minimap.png")
-	show_browser(current_mapviewer, "<img src=marine_minimap.png>", "Marine Minimap", "marineminimap", "size=[(map_sizes[1]*2)+50]x[(map_sizes[2]*2)+50]", closeref = src)
-
 /obj/structure/machinery/computer/communications/Topic(href, href_list)
-	if (href_list["close"] && current_mapviewer)
-		close_browser(current_mapviewer, "marineminimap")
-		current_mapviewer = null
-		return
 	if(..()) return FALSE
 
 	usr.set_interaction(src)
 	switch(href_list["operation"])
 		if("mapview")
-			if(current_mapviewer)
-				update_mapview(1)
-				return
-			current_mapviewer = usr
-			update_mapview()
-			return
+			tacmap.tgui_interact(usr)
 
 		if("main") state = STATE_DEFAULT
 
@@ -94,13 +78,13 @@
 			var/obj/item/card/id/I = C.get_active_hand()
 			if(istype(I))
 				if(check_access(I)) authenticated = 1
-				if(ACCESS_MARINE_COMMANDER in I.access)
+				if(ACCESS_MARINE_SENIOR in I.access)
 					authenticated = 2
 			else
 				I = C.wear_id
 				if(istype(I))
 					if(check_access(I)) authenticated = 1
-					if(ACCESS_MARINE_COMMANDER in I.access)
+					if(ACCESS_MARINE_SENIOR in I.access)
 						authenticated = 2
 		if("logout")
 			authenticated = 0
@@ -109,7 +93,7 @@
 			var/mob/M = usr
 			var/obj/item/card/id/I = M.get_active_hand()
 			if(istype(I))
-				if((ACCESS_MARINE_COMMANDER in I.access) || (ACCESS_MARINE_BRIDGE in I.access)) //Let heads change the alert level.
+				if((ACCESS_MARINE_SENIOR in I.access) || (ACCESS_MARINE_COMMAND in I.access)) //Let heads change the alert level.
 					switch(tmp_alertlevel)
 						if(-INFINITY to SEC_LEVEL_GREEN) tmp_alertlevel = SEC_LEVEL_GREEN //Cannot go below green.
 						if(SEC_LEVEL_BLUE to INFINITY) tmp_alertlevel = SEC_LEVEL_BLUE //Cannot go above blue.

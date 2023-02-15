@@ -51,7 +51,7 @@
 				balloon_alert(user, "plating secured")
 				playsound(src.loc, 'sound/items/Ratchet.ogg', 25, 1)
 				construct_op --
-			if(HAS_TRAIT(P, TRAIT_TOOL_SCREWDRIVER))
+			if(HAS_TRAIT(P, TRAIT_TOOL_WIRECUTTERS))
 				playsound(src.loc, 'sound/items/Wirecutter.ogg', 25, 1)
 				to_chat(user, "You remove the cables.")
 				balloon_alert(user, "cables removed")

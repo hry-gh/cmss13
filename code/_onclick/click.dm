@@ -326,6 +326,9 @@
 	apply_clickcatcher()
 	mob.reload_fullscreens()
 
+	if(prefs.auto_fit_viewport)
+		INVOKE_ASYNC(src, .verb/fit_viewport)
+
 /client/proc/create_clickcatcher()
 	if(!void)
 		void = new()
