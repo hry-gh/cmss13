@@ -67,22 +67,27 @@
 		if(!hacked)
 			if(!allowed(user))
 				to_chat(user, SPAN_WARNING("Access denied."))
+				balloon_alert(user, "access denied!")
 				return
 
 			if(LAZYLEN(vendor_role) && !vendor_role.Find(user.job))
 				to_chat(user, SPAN_WARNING("This machine isn't for you."))
+				balloon_alert(user, "not for you!")
 				return
 
 		var/obj/item/reagent_container/C = I
 		if(!(C.type in chem_refill))
 			to_chat(user, SPAN_WARNING("[src] cannot refill the [C.name]."))
+			balloon_alert(user, "cannot refill!")
 			return
 
 		if(C.reagents.total_volume == C.reagents.maximum_volume)
 			to_chat(user, SPAN_WARNING("[src] makes a warning noise. The [C.name] is currently full."))
+			balloon_alert(user, "full!")
 			return
 
 		to_chat(user, SPAN_NOTICE("[src] makes a whirring noise as it refills your [C.name]."))
+		balloon_alert(user, "refilled")
 		// Since the reagent is deleted on use it's easier to make a new one instead of snowflake checking
 		var/obj/item/reagent_container/new_container = new C.type(src)
 		qdel(C)
@@ -91,22 +96,27 @@
 		if(!hacked)
 			if(!allowed(user))
 				to_chat(user, SPAN_WARNING("Access denied."))
+				balloon_alert(user, "access denied!")
 				return
 
 			if(LAZYLEN(vendor_role) && !vendor_role.Find(user.job))
 				to_chat(user, SPAN_WARNING("This machine isn't for you."))
+				balloon_alert(user, "not for you!")
 				return
 
 		var/obj/item/stack/S = I
 		if(!(S.type in stack_refill))
 			to_chat(user, SPAN_WARNING("[src] cannot restock the [S.name]."))
+			balloon_alert(user, "cannot restock!")
 			return
 
 		if(S.amount == S.max_amount)
 			to_chat(user, SPAN_WARNING("[src] makes a warning noise. The [S.name] is currently fully stacked."))
+			balloon_alert(user, "fully stacked!")
 			return
 
 		to_chat(user, SPAN_NOTICE("[src] makes a whirring noise as it restocks your [S.name]."))
+		balloon_alert(user, "restocked")
 		S.amount = S.max_amount
 		S.update_icon()
 	else
@@ -117,10 +127,12 @@
 		var/mob/living/carbon/human/user = usr
 		if(!hacked && !allowed(user))
 			to_chat(user, SPAN_WARNING("Access denied."))
+			balloon_alert(user, "access denied!")
 			return
 
 		if(!healthscan)
 			to_chat(user, SPAN_WARNING("\The [src] does not have health scanning function."))
+			balloon_alert(user, "no health scan!")
 			return
 
 		if (!last_health_display)

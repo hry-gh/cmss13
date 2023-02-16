@@ -18,14 +18,18 @@
 /obj/item/device/debugger/is_used_on(obj/O, mob/user)
 	if(istype(O, /obj/structure/machinery/power/apc))
 		to_chat(user, SPAN_NOTICE(" The device's software appears to be fine."))
+		balloon_alert(user, "software fine")
 		return 1
 	if(istype(O, /obj/structure/machinery/door))
 		var/obj/structure/machinery/door/D = O
 		if(D.operating == -1)
 			to_chat(user, SPAN_DANGER("There is a software error with the device."))
+			balloon_alert(user, "error detected!")
 		else
 			to_chat(user, SPAN_NOTICE(" The device's software appears to be fine."))
+			balloon_alert(user, "software fine")
 		return 1
 	else if(istype(O, /obj/structure/machinery))
 		to_chat(user, SPAN_NOTICE(" The device's software appears to be fine."))
+		balloon_alert(user, "software fine")
 		return 1

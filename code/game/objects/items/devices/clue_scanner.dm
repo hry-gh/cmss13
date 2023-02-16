@@ -51,5 +51,7 @@
 
 	if(!newlyfound)
 		to_chat(user, SPAN_INFO("No new print sets found!"))
+		balloon_alert(user, "nothing found!")
 	else
 		to_chat(user, SPAN_INFO("New print sets found: [newlyfound], total stored amount: [print_list.len]"))
+		balloon_alert(user, "found, [newlyfound]/[length(print_list)]")

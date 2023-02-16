@@ -320,10 +320,13 @@ cases. Override_icon_state should be a list.*/
 					S.handle_item_insertion(I, TRUE, user) //The 1 stops the "You put the [src] into [S]" insertion message from being displayed.
 				if(success && !failure)
 					to_chat(user, SPAN_NOTICE("You put everything in [S]."))
+					balloon_alert(user, "all picked up")
 				else if(success)
 					to_chat(user, SPAN_NOTICE("You put some things in [S]."))
+					balloon_alert(user, "some picked up")
 				else
 					to_chat(user, SPAN_NOTICE("You fail to pick anything up with [S]."))
+					balloon_alert(user, "none picked up")
 
 			else if(S.can_be_inserted(src))
 				S.handle_item_insertion(src, FALSE, user)
@@ -808,12 +811,16 @@ cases. Override_icon_state should be a list.*/
 
 	if(user.eye_blind)
 		to_chat(user, SPAN_WARNING("You are too blind to see anything."))
+		balloon_alert(user, "too blind!")
 	else if(user.stat || !ishuman(user))
 		to_chat(user, SPAN_WARNING("You are unable to focus through \the [zoom_device]."))
+		balloon_alert(user, "can't focus!")
 	else if(!zoom && user.client && user.update_tint())
 		to_chat(user, SPAN_WARNING("Your welding equipment gets in the way of you looking through \the [zoom_device]."))
+		balloon_alert(user, "no welding equipment!")
 	else if(!zoom && user.get_active_hand() != src && !istype(src, /obj/item/clothing/mask))
 		to_chat(user, SPAN_WARNING("You need to hold \the [zoom_device] to look through it."))
+		balloon_alert(user, "must be holding!")
 	else if(!zoom)
 		do_zoom(user, tileoffset, viewsize, keep_zoom)
 		return

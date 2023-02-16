@@ -38,6 +38,7 @@ GLOBAL_LIST_INIT(cm_vending_walkman, list(
 				var/obj/item/device/walkman/W = item_to_stock
 				if(W.tape)
 					to_chat(user,SPAN_WARNING("Remove the tape first!"))
+					balloon_alert(user, "remove tape!")
 					return
 
 			if(item_to_stock.loc == user) //Inside the mob's inventory

@@ -28,6 +28,7 @@
 			O.forceMove(src)
 			scan = O
 			to_chat(user, "You insert [O].")
+			balloon_alert(user, "id inserted")
 	..()
 
 /obj/structure/machinery/computer/skills/attack_remote(mob/user as mob)

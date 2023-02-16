@@ -188,15 +188,19 @@
 				balloon_alert(user, "interrupted!")
 				return FALSE
 			to_chat(user, SPAN_NOTICE("You unscrew \the [src]'s broken panel and remove it, exposing many broken wires."))
+			balloon_alert(user, "exposed the wires")
 			stat &= ~BROKEN
 			stat |= REPAIR_STEP_ONE
 			return TRUE
 		else if(stat & REPAIR_STEP_FOUR)
 			to_chat(user, SPAN_NOTICE("You start to fasten \the [src]'s new panel."))
+			balloon_alert(user, "reattaching the panel...")
 			if(!do_after(user, 3 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 				to_chat(user, SPAN_WARNING("You stop fastening \the [src]'s new panel."))
+				balloon_alert(user, "interrupted!")
 				return FALSE
 			to_chat(user, SPAN_NOTICE("You fasten \the [src]'s new panel, fully repairing the vendor."))
+			balloon_alert(user, "panel attached")
 			stat &= ~REPAIR_STEP_FOUR
 			stat |= FULLY_REPAIRED
 			update_icon()
@@ -214,10 +218,13 @@
 			return
 		else if(stat & REPAIR_STEP_ONE)
 			to_chat(user, SPAN_NOTICE("You start to remove \the [src]'s broken wires."))
+			balloon_alert(user, "removing wires...")
 			if(!do_after(user, 3 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 				to_chat(user, SPAN_WARNING("You stop removing \the [src]'s broken wires."))
+				balloon_alert(user, "interrupted!")
 				return FALSE
-			to_chat(user, SPAN_NOTICE("You remove \the [src]'s broken broken wires."))
+			to_chat(user, SPAN_NOTICE("You remove \the [src]'s broken wires."))
+			balloon_alert(user, "removed wires")
 			stat &= ~REPAIR_STEP_ONE
 			stat |= REPAIR_STEP_TWO
 			return TRUE
@@ -228,19 +235,25 @@
 	else if(istype(W, /obj/item/stack/cable_coil))
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You do not understand how to repair the broken [src]."))
+			balloon_alert(user, "not trained!")
 			return FALSE
 		var/obj/item/stack/cable_coil/CC = W
 		if(stat & REPAIR_STEP_TWO)
 			if(CC.amount < 5)
 				to_chat(user, SPAN_WARNING("You need more cable coil to replace the removed wires."))
+				balloon_alert(user, "more cable!")
 			to_chat(user, SPAN_NOTICE("You start to replace \the [src]'s removed wires."))
+			balloon_alert(user, "replacing wires...")
 			if(!do_after(user, 3 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 				to_chat(user, SPAN_WARNING("You stop replacing \the [src]'s removed wires."))
+				balloon_alert(user, "interrupted!")
 				return FALSE
 			if(!CC || !CC.use(5))
 				to_chat(user, SPAN_WARNING("You need more cable coil to replace the removed wires."))
+				balloon_alert(user, "more cable!")
 				return FALSE
-			to_chat(user, SPAN_NOTICE("You remove \the [src]'s broken broken wires."))
+			to_chat(user, SPAN_NOTICE("You replace \the [src]'s broken wires."))
+			balloon_alert(user, "replaced cables")
 			stat &= ~REPAIR_STEP_TWO
 			stat |= REPAIR_STEP_THREE
 			return TRUE
@@ -251,17 +264,22 @@
 	else if(istype(W, /obj/item/stack/sheet/metal))
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You do not understand how to repair the broken [src]."))
+			balloon_alert(user, "not trained!")
 			return FALSE
 		var/obj/item/stack/sheet/metal/M = W
 		if(stat & REPAIR_STEP_THREE)
 			to_chat(user, SPAN_NOTICE("You start to construct a new panel for \the [src]."))
+			balloon_alert(user, "constructing panel...")
 			if(!do_after(user, 3 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, numticks = 3))
 				to_chat(user, SPAN_WARNING("You stop constructing a new panel for \the [src]."))
+				balloon_alert(user, "interrupted!")
 				return FALSE
 			if(!M || !M.use(1))
-				to_chat(user, SPAN_WARNING("You a sheet of metal to construct a new panel."))
+				to_chat(user, SPAN_WARNING("You need a sheet of metal to construct a new panel."))
+				balloon_alert(user, "more metal!")
 				return FALSE
 			to_chat(user, SPAN_NOTICE("You construct a new panel for \the [src]."))
+			balloon_alert(user, "panel constructed")
 			stat &= ~REPAIR_STEP_THREE
 			stat |= REPAIR_STEP_FOUR
 			return TRUE
@@ -279,8 +297,10 @@
 				if (0)
 					anchored = TRUE
 					user.visible_message("[user] tightens the bolts securing \the [src] to the floor.", "You tighten the bolts securing \the [src] to the floor.")
+					balloon_alert_to_viewers("bolts tightened")
 				if (1)
 					user.visible_message("[user] unfastens the bolts securing \the [src] to the floor.", "You unfasten the bolts securing \the [src] to the floor.")
+					balloon_alert_to_viewers("bolts unfastened")
 					anchored = FALSE
 		return
 	else if(HAS_TRAIT(W, TRAIT_TOOL_MULTITOOL) || HAS_TRAIT(W, TRAIT_TOOL_WIRECUTTERS))
@@ -291,6 +311,7 @@
 		if(user.drop_inv_item_to_loc(W, src))
 			coin = W
 			to_chat(user, SPAN_NOTICE(" You insert the [W] into the [src]"))
+			balloon_alert(user, "[w] inserted")
 			ui_interact(user)
 		return
 	else if(istype(W, /obj/item/card))
@@ -302,6 +323,7 @@
 		if(user.drop_inv_item_to_loc(W, src))
 			ewallet = W
 			to_chat(user, SPAN_NOTICE(" You insert the [W] into the [src]"))
+			balloon_alert(user, "[w] inserted")
 			ui_interact(user)
 		return
 
@@ -580,18 +602,22 @@
 /obj/structure/machinery/vending/proc/vend(datum/data/vending_product/R, mob/user)
 	if(!allowed(user) && (wires & VENDING_WIRE_IDSCAN || hacking_safety)) //For SECURE VENDING MACHINES YEAH
 		to_chat(user, SPAN_WARNING("Access denied.")) //Unless emagged of course
+		balloon_alert(user, "access denied!")
 		flick(src.icon_deny,src)
 		return
 
 	if (R in coin_records)
 		if(!coin)
 			to_chat(user, SPAN_NOTICE(" You need to insert a coin to get this item."))
+			balloon_alert(user, "need coin!")
 			return
 		if(coin.string_attached)
 			if(prob(50))
 				to_chat(user, SPAN_NOTICE(" You successfully pull the coin out before the [src] could swallow it."))
+				balloon_alert(user, "coin retrieved!")
 			else
 				to_chat(user, SPAN_NOTICE(" You weren't able to pull the coin out fast enough, the machine ate it, string and all."))
+				balloon_alert(user, "coin gone...")
 				QDEL_NULL(coin)
 		else
 			QDEL_NULL(coin)
@@ -653,36 +679,43 @@
 				var/obj/item/weapon/gun/G = item_to_stock
 				if(G.in_chamber || (G.current_mag && !istype(G.current_mag, /obj/item/ammo_magazine/internal)) || (istype(G.current_mag, /obj/item/ammo_magazine/internal) && G.current_mag.current_rounds > 0) )
 					to_chat(user, SPAN_WARNING("[G] is still loaded. Unload it before you can restock it."))
+					balloon_alert(user, "unload it!")
 					return
 				for(var/obj/item/attachable/A in G.contents) //Search for attachments on the gun. This is the easier method
 					if((A.flags_attach_features & ATTACH_REMOVABLE) && !(is_type_in_list(A, G.starting_attachment_types))) //There are attachments that are default and others that can't be removed
 						to_chat(user, SPAN_WARNING("[G] has non-standard attachments equipped. Detach them before you can restock it."))
+						balloon_alert(user, "detach them!")
 						return
 
 			if(istype(item_to_stock, /obj/item/ammo_magazine))
 				var/obj/item/ammo_magazine/A = item_to_stock
 				if(A.current_rounds < A.max_rounds)
 					to_chat(user, SPAN_WARNING("[A] isn't full. Fill it before you can restock it."))
+					balloon_alert(user, "not full!")
 					return
 			if(istype(item_to_stock,/obj/item/device/walkman))
 				var/obj/item/device/walkman/W = item_to_stock
 				if(W.tape)
 					to_chat(user,SPAN_WARNING("Remove the tape first!"))
+					balloon_alert(user, "remove tape!")
 					return
 
 			if(istype(item_to_stock, /obj/item/device/defibrillator))
 				var/obj/item/device/defibrillator/D = item_to_stock
 				if(!D.dcell)
 					to_chat(user, SPAN_WARNING("\The [item_to_stock] needs a cell in it to be restocked!"))
+					balloon_alert(user, "needs battery!")
 					return
 				if(D.dcell.charge < D.dcell.maxcharge)
 					to_chat(user, SPAN_WARNING("\The [item_to_stock] needs to be fully charged to restock it!"))
+					balloon_alert(user, "must be fully charged!")
 					return
 
 			if(istype(item_to_stock, /obj/item/cell))
 				var/obj/item/cell/C = item_to_stock
 				if(C.charge < C.maxcharge)
 					to_chat(user, SPAN_WARNING("\The [item_to_stock] needs to be fully charged to restock it!"))
+					balloon_alert(user, "must be fully charged!")
 					return
 
 			if(item_to_stock.loc == user) //Inside the mob's inventory
@@ -697,6 +730,7 @@
 			qdel(item_to_stock)
 			user.visible_message(SPAN_NOTICE("[user] stocks [src] with \a [R.product_name]."),
 			SPAN_NOTICE("You stock [src] with \a [R.product_name]."))
+			balloon_alert_to_viewers("restocked")
 			R.amount++
 			return //We found our item, no reason to go on.
 

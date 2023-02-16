@@ -348,6 +348,7 @@
 	incident_reports += W
 
 	to_chat(user, SPAN_NOTICE("You insert \the [W] into \the [name]."))
+	balloon_alert(user, "report inserted")
 
 /obj/structure/machinery/brig_cell/proc/set_picture(state)
 	picture_state = state

@@ -75,12 +75,14 @@
 /obj/structure/machinery/portable_atmospherics/powered/scrubber/huge/attackby(obj/item/I as obj, mob/user as mob)
 	if(HAS_TRAIT(I, TRAIT_TOOL_WRENCH))
 		if(on)
-			to_chat(user, SPAN_NOTICE(" Turn it off first!"))
+			to_chat(user, SPAN_NOTICE("Turn it off first!"))
+			balloon_alert(user, "turn it off!")
 			return
 
 		anchored = !anchored
 		playsound(src.loc, 'sound/items/Ratchet.ogg', 25, 1)
 		to_chat(user, SPAN_NOTICE(" You [anchored ? "wrench" : "unwrench"] \the [src]."))
+		balloon_alert(user, anchored ? "wrenched" : "unwrenched")
 
 		return
 
@@ -103,6 +105,7 @@
 /obj/structure/machinery/portable_atmospherics/powered/scrubber/huge/stationary/attackby(obj/item/I as obj, mob/user as mob)
 	if(HAS_TRAIT(I, TRAIT_TOOL_WRENCH))
 		to_chat(user, SPAN_NOTICE(" The bolts are too tight for you to unscrew!"))
+		balloon_alert(user, "can't unscrew!")
 		return
 
 	..()

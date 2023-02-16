@@ -27,23 +27,28 @@
 	if(istype(O, /obj/item/vehicle_clamp))
 		if(clamped)
 			to_chat(user, SPAN_WARNING("[src] already has a [O.name] attached."))
+			balloon_alert(user, "clamp attached!")
 			return
 
 		//only can clamp friendly vehicles
 		if(!get_target_lock(user.faction_group))
 			to_chat(user, SPAN_WARNING("You can attach clamp to vehicles of your faction only."))
+			balloon_alert(user, "not your faction!")
 			return
 
 		if(!skillcheck(user, SKILL_POLICE, SKILL_POLICE_SKILLED))
 			to_chat(user, SPAN_WARNING("You don't know how to use \the [O.name]."))
+			balloon_alert(user, "don't know how!")
 			return
 
 		for(var/obj/item/hardpoint/locomotion/Loco in hardpoints)
 			user.visible_message(SPAN_WARNING("[user] attaches the vehicle clamp to \the [src]."), SPAN_NOTICE("You attach the vehicle clamp to \the [src] and lock the mechanism."))
+			balloon_alert(user, "clamp attached")
 			attach_clamp(O, user)
 			return
 
 		to_chat(user, SPAN_WARNING("There are no treads or wheels to attach \the [O.name] to."))
+		balloon_alert(user, "nowhere to attach!")
 		return
 
 	// Are we trying to remove a vehicle clamp?
@@ -506,6 +511,7 @@
 			break
 
 	to_chat(user, SPAN_NOTICE("You start trying to fit [dragged_atom] into \the [src]..."))
+	balloon_alert(user, "loading...")
 	if(!do_after(user, 1 SECONDS, INTERRUPT_NO_NEEDHAND, BUSY_ICON_GENERIC))
 		return
 	if(mob_x != user.x - x || mob_y != user.y - y)
@@ -522,13 +528,16 @@
 
 	if(currently_dragged != dragged_atom)
 		to_chat(user, SPAN_WARNING("You stop fitting [dragged_atom] inside \the [src]!"))
+		balloon_alert(user, "interrupted!")
 		return
 
 	var/success = interior.enter(dragged_atom, entrance_used)
 	if(success)
 		to_chat(user, SPAN_NOTICE("You successfully fit [dragged_atom] inside \the [src]."))
+		balloon_alert(user, "loaded")
 	else
 		to_chat(user, SPAN_WARNING("You fail to fit [dragged_atom] inside \the [src]! It's either too big or vehicle is out of space!"))
+		balloon_alert(user, "failed!")
 	return
 
 //CLAMP procs, unsafe proc, checks are done before calling it

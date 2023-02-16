@@ -245,11 +245,14 @@
 					SPAN_NOTICE("[buckled_mob.name] was unbuckled by [user.name]!"),\
 					SPAN_NOTICE("You were unbuckled from [src] by [user.name]."),\
 					SPAN_NOTICE("You hear metal clanking."))
+					balloon_alert(buckled_mob, "unbuckled")
+					balloon_alert(user, "unbuckled")
 			else
 				buckled_mob.visible_message(\
 					SPAN_NOTICE("[buckled_mob.name] unbuckled \himself!"),\
 					SPAN_NOTICE("You unbuckle yourself from [src]."),\
 					SPAN_NOTICE("You hear metal clanking"))
+					balloon_alert(buckled_mob, "unbuckled")
 			unbuckle(buckled_mob)
 			add_fingerprint(user)
 			return 1
@@ -264,6 +267,7 @@
 
 	if (isxeno(user))
 		to_chat(user, SPAN_WARNING("You don't have the dexterity to do that, try a nest."))
+		balloon_alert(user, "not dextrous!")
 		return
 	if (iszombie(user))
 		return
@@ -285,6 +289,7 @@
 		return
 	if (M.mob_size > MOB_SIZE_HUMAN)
 		to_chat(user, SPAN_WARNING("[M] is too big to buckle in."))
+		balloon_alert(user, "too big!")
 		return
 	do_buckle(M, user)
 
@@ -314,11 +319,14 @@
 			SPAN_NOTICE("[M] buckles in!"),\
 			SPAN_NOTICE("You buckle yourself to [src]."),\
 			SPAN_NOTICE("You hear metal clanking."))
+		balloon_alert(user, "buckled in")
 	else
 		M.visible_message(\
 			SPAN_NOTICE("[M] is buckled in to [src] by [user]!"),\
 			SPAN_NOTICE("You are buckled in to [src] by [user]."),\
 			SPAN_NOTICE("You hear metal clanking"))
+		balloon_alert(user, "buckled in")
+		balloon_alert(M, "buckled")
 
 /obj/Move(NewLoc, direct)
 	. = ..()

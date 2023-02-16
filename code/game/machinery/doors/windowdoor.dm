@@ -167,8 +167,10 @@
 	if (src.operating == -1 && istype(I, /obj/item/tool/crowbar))
 		playsound(src.loc, 'sound/items/Crowbar.ogg', 25, 1)
 		user.visible_message("[user] removes the electronics from the windoor.", "You start to remove electronics from the windoor.")
+		balloon_alert(user, "starting to remove electronics...")
 		if (do_after(user, 40, INTERRUPT_ALL, BUSY_ICON_BUILD))
 			to_chat(user, SPAN_NOTICE(" You removed the windoor electronics!"))
+			balloon_alert(user, "electronics removed")
 
 			var/obj/structure/windoor_assembly/wa = new/obj/structure/windoor_assembly(src.loc)
 			if (istype(src, /obj/structure/machinery/door/window/brigdoor))

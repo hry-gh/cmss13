@@ -27,6 +27,7 @@
 	if(istype(I, /obj/item/cell))
 		if(cell)
 			to_chat(user, "There is already a power cell installed.")
+			balloon_alert(user, "already a cell!")
 			return
 
 		var/obj/item/cell/C = I
@@ -40,6 +41,7 @@
 	if(HAS_TRAIT(I, TRAIT_TOOL_SCREWDRIVER))
 		if(!cell)
 			to_chat(user, SPAN_DANGER("There is no power cell installed."))
+			balloon_alert(user, "no cell!")
 			return
 
 		user.visible_message(SPAN_NOTICE("[user] opens the panel on [src] and removes [cell]."), SPAN_NOTICE("You open the panel on [src] and remove [cell]."))

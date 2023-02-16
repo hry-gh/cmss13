@@ -141,6 +141,7 @@
 /obj/structure/machinery/cm_vending/sorted/cargo_guns/stock(obj/item/item_to_stock, mob/user)
 	if(istype(item_to_stock, /obj/item/storage) && !istype(item_to_stock, /obj/item/storage/box/m94) && !istype(item_to_stock, /obj/item/storage/large_holster/machete))
 		to_chat(user, SPAN_WARNING("Can't restock \the [item_to_stock]."))
+		balloon_alert(user, "can't restock!")
 		return
 
 	//this below is in case we have subtype of an object, that SHOULD be treated as parent object (like /empty ammo box)
@@ -332,6 +333,7 @@
 	//these are exempted because checks would be huge and not worth it
 	if(istype(item_to_stock, /obj/item/storage))
 		to_chat(user, SPAN_WARNING("Can't restock \the [item_to_stock]."))
+		balloon_alert(user, "can't restock!")
 		return
 	var/list/R
 
@@ -632,12 +634,14 @@
 				var/obj/item/clothing/suit/storage/marine/AR = item_to_stock
 				if(AR.pockets && AR.pockets.contents.len)
 					to_chat(user, SPAN_WARNING("\The [AR] has something inside it. Empty it before restocking."))
+					balloon_alert(user, "empty it!")
 					return
 			//Marine helmet handling
 			else if(istype(item_to_stock, /obj/item/clothing/head/helmet/marine))
 				var/obj/item/clothing/head/helmet/marine/H = item_to_stock
 				if(H.pockets && H.pockets.contents.len)
 					to_chat(user, SPAN_WARNING("\The [H] has something inside it. Empty it before restocking."))
+					balloon_alert(user, "empty it!")
 					return
 
 			if(item_to_stock.loc == user) //Inside the mob's inventory

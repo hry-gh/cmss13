@@ -63,11 +63,13 @@
 		var/obj/item/stack/cable_coil/CC = W
 		if(string_attached)
 			to_chat(user, SPAN_NOTICE("There already is a string attached to this coin."))
+			balloon_alert(user, "already attached!")
 			return
 		if (CC.use(1))
 			overlays += image('icons/obj/items/items.dmi',"coin_string_overlay")
 			string_attached = 1
 			to_chat(user, SPAN_NOTICE("You attach a string to the coin."))
+			balloon_alert(user, "string attached")
 		else
 			to_chat(user, SPAN_NOTICE("This cable coil appears to be empty."))
 		return
@@ -82,6 +84,7 @@
 		overlays = list()
 		string_attached = null
 		to_chat(user, SPAN_NOTICE(" You detach the string from the coin."))
+		balloon_alert(user, "string detached")
 	else ..()
 
 /obj/item/coin/attack_self(mob/user)

@@ -61,7 +61,7 @@
 /obj/structure/machinery/computer/security/attack_hand(mob/user)
 	if(!admin_console && is_admin_level(z))
 		to_chat(user, SPAN_DANGER("<b>Unable to establish a connection</b>: \black You're too far away from the ship!"))
-		balloon_alert(user, "could not establish connection!")
+		balloon_alert(user, "couldn't establish connection!")
 		return
 	if(inoperable())
 		return

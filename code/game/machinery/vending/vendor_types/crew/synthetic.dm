@@ -290,6 +290,7 @@ GLOBAL_LIST_INIT(cm_vending_clothing_synth_snowflake, list(
 			available_points = available_points + 45
 			available_points_to_display = available_points
 			to_chat(user, SPAN_NOTICE("You insert \the [W] into \the [src]."))
+			balloon_alert(user, "[w] inserted")
 			return
 	return ..()
 

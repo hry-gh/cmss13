@@ -595,7 +595,7 @@
 	if(mods["shift"])
 		var/area/current_area = get_area(user)
 		to_chat(user, SPAN_NOTICE("You are currently at: <b>[current_area.name]</b>."))
-		balloon_alert(user, "[current_area.name]")
+		balloon_alert(user, "[lowertext(current_area.name)]")
 		return
 	else if(mods["alt"])
 		earpiece.switch_tracker_target()

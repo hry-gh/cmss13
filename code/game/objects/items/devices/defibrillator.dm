@@ -74,6 +74,7 @@
 	if (istype(user))
 		if(!skillcheck(user, SKILL_MEDICAL, SKILL_MEDICAL_MEDIC))
 			to_chat(user, SPAN_WARNING("You don't seem to know how to use [src]..."))
+			balloon_alert(user, "not trained!")
 			return
 
 	defib_cooldown = world.time + 10 //1 second cooldown every time the defib is toggled
@@ -113,9 +114,11 @@
 /obj/item/device/defibrillator/proc/check_revive(mob/living/carbon/human/H, mob/living/carbon/human/user)
 	if(!ishuman(H) || isyautja(H))
 		to_chat(user, SPAN_WARNING("You can't defibrilate [H]. You don't even know where to put the paddles!"))
+		balloon_alert(user, "can't defib this!")
 		return
 	if(!ready)
 		to_chat(user, SPAN_WARNING("Take [src]'s paddles out first."))
+		balloon_alert(user, "need paddles!")
 		return
 	if(dcell.charge <= charge_cost)
 		user.visible_message(SPAN_WARNING("[icon2html(src, viewers(src))] \The [src]'s battery is too low! It needs to recharge."))
