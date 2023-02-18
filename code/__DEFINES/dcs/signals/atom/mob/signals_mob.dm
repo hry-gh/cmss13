@@ -105,6 +105,3 @@
 #define COMSIG_MOB_STAT_SET_ALIVE "mob_stat_set_alive"
 //from /mob/living/set_stat()
 #define COMSIG_MOB_STAT_SET_DEAD "mob_stat_set_dead"
-
-/// from /obj/structure/closet/proc/dump_contents()
-#define COMSIG_MOB_LEFT_CLOSET "mob_left_closet"

@@ -74,7 +74,6 @@
 		stack_trace("/datum/chatmessage created with [isnull(owner) ? "null" : "invalid"] mob owner")
 		qdel(src)
 		return
-	RegisterSignal(target, COMSIG_MOB_LEFT_CLOSET, PROC_REF(handle_closet))
 	RegisterSignal(target, COMSIG_MOVABLE_MOVED, PROC_REF(handle_move))
 	INVOKE_ASYNC(src, PROC_REF(generate_image), text, target, owner, language, extra_classes, lifespan)
 
@@ -96,28 +95,24 @@
 	qdel(src)
 
 /**
- * Moves the message location when a mob leaves a closet
+ * Handles atoms moving in and out of contents
  */
-/datum/chatmessage/proc/handle_closet(atom/movable/source)
-	SIGNAL_HANDLER
-	if(isturf(source.loc))
-		message.loc = source
-
 /datum/chatmessage/proc/handle_move(atom/movable/source, atom/old_loc)
 	SIGNAL_HANDLER
 
 	if(isturf(old_loc) && !isturf(source.loc))
-		LAZYREMOVEASSOC(owned_by.seen_messages, message.loc, src)
-		message.loc = get_atom_on_turf(source)
-		LAZYADDASSOC(owned_by.seen_messages, source, src)
+		LAZYREMOVEASSOC(owned_by.seen_messages, message_loc, src)
+		message_loc = get_atom_on_turf(source)
+		message.loc = message_loc
+		LAZYADDASSOCLIST(owned_by.seen_messages, message_loc, src)
 		return
 
 	if(isturf(source.loc) && !isturf(old_loc))
-		LAZYREMOVEASSOC(owned_by.seen_messages, message.loc, src)
-		message.loc = source
-		LAZYADDASSOC(owned_by.seen_messages, source, src)
+		LAZYREMOVEASSOC(owned_by.seen_messages, message_loc, src)
+		message_loc = source
+		message.loc = message_loc
+		LAZYADDASSOCLIST(owned_by.seen_messages, message_loc, src)
 		return
-
 
 /**
  * Generates a chat message image representation

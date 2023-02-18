@@ -248,8 +248,8 @@ for it but just ignore it.
 
 /// Scans the input sentence for speech emphasis modifiers, notably |italics|, +bold+, and _underline_ -mothblocks
 /atom/movable/proc/say_emphasis(input)
-	ENCODE_HTML_EMPHASIS(input, "\\|", "i", italics)
-	ENCODE_HTML_EMPHASIS(input, "\\+", "b", bold)
+	ENCODE_HTML_EMPHASIS(input, "\\/", "i", italics)
+	ENCODE_HTML_EMPHASIS(input, "*", "b", bold)
 	ENCODE_HTML_EMPHASIS(input, "_", "u", underline)
 	var/static/regex/remove_escape_backlashes = regex("\\\\(_|\\+|\\|)", "g") // Removes backslashes used to escape text modification.
 	input = remove_escape_backlashes.Replace_char(input, "$1")
