@@ -271,10 +271,12 @@
 	if(HAS_TRAIT(O, TRAIT_TOOL_SCREWDRIVER))
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 			to_chat(user, SPAN_WARNING("You are not trained to dismantle machines..."))
+			balloon_alert(user, "untrained!")
 			return
 		panel_open = !panel_open
 		icon_state = (panel_open ? "[base_state]_t": "[base_state]")
 		to_chat(user, "You [panel_open ? "open" : "close"] the maintenance hatch of [src].")
+		balloon_alert(user, "[panel_open ? "opened" ? "closed"]")
 		return
 
 	if(panel_open)
@@ -295,6 +297,7 @@
 	var/obj/item/eating = O
 	if(!eating.matter)
 		to_chat(user, "\The [eating] does not contain significant amounts of useful materials and cannot be accepted.")
+		balloon_alert(user, "insufficient material!")
 		return
 
 	var/filltype = 0    // Used to determine message.
@@ -329,11 +332,14 @@
 
 	if(!filltype)
 		to_chat(user, SPAN_DANGER("\The [src] is full. Please remove material from the [name] in order to insert more."))
+		balloon_alert(user, "full!")
 		return
 	else if(filltype == 1)
 		to_chat(user, "You fill \the [src] to capacity with \the [eating].")
+		balloon_alert(user, "entirely filled")
 	else
 		to_chat(user, "You fill \the [src] with \the [eating].")
+		balloon_alert(user, "filled")
 
 	flick("[base_state]_o",src) // Plays metal insertion animation. Work out a good way to work out a fitting animation. ~Z
 
@@ -370,6 +376,7 @@
 		if(projected_stored_material[material] && projected_stored_material[material] >= (making.resources[material]*multiplier))
 			continue
 		to_chat(user, SPAN_DANGER("The [name] does not have the materials to create \the [making.name]."))
+		balloon_alert(user, "insufficient materials!")
 		return AUTOLATHE_FAILED
 
 	for (var/material in making.resources)
@@ -589,6 +596,7 @@
 /obj/structure/machinery/autolathe/armylathe/attack_hand(mob/user)
 	if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 		to_chat(user, SPAN_WARNING("You have no idea how to operate the [name]."))
+		balloon_alert(user, "untrained!")
 		return FALSE
 	. = ..()
 
@@ -616,6 +624,7 @@
 /obj/structure/machinery/autolathe/medilathe/attack_hand(mob/user)
 	if(!skillcheck(user, SKILL_MEDICAL, SKILL_MEDICAL_DOCTOR))
 		to_chat(user, SPAN_WARNING("You have no idea how to operate \the [name]."))
+		balloon_alert(user, "untrained!")
 		return FALSE
 	. = ..()
 

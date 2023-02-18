@@ -131,14 +131,17 @@
 
 	if(istype(I, /obj/item/evidencebag))
 		to_chat(user, SPAN_NOTICE("You find putting an evidence bag in another evidence bag to be slightly absurd."))
+		balloon_alert(user, "seems wrong!")
 		return
 
 	if(I.w_class > SIZE_MEDIUM)
 		to_chat(user, SPAN_NOTICE("[I] won't fit in [src]."))
+		balloon_alert(user, "won't fit!")
 		return
 
 	if(contents.len)
 		to_chat(user, SPAN_NOTICE("[src] already has something inside it."))
+		balloon_alert(user, "already something!")
 		return
 
 	user.visible_message("[user] puts [I] into [src]", "You put [I] inside [src].",\
@@ -184,6 +187,7 @@
 		desc = "An empty evidence bag."
 	else
 		to_chat(user, "[src] is empty.")
+		balloon_alert(user, "empty!")
 		icon_state = "evidenceobj"
 	return
 

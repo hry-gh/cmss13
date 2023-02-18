@@ -24,6 +24,7 @@
 		armed = !armed
 		icon_state = "beartrap[armed]"
 		to_chat(user, SPAN_NOTICE("[src] is now [armed ? "armed" : "disarmed"]"))
+		balloon_alert(user, "[armed ? "armed" : "disarmed"]")
 
 /obj/item/legcuffs/beartrap/Crossed(atom/movable/AM)
 	if(armed)

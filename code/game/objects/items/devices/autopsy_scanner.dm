@@ -193,15 +193,18 @@
 		src.chemtraces = list()
 		src.timeofdeath = null
 		to_chat(user, SPAN_DANGER("A new patient has been registered. Purging data for previous patient."))
+		balloon_alert(user, "new patient registered")
 
 	src.timeofdeath = M.timeofdeath
 
 	var/obj/limb/S = M.get_limb(user.zone_selected)
 	if(!S)
 		to_chat(usr, "<b>You can't scan this body part.</b>")
+		balloon_alert(user, "can't scan this!")
 		return
 	if(M.incision_depths[S.name] == SURGERY_DEPTH_SURFACE)
 		to_chat(usr, "<b>You have to cut the limb open first!</b>")
+		balloon_alert(user, "cut it open!")
 		return
 	for(var/mob/O in viewers(M))
 		O.show_message(SPAN_DANGER("[user.name] scans the wounds on [M.name]'s [S.display_name] with \the [src.name]"), SHOW_MESSAGE_VISIBLE)

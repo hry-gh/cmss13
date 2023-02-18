@@ -14,6 +14,7 @@
 	if (istype(W,/obj/item/trash/cigbutt) || istype(W,/obj/item/clothing/mask/cigarette) || istype(W, /obj/item/tool/match))
 		if (contents.len >= max_butts)
 			to_chat(user, "This ashtray is full.")
+			balloon_alert(user, "full!")
 			return
 		var/drop = TRUE
 
@@ -22,6 +23,7 @@
 			if(cig.type_butt)
 				if(cig.heat_source)
 					user.visible_message("[user] crushes \the [cig] in \the [src], putting it out.", "You crush \the [cig] in \the [src], putting it out.")
+					balloon_alert(user, "crushed!")
 					var/obj/item/butt = cig.go_out(user, TRUE)
 					butt.forceMove(src)
 					drop = FALSE
@@ -35,6 +37,7 @@
 					P.ash = FALSE
 				else
 					to_chat(user, "There is no ash in \the [P].")
+					balloon_alert(user, "no ash!")
 
 		if(drop)
 			user.visible_message("[user] places \the [W] into \the [src].", "You place \the [W] into \the [src].")

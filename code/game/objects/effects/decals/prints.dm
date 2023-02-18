@@ -42,11 +42,13 @@
 
 	if(!skillcheck(user, SKILL_POLICE, SKILL_POLICE_SKILLED))
 		to_chat(user, SPAN_WARNING("You don't seem to know how to use [S]..."))
+		balloon_alert(user, "not trained!")
 		return
 
 	S.scanning = TRUE
 	S.update_icon()
 	to_chat(user, SPAN_NOTICE("You start scanning [src]..."))
+	balloon_alert(user, "scanning...")
 	if(!do_after(user, 50, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD))
 		S.scanning = FALSE
 		S.update_icon()
@@ -57,6 +59,7 @@
 	LAZYADD(S.print_list, src)
 	S.update_icon()
 	to_chat(user, SPAN_INFO("New print sets found: 1, total amount: [length(S.print_list)]"))
+	balloon_alert(user, "1 found, total [length(S.print_list)]")
 
 /obj/effect/decal/prints/proc/decipher_clue()
 	var/information = ""

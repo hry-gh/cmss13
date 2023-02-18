@@ -60,10 +60,12 @@
 		Huser.animation_attack_on(H)
 		if(!open)
 			to_chat(user, SPAN_WARNING("The lid is on!"))
+			balloon_alert(user, "lid is on!")
 			return FALSE
 
 		if(H.lip_style) //if they already have lipstick on
 			to_chat(user, SPAN_WARNING("You need to wipe the old makeup off with paper first!"))
+			balloon_alert(user, "wipe it off!")
 			return
 
 		if(H == user)
@@ -113,10 +115,12 @@
 	if(open)
 		open = FALSE
 		to_chat(user, SPAN_NOTICE("You put the lipstick's lid back on."))
+		balloon_alert(user, "lid on")
 		icon_state = icon_state_closed
 	else
 		open = TRUE
 		to_chat(user, SPAN_NOTICE("You take the lid off."))
+		balloon_alert(user, "lid removed")
 		icon_state = icon_state_open
 		playsound(src, "pillbottle", 25, TRUE)
 

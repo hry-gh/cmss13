@@ -18,6 +18,7 @@
 	..()
 	src.read_only = !src.read_only
 	to_chat(user, "You flip the write-protect tab to [src.read_only ? "protected" : "unprotected"].")
+	balloon_alert(user, "[read_only ? "protected" : "unprotected"]")
 
 /obj/item/disk/data/get_examine_text(mob/user)
 	. = ..()

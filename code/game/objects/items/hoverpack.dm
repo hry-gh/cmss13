@@ -50,6 +50,7 @@
 /obj/item/hoverpack/attack_self(mob/user)
 	..()
 	to_chat(user, SPAN_NOTICE("You start dumping the contents of [src]'s reservoir..."))
+	balloon_alert(user, "dumping reservoir...")
 	if(!do_after(user, 5 SECONDS, INTERRUPT_ALL, BUSY_ICON_GENERIC))
 		return
 	to_chat(user, SPAN_NOTICE("You dump the contents of [src]'s reservoir."))
@@ -84,6 +85,7 @@
 				hover_cooldown = 10 SECONDS
 
 		to_chat(user, SPAN_NOTICE("You set the hoverpack's pressure output to [input]."))
+		balloon_alert(user, "[input] pressure")
 
 	else if(W.is_open_container())
 		W.afterattack(reservoir, user, TRUE)
@@ -99,6 +101,7 @@
 /obj/item/hoverpack/proc/expend_fuel(mob/user) //jesus
 	if(!reservoir.reagents.total_volume)
 		to_chat(user, SPAN_NOTICE("\The [reservoir] is empty!"))
+		balloon_alert(user, "empty!")
 		return NO_FUEL
 	var/datum/chem_property/OP
 	var/boom_chance = 0
@@ -113,10 +116,12 @@
 
 	if(prob(boom_chance))
 		to_chat(user, SPAN_DANGER("Something feels wrong..."))
+		balloon_alert(user, "feels wrong...")
 		return KABOOM
 
 	if(!OP)
 		to_chat(user, SPAN_NOTICE("\The [src] makes a clanking noise. You think you put the wrong stuff inside."))
+		balloon_alert(user, "no fuel!")
 		return NO_FUEL
 
 	var/reduction_modifier = OP.level
@@ -152,6 +157,7 @@
 		fuel_used = last_fuel
 
 	to_chat(user, SPAN_BOLDNOTICE(" PROPELLANT EXPENDED: [round(fuel_used/reservoir.reagents.maximum_volume * 100, 0.1)]% <br> PROPELLANT REMAINING: [round(reservoir.reagents.total_volume/reservoir.reagents.maximum_volume * 100, 0.1)]%"))
+	balloon_alert(user, "[round(reservoir.reagents.total_volume/reservoir.reagents.maximum_volume * 100, 0.1)]% remaining")
 	update_icon()
 	playsound(user, 'sound/items/jetpack_sound.ogg', 45, TRUE)
 
@@ -186,10 +192,12 @@
 /obj/item/hoverpack/proc/can_use_hoverpack(mob/living/carbon/human/user)
 	if(user.is_mob_incapacitated() || user.lying)
 		to_chat(user, SPAN_WARNING("You're a bit too incapacitated for that."))
+		balloon_alert(user, "incapacitated!")
 		return FALSE
 
 	if(!can_hover)
 		to_chat(user, SPAN_WARNING("You cannot use the hoverpack yet!"))
+		balloon_alert(user, "can't use!")
 		return FALSE
 
 	return expend_fuel(user)

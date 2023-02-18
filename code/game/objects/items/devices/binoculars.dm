@@ -102,15 +102,18 @@
 			return FALSE
 		if(user.z != A.z)
 			to_chat(user, SPAN_WARNING("You cannot get a direct laser from where you are."))
+			balloon_alert(user, "not from here!")
 			return FALSE
 		if(!(is_ground_level(A.z)))
 			to_chat(user, SPAN_WARNING("INVALID TARGET: target must be on the surface."))
+			balloon_alert(user, "must be on the surface!")
 			return FALSE
 		if(user.sight & SEE_TURFS)
 			var/list/turf/path = getline2(user, A, include_from_atom = FALSE)
 			for(var/turf/T in path)
 				if(T.opacity)
 					to_chat(user, SPAN_WARNING("There is something in the way of the laser!"))
+					balloon_alert(user, "blocked!")
 					return FALSE
 		acquire_target(A, user)
 		return TRUE
@@ -126,9 +129,11 @@
 
 	if(coord)
 		to_chat(user, SPAN_WARNING("You're already targeting something."))
+		balloon_alert(user, "already targeting!")
 		return
 	if(world.time < laser_cooldown)
 		to_chat(user, SPAN_WARNING("[src]'s laser battery is recharging."))
+		balloon_alert(user, "recharging!")
 		return
 
 	var/acquisition_time = target_acquisition_delay
@@ -168,6 +173,7 @@
 		tgui_interact(user)
 	else
 		to_chat(user, SPAN_NOTICE(FONT_SIZE_LARGE("SIMPLIFIED COORDINATES OF TARGET. LONGITUDE [last_x]. LATITUDE [last_y].")))
+	balloon_alert(user, "[last_x], [last_y]")
 
 /obj/item/device/binoculars/range/tgui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
@@ -243,6 +249,7 @@
 
 	mode = !mode
 	to_chat(user, SPAN_NOTICE("You switch [src] to [mode? "range finder" : "CAS marking"] mode."))
+	balloon_alert(user, "[mode? "range finder" : "CAS marking"]")
 	update_icon()
 	playsound(usr, 'sound/machines/click.ogg', 15, 1)
 
@@ -260,10 +267,12 @@
 
 	if(laser || coord)
 		to_chat(user, SPAN_WARNING("You're already targeting something."))
+		balloon_alert(user, "already targeting!")
 		return
 
 	if(world.time < laser_cooldown)
 		to_chat(user, SPAN_WARNING("[src]'s laser battery is recharging."))
+		balloon_alert(user, "recharging!")
 		return
 
 	var/acquisition_time = target_acquisition_delay
@@ -298,12 +307,15 @@
 
 	if(!is_outside && !mode) //rangefinding works regardless of ceiling
 		to_chat(user, SPAN_WARNING("INVALID TARGET: target must be visible from high altitude."))
+		balloon_alert(user, "must be visible from altitude!")
 		return
 	if(user.action_busy)
 		return
 	playsound(src, 'sound/effects/nightvision.ogg', 35)
 	to_chat(user, SPAN_NOTICE("INITIATING LASER TARGETING. Stand still."))
+	balloon_alert(user, "initiating targeting...")
 	if(!do_after(user, acquisition_time, INTERRUPT_ALL, BUSY_ICON_GENERIC) || world.time < laser_cooldown || laser)
+		balloon_alert(user, "interrupted!")
 		return
 	if(mode)
 		var/obj/effect/overlay/temp/laser_coordinate/LT = new (TU, las_name, user)
@@ -318,6 +330,7 @@
 				break
 	else
 		to_chat(user, SPAN_NOTICE("TARGET ACQUIRED. LASER TARGETING IS ONLINE. DON'T MOVE."))
+		balloon_alert(user, "target acquired!")
 		var/obj/effect/overlay/temp/laser_target/LT = new (TU, las_name, user, tracking_id)
 		laser = LT
 
@@ -576,13 +589,16 @@
 
 	if(!las_mode)
 		to_chat(user, SPAN_WARNING("The Laser Designator is currently off!"))
+		balloon_alert(user, "off!")
 		return 0
 
 	if(las_r || las_b) //Make sure we don't spam strikes
 		to_chat(user, SPAN_WARNING("The laser is currently cooling down. Please wait roughly 5 minutes from lasing the target."))
+		balloon_alert(user, "cooling down!")
 		return 0
 
 	to_chat(user, SPAN_BOLDNOTICE(" You start lasing the target area."))
+	balloon_alert(user, "start lasing...")
 	message_staff("ALERT: [user] ([user.key]) IS CURRENTLY LASING A TARGET: CURRENT MODE [las_mode], at ([T.x],[T.y],[T.z]) (<A HREF='?_src_=admin_holder;[HrefToken(forceGlobal = TRUE)];adminplayerobservecoodjump=1;X=[T.x];Y=[T.y];Z=[T.z]'>JMP</a>).") // Alert all the admins to this asshole. Added the jmp command from the explosion code.
 	var/obj/effect/las_target/lasertarget = new(T.loc)
 	if(las_mode == 1 && !las_r) // Heres our IR bomb code.

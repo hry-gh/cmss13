@@ -32,6 +32,7 @@
 		gift.add_fingerprint(user)
 	else
 		to_chat(user, SPAN_NOTICE("The gift was empty!"))
+		balloon_alert(user, "empty...")
 	deconstruct(TRUE)
 	return
 
@@ -43,15 +44,18 @@
 	if (user.stat)
 		return
 	to_chat(user, SPAN_NOTICE(" You can't move."))
+	balloon_alert(user, "can't move!")
 
 /obj/effect/spresent/attackby(obj/item/W as obj, mob/user as mob)
 	..()
 
 	if (!HAS_TRAIT(W, TRAIT_TOOL_WIRECUTTERS))
 		to_chat(user, SPAN_NOTICE(" I need wirecutters for that."))
+		balloon_alert(user, "need wirecutters!")
 		return
 
 	to_chat(user, SPAN_NOTICE(" You cut open the present."))
+	balloon_alert(user, "opened")
 
 	for(var/mob/M in src) //Should only be one but whatever.
 		M.forceMove(src.loc)

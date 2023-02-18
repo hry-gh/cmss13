@@ -77,16 +77,19 @@
 
 	if (!T || T.density)
 		to_chat(user, "This hole leads nowhere!")
+		balloon_alert(user, "goes nowhere!")
 		return
 
 	if(entrance_dir)
 		if(!step(user, entrance_dir))
 			to_chat(user, SPAN_WARNING("You can't reach the hole's entrance."))
+			balloon_alert(user, "can't reach!")
 			return
 
 	for(var/obj/O in T)
 		if(O.BlockedPassDirs(user, crawl_dir))
 			to_chat(user, SPAN_WARNING("The hole's exit is blocked by something!"))
+			balloon_alert(user, "blocked!")
 			return
 
 	if(user.action_busy)
@@ -134,6 +137,7 @@
 			return
 
 		to_chat(user, SPAN_NOTICE("You take the position to throw [G]."))
+		balloon_alert(user, "preparing to throw...")
 		if(do_after(user,10, INTERRUPT_ALL, BUSY_ICON_HOSTILE))
 			if(Target.density)
 				return
@@ -153,9 +157,11 @@
 
 		if(!Target ||Target.density)
 			to_chat(user, SPAN_WARNING("This hole leads nowhere!"))
+			balloon_alert(user, "leads nowhere!")
 			return
 
 		to_chat(user, SPAN_NOTICE("You take the position to throw [F]."))
+		balloon_alert(user, "preparing to throw...")
 		if(do_after(user,10, INTERRUPT_ALL, BUSY_ICON_HOSTILE))
 			if(Target.density)
 				return

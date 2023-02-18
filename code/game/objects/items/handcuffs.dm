@@ -25,6 +25,7 @@
 		return ..()
 	if (!istype(user, /mob/living/carbon/human))
 		to_chat(user, SPAN_DANGER("You don't have the dexterity to do this!"))
+		balloon_alert(user, "not dextrous!")
 		return
 	if(!C.handcuffed)
 		place_handcuffs(C, user)
@@ -62,6 +63,7 @@
 
 		if (!H.has_limb_for_slot(WEAR_HANDCUFFS))
 			to_chat(user, SPAN_DANGER("\The [H] needs at least two wrists before you can cuff them together!"))
+			balloon_alert(user, "needs wrists!")
 			return
 
 		H.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been handcuffed (attempt) by [key_name(user)]</font>")
@@ -74,6 +76,7 @@
 				if(iscarbon(H))
 					if(istype(H.buckled, /obj/structure/bed/roller))
 						to_chat(user, SPAN_DANGER("You cannot handcuff someone who is buckled onto a roller bed."))
+						balloon_alert(user, "buckled!")
 						return
 				if(H.has_limb_for_slot(WEAR_HANDCUFFS))
 					user.drop_inv_item_on_ground(src)
@@ -159,6 +162,7 @@
 			var/mob/living/carbon/human/H = C
 			if (!H.has_limb_for_slot(WEAR_HANDCUFFS))
 				to_chat(user, SPAN_DANGER("\The [H] needs at least two wrists before you can cuff them together!"))
+				balloon_alert(user, "need wrists!")
 				return
 
 		spawn(30)
@@ -191,11 +195,13 @@
 /obj/item/restraints/attack(mob/living/carbon/C as mob, mob/user as mob)
 	if(!istype(C, /mob/living/carbon/xenomorph))
 		to_chat(user, SPAN_DANGER("The cuffs do not fit!"))
+		balloon_alert(user, "don't fit!")
 		return
 	if(!C.handcuffed)
 		var/turf/p_loc = user.loc
 		var/turf/p_loc_m = C.loc
 		playsound(src.loc, 'sound/weapons/handcuffs.ogg', 25, 1, 6)
+		balloon_alert_to_viewers("handcuffing...")
 		for(var/mob/O in viewers(user, null))
 			O.show_message(SPAN_DANGER("<B>[user] is trying to put restraints on [C]!</B>"), SHOW_MESSAGE_VISIBLE)
 		spawn(30)

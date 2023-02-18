@@ -104,6 +104,7 @@
 
 	if(blocker)
 		to_chat(user, SPAN_WARNING("\The [blocker] prevents you from climbing [src]."))
+		balloon_alert(user, "blocked!")
 		return FALSE
 
 	return TRUE
@@ -192,17 +193,20 @@
 		return 0
 	if(user.is_mob_restrained() || user.buckled)
 		to_chat(user, SPAN_NOTICE("You need your hands and legs free for this."))
+		balloon_alert(user, "must be free!")
 		return 0
 	if(user.is_mob_incapacitated(TRUE) || user.lying)
 		return 0
 	if(isRemoteControlling(user))
 		to_chat(user, SPAN_NOTICE("You need hands for this."))
+		balloon_alert(user, "need hands!")
 		return 0
 	return 1
 
 /obj/structure/proc/toggle_anchored(obj/item/W, mob/user)
 	if(!wrenchable)
 		to_chat(user, SPAN_WARNING("The [src] cannot be [anchored ? "un" : ""]anchored."))
+		balloon_alert(user, "can't [anchored ? "un" : ""]anchor")
 		return FALSE
 	else
 		// Wrenching is faster if we are better at engineering
