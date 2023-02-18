@@ -62,14 +62,8 @@
 	///The color this atom will be if we choose to draw it on the minimap
 	var/minimap_color = MINIMAP_SOLID
 
-	/// Last name used to calculate a color for the chatmessage overlays
-	var/chat_color_name
-
-	/// Last color calculated for the the chatmessage overlays
+	/// chat color for the chatmessage overlays
 	var/chat_color
-
-	/// A luminescence-shifted value of the last color calculated for chatmessage overlays
-	var/chat_color_darkened
 
 /atom/New(loc, ...)
 	var/do_initialize = SSatoms.initialized

@@ -44,6 +44,7 @@
 	hardcore = FALSE
 	pixel_x = -16
 	old_x = -16
+	bubble_icon_y_offset = 10
 	mob_size = MOB_SIZE_BIG
 	tier = 1
 	age = XENO_NO_AGE //Predaliens are already in their ultimate form, they don't get even better

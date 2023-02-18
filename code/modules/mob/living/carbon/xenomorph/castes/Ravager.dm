@@ -46,6 +46,7 @@
 	mutation_type = RAVAGER_NORMAL
 	claw_type = CLAW_TYPE_VERY_SHARP
 	maptext_height = 64
+	bubble_icon_y_offset = 20
 
 	base_actions = list(
 		/datum/action/xeno_action/onclick/xeno_resting,

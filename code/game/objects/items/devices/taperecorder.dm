@@ -263,7 +263,7 @@
 
 		var/list/heard = get_mobs_in_view(world_view_size, src)
 		for(var/mob/receivers as anything in heard)
-			receivers.create_chat_message(src, raw_message = mytape.storedinfo[i], spans = "small")
+			receivers.create_chat_message(src, raw_message = mytape.storedinfo[i])
 
 		audible_message(SPAN_MAROON("[icon2html(src, usr)] [mytape.storedinfo[i]]"))//We want to display this properly, don't double encode
 		if(mytape.storedinfo.len < i + 1)

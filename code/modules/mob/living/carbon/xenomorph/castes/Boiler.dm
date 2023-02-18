@@ -40,6 +40,7 @@
 	plasma_types = list(PLASMA_NEUROTOXIN)
 	pixel_x = -16
 	old_x = -16
+	bubble_icon_y_offset = 10
 	mob_size = MOB_SIZE_BIG
 	tier = 3
 	gib_chance = 100

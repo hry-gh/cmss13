@@ -44,6 +44,7 @@
 	tier = 3
 	mutation_type = PRAETORIAN_NORMAL
 	maptext_height = 64
+	bubble_icon_y_offset = 20
 
 	base_actions = list(
 		/datum/action/xeno_action/onclick/xeno_resting,

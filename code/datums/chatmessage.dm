@@ -75,6 +75,7 @@
 		qdel(src)
 		return
 	RegisterSignal(target, COMSIG_MOB_LEFT_CLOSET, PROC_REF(handle_closet))
+	RegisterSignal(target, COMSIG_MOVABLE_MOVED, PROC_REF(handle_move))
 	INVOKE_ASYNC(src, PROC_REF(generate_image), text, target, owner, language, extra_classes, lifespan)
 
 /datum/chatmessage/Destroy()
@@ -101,6 +102,22 @@
 	SIGNAL_HANDLER
 	if(isturf(source.loc))
 		message.loc = source
+
+/datum/chatmessage/proc/handle_move(atom/movable/source, atom/old_loc)
+	SIGNAL_HANDLER
+
+	if(isturf(old_loc) && !isturf(source.loc))
+		LAZYREMOVEASSOC(owned_by.seen_messages, message.loc, src)
+		message.loc = get_atom_on_turf(source)
+		LAZYADDASSOC(owned_by.seen_messages, source, src)
+		return
+
+	if(isturf(source.loc) && !isturf(old_loc))
+		LAZYREMOVEASSOC(owned_by.seen_messages, message.loc, src)
+		message.loc = source
+		LAZYADDASSOC(owned_by.seen_messages, source, src)
+		return
+
 
 /**
  * Generates a chat message image representation
@@ -130,12 +147,6 @@
 	if (length_char(text) > maxlen)
 		text = copytext_char(text, 1, maxlen + 1) + "..." // BYOND index moment
 
-	// Calculate target color if not already present
-	if (!target.chat_color || target.chat_color_name != target.name)
-		target.chat_color = colorize_string(target.name)
-		target.chat_color_darkened = colorize_string(target.name, 0.85, 0.85)
-		target.chat_color_name = target.name
-
 	// Get rid of any URL schemes that might cause BYOND to automatically wrap something in an anchor tag
 	var/static/regex/url_scheme = new(@"[A-Za-z][A-Za-z0-9+-\.]*:\/\/", "g")
 	text = replacetext(text, url_scheme, "")
@@ -162,11 +173,8 @@
 
 	text = "[prefixes?.Join("&nbsp;")][text]"
 
-	// We dim italicized text to make it more distinguishable from regular text
-	var/tgt_color = extra_classes.Find("italics") ? target.chat_color_darkened : target.chat_color
-
 	// Approximate text height
-	var/complete_text = "<span class='center [extra_classes.Join(" ")]' style='color: [tgt_color]'>[owner.say_emphasis(text)]</span>"
+	var/complete_text = "<span class='center [extra_classes.Join(" ")]' style='color: [owner.chat_color]'>[owner.say_emphasis(text)]</span>"
 
 	var/mheight
 	WXH_TO_HEIGHT(owned_by.MeasureText(complete_text, null, CHAT_MESSAGE_WIDTH), mheight)
@@ -215,7 +223,7 @@
 	message.appearance_flags = APPEARANCE_UI_IGNORE_ALPHA | KEEP_APART
 	message.alpha = 0
 	message.pixel_y = target.maptext_height
-	message.pixel_x = -target.base_pixel_x
+	message.pixel_x = -target.pixel_x
 	message.maptext_width = CHAT_MESSAGE_WIDTH
 	message.maptext_height = mheight
 	message.maptext_x = (CHAT_MESSAGE_WIDTH - owner.bound_width) * -0.5
@@ -260,58 +268,16 @@
 	else
 		new /datum/chatmessage(raw_message, speaker, src, message_language, spans)
 
-// Tweak these defines to change the available color ranges
-#define CM_COLOR_SAT_MIN 0.6
-#define CM_COLOR_SAT_MAX 0.7
-#define CM_COLOR_LUM_MIN 0.65
-#define CM_COLOR_LUM_MAX 0.75
-
 /**
- * Gets a color for a name, will return the same color for a given string consistently within a round.atom
+ * Sends a chat message to members of a group. Helper to reduce the amount of boilerplate
  *
- * Note that this proc aims to produce pastel-ish colors using the HSL colorspace. These seem to be favorable for displaying on the map.
- *
- * Arguments:
- * * name - The name to generate a color for
- * * sat_shift - A value between 0 and 1 that will be multiplied against the saturation
- * * lum_shift - A value between 0 and 1 that will be multiplied against the luminescence
+ * Argument:
+ * * language - optional, which language is required to see this message
+ * * list/group - required, list of mobs to send the message to
+ * * message - required, what message should be visible
+ * * list/spans - optional, what spans should be applied to the message
+ * * runechat_flags - optional, if this is an emote
  */
-/datum/chatmessage/proc/colorize_string(name, sat_shift = 1, lum_shift = 1)
-	// seed to help randomness
-	var/static/rseed = rand(1,26)
-
-	// get hsl using the selected 6 characters of the md5 hash
-	var/hash = copytext(md5(name + SSperf_logging.round.id), rseed, rseed + 6)
-	var/h = hex2num(copytext(hash, 1, 3)) * (360 / 255)
-	var/s = (hex2num(copytext(hash, 3, 5)) >> 2) * ((CM_COLOR_SAT_MAX - CM_COLOR_SAT_MIN) / 63) + CM_COLOR_SAT_MIN
-	var/l = (hex2num(copytext(hash, 5, 7)) >> 2) * ((CM_COLOR_LUM_MAX - CM_COLOR_LUM_MIN) / 63) + CM_COLOR_LUM_MIN
-
-	// adjust for shifts
-	s *= clamp(sat_shift, 0, 1)
-	l *= clamp(lum_shift, 0, 1)
-
-	// convert to rgb
-	var/h_int = round(h/60) // mapping each section of H to 60 degree sections
-	var/c = (1 - abs(2 * l - 1)) * s
-	var/x = c * (1 - abs((h / 60) % 2 - 1))
-	var/m = l - c * 0.5
-	x = (x + m) * 255
-	c = (c + m) * 255
-	m *= 255
-	switch(h_int)
-		if(0)
-			return "#[num2hex(c, 2)][num2hex(x, 2)][num2hex(m, 2)]"
-		if(1)
-			return "#[num2hex(x, 2)][num2hex(c, 2)][num2hex(m, 2)]"
-		if(2)
-			return "#[num2hex(m, 2)][num2hex(c, 2)][num2hex(x, 2)]"
-		if(3)
-			return "#[num2hex(m, 2)][num2hex(x, 2)][num2hex(c, 2)]"
-		if(4)
-			return "#[num2hex(x, 2)][num2hex(m, 2)][num2hex(c, 2)]"
-		if(5)
-			return "#[num2hex(c, 2)][num2hex(m, 2)][num2hex(x, 2)]"
-
 /mob/proc/send_runechat_to_group(datum/language/language, list/group, message, list/spans, runechat_flags)
 	for(var/mob/receiver as anything in group)
 		receiver.create_chat_message(src, language, message, spans, runechat_flags)

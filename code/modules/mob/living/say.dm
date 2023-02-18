@@ -125,6 +125,8 @@ var/list/department_radio_keys = list(
 
 		var/speech_bubble_test = say_test(message)
 		var/image/speech_bubble = image('icons/mob/effects/talk.dmi', src, "[bubble_type][speech_bubble_test]", FLY_LAYER)
+		speech_bubble.pixel_x = bubble_icon_x_offset
+		speech_bubble.pixel_y = bubble_icon_y_offset
 
 		for(var/mob/M as anything in listening)
 			M.hear_say(message, verb, speaking, alt_name, italics, src, speech_sound, sound_vol)

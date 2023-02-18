@@ -52,7 +52,8 @@
 	old_x = -16
 	mob_size = MOB_SIZE_BIG
 	drag_delay = 6 //pulling a big dead xeno is hard
-	maptext_height = 64
+	maptext_height = 48
+	bubble_icon_y_offset = 10
 	tier = 2
 	base_actions = list(
 		/datum/action/xeno_action/onclick/xeno_resting,
