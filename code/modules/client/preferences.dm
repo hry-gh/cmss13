@@ -57,7 +57,6 @@ var/const/MAX_SAVE_SLOTS = 10
 	var/toggles_admin = TOGGLES_ADMIN_DEFAULT
 	var/toggles_chat = TOGGLES_CHAT_DEFAULT
 	var/toggles_ghost = TOGGLES_GHOST_DEFAULT
-	var/toggles_langchat = TOGGLES_LANGCHAT_DEFAULT
 	var/toggles_sound = TOGGLES_SOUND_DEFAULT
 	var/toggles_flashing = TOGGLES_FLASHING_DEFAULT
 	var/toggles_ert = TOGGLES_ERT_DEFAULT
@@ -195,7 +194,14 @@ var/const/MAX_SAVE_SLOTS = 10
 
 	var/stylesheet = "Modern"
 
-	var/lang_chat_disabled = FALSE
+	///Runechat preference. If true, certain messages will be displayed on the map, not ust on the chat area. Boolean.
+	var/chat_on_map = TRUE
+	///Limit preference on the size of the message. Requires chat_on_map to have effect.
+	var/max_chat_length = CHAT_MESSAGE_MAX_LENGTH
+	///Whether non-mob messages will be displayed, such as machine vendor announcements. Requires chat_on_map to have effect. Boolean.
+	var/see_chat_non_mob = TRUE
+	///Whether emotes will be displayed on runechat. Requires chat_on_map to have effect. Boolean.
+	var/see_rc_emotes = TRUE
 
 	var/show_permission_errors = TRUE
 

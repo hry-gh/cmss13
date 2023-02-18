@@ -1824,9 +1824,9 @@ var/list/WALLITEMS = list(
 	if(QDELETED(sourcemob) || !istype(sourcemob) || QDELETED(targetmob) || !istype(targetmob) || (targetmob.stat == DEAD))
 		return
 	targetmob.hear_say(message, verb, language, "", italics, sourcemob) // proxies speech itself to the mob
-	if(targetmob && targetmob.client && targetmob.client.prefs && !targetmob.client.prefs.lang_chat_disabled \
-	   && !targetmob.ear_deaf && targetmob.say_understands(sourcemob, language))
-		sourcemob.langchat_display_image(targetmob) // strap langchat display on
+//	if(targetmob && targetmob.client && targetmob.client.prefs && targetmob.client.prefs.chat_on_map \
+//	   && !targetmob.ear_deaf && targetmob.say_understands(sourcemob, language))
+//		sourcemob.langchat_display_image(targetmob) // strap langchat display on
 #endif // ifdef OBJECTS_PROXY_SPEECH
 
 #define UNTIL(X) while(!(X)) stoplag()

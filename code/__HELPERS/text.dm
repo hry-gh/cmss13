@@ -326,35 +326,6 @@
 		finalized_text += capitalize(word)
 	return jointext(finalized_text, " ")
 
-// Aurorastation Markup System
-// For processing simple markup, similar to what Skype and Discord use.
-// Enabled from a config setting.
-/proc/process_chat_markup(message, list/ignore_tags = list())
-	if (!message)
-		return ""
-
-	// ---Begin URL caching.
-	var/list/urls = list()
-	var/i = 1
-	while (url_find_lazy.Find_char(message))
-		urls["\ref[urls]-[i]"] = url_find_lazy.match
-		i++
-
-	for (var/ref in urls)
-		message = replacetextEx_char(message, urls[ref], ref)
-	// ---End URL caching
-
-	var/regex/tag_markup
-	for (var/tag in (markup_tags - ignore_tags))
-		tag_markup = markup_regex[tag]
-		message = tag_markup.Replace_char(message, "$2[markup_tags[tag][1]]$3[markup_tags[tag][2]]$5")
-
-	// ---Unload URL cache
-	for (var/ref in urls)
-		message = replacetextEx_char(message, ref, urls[ref])
-
-	return message
-
 #define SMALL_FONTS(FONTSIZE, MSG) "<span style=\"font-family: 'Small Fonts'; -dm-text-outline: 1 black; font-size: [FONTSIZE]px;\">[MSG]</span>"
 #define SMALL_FONTS_CENTRED(FONTSIZE, MSG) "<center><span style=\"font-family: 'Small Fonts'; -dm-text-outline: 1 black; font-size: [FONTSIZE]px;\">[MSG]</span></center>"
 #define SMALL_FONTS_COLOR(FONTSIZE, MSG, COLOR) "<span style=\"font-family: 'Small Fonts'; -dm-text-outline: 1 black; font-size: [FONTSIZE]px; color: [COLOR];\">[MSG]</span>"

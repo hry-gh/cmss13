@@ -49,7 +49,7 @@
 	balloon_alert.appearance_flags = NO_CLIENT_COLOR|KEEP_APART|RESET_COLOR|RESET_TRANSFORM|RESET_ALPHA
 	balloon_alert.maptext = MAPTEXT("<span class='center langchat'>[text]</span>")
 	balloon_alert.maptext_x = (BALLOON_TEXT_WIDTH - bound_width) * -0.5
-	balloon_alert.maptext_height = WXH_TO_HEIGHT(viewer_client?.MeasureText(text, null, BALLOON_TEXT_WIDTH))
+	WXH_TO_HEIGHT(viewer_client?.MeasureText(text, null, BALLOON_TEXT_WIDTH), balloon_alert.maptext_height)
 	balloon_alert.maptext_width = BALLOON_TEXT_WIDTH
 	if(appearance_flags & PIXEL_SCALE)
 		balloon_alert.appearance_flags |= PIXEL_SCALE

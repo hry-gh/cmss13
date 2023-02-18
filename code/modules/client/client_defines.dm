@@ -128,3 +128,6 @@
 
 	/// Does this client have typing indicators enabled?
 	var/typing_indicators = TRUE
+
+	/// Messages currently seen by this client
+	var/list/seen_messages

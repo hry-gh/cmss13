@@ -63,7 +63,6 @@ var/list/reboot_sfx = file2list("config/reboot_sfx.txt")
 	load_mode()
 	loadShuttleInfoDatums()
 	populate_gear_list()
-	initialize_global_regex()
 
 	//Emergency Fix
 	//end-emergency fix
