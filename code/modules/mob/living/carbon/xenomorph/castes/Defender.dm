@@ -36,6 +36,7 @@
 	pixel_x = -16
 	old_x = -16
 	tier = 1
+	maptext_height = 48
 	base_actions = list(
 		/datum/action/xeno_action/onclick/xeno_resting,
 		/datum/action/xeno_action/onclick/regurgitate,

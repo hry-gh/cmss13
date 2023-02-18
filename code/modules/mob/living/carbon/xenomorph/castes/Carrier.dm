@@ -46,6 +46,7 @@
 	icon_xeno = 'icons/mob/xenos/carrier.dmi'
 	icon_state = "Carrier Walking"
 	plasma_types = list(PLASMA_PURPLE)
+	maptext_height = 64
 
 	drag_delay = 6 //pulling a big dead xeno is hard
 	var/huggers_reserved = 0

@@ -39,6 +39,7 @@
 	wall_smash = 0
 	universal_understand = 0
 	universal_speak = 0
+	chat_color = "#b491c8"
 	mob_size = MOB_SIZE_XENO
 	hand = 1 //Make right hand active by default. 0 is left hand, mob defines it as null normally
 	see_in_dark = 12

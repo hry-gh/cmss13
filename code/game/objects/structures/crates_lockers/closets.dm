@@ -86,6 +86,7 @@
 		if(!M.lying)
 			M.visible_message(SPAN_WARNING("[M] suddenly gets out of [src]!"),
 			SPAN_WARNING("You get out of [src] and get your bearings!"))
+		SEND_SIGNAL(M, COMSIG_MOB_LEFT_CLOSET)
 
 /obj/structure/closet/proc/open()
 	if(opened)

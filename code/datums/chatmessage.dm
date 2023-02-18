@@ -74,6 +74,7 @@
 		stack_trace("/datum/chatmessage created with [isnull(owner) ? "null" : "invalid"] mob owner")
 		qdel(src)
 		return
+	RegisterSignal(target, COMSIG_MOB_LEFT_CLOSET, PROC_REF(handle_closet))
 	INVOKE_ASYNC(src, PROC_REF(generate_image), text, target, owner, language, extra_classes, lifespan)
 
 /datum/chatmessage/Destroy()
@@ -92,6 +93,14 @@
 /datum/chatmessage/proc/on_parent_qdel()
 	SIGNAL_HANDLER
 	qdel(src)
+
+/**
+ * Moves the message location when a mob leaves a closet
+ */
+/datum/chatmessage/proc/handle_closet(atom/movable/source)
+	SIGNAL_HANDLER
+	if(isturf(source.loc))
+		message.loc = source
 
 /**
  * Generates a chat message image representation
@@ -206,7 +215,7 @@
 	message.appearance_flags = APPEARANCE_UI_IGNORE_ALPHA | KEEP_APART
 	message.alpha = 0
 	message.pixel_y = target.maptext_height
-	message.pixel_x = (target.maptext_width * 0.5) - 16
+	message.pixel_x = -target.base_pixel_x
 	message.maptext_width = CHAT_MESSAGE_WIDTH
 	message.maptext_height = mheight
 	message.maptext_x = (CHAT_MESSAGE_WIDTH - owner.bound_width) * -0.5

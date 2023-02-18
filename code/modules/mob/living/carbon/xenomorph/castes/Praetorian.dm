@@ -43,6 +43,7 @@
 	drag_delay = 6 //pulling a big dead xeno is hard
 	tier = 3
 	mutation_type = PRAETORIAN_NORMAL
+	maptext_height = 64
 
 	base_actions = list(
 		/datum/action/xeno_action/onclick/xeno_resting,
