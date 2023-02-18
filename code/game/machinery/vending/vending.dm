@@ -311,7 +311,7 @@
 		if(user.drop_inv_item_to_loc(W, src))
 			coin = W
 			to_chat(user, SPAN_NOTICE(" You insert the [W] into the [src]"))
-			balloon_alert(user, "[w] inserted")
+			balloon_alert(user, "[W] inserted")
 			ui_interact(user)
 		return
 	else if(istype(W, /obj/item/card))
@@ -323,7 +323,7 @@
 		if(user.drop_inv_item_to_loc(W, src))
 			ewallet = W
 			to_chat(user, SPAN_NOTICE(" You insert the [W] into the [src]"))
-			balloon_alert(user, "[w] inserted")
+			balloon_alert(user, "[W] inserted")
 			ui_interact(user)
 		return
 

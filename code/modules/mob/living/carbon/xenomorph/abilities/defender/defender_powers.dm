@@ -119,12 +119,12 @@
 
 	if(xeno.fortify)
 		to_chat(src, SPAN_XENOWARNING("You cannot use tail swipe while fortified."))
-		X.balloon_alert(X, "fortified!")
+		xeno.balloon_alert(xeno, "fortified!")
 		return
 
 	if(xeno.crest_defense)
 		to_chat(src, SPAN_XENOWARNING("You cannot use tail swipe with your crest lowered."))
-		X.balloon_alert(X, "crest is down!")
+		xeno.balloon_alert(xeno, "crest is down!")
 		return
 
 	xeno.visible_message(SPAN_XENOWARNING("[xeno] sweeps its tail in a wide circle!"), \

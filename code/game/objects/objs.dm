@@ -245,14 +245,14 @@
 					SPAN_NOTICE("[buckled_mob.name] was unbuckled by [user.name]!"),\
 					SPAN_NOTICE("You were unbuckled from [src] by [user.name]."),\
 					SPAN_NOTICE("You hear metal clanking."))
-					balloon_alert(buckled_mob, "unbuckled")
-					balloon_alert(user, "unbuckled")
+				balloon_alert(buckled_mob, "unbuckled")
+				balloon_alert(user, "unbuckled")
 			else
 				buckled_mob.visible_message(\
 					SPAN_NOTICE("[buckled_mob.name] unbuckled \himself!"),\
 					SPAN_NOTICE("You unbuckle yourself from [src]."),\
 					SPAN_NOTICE("You hear metal clanking"))
-					balloon_alert(buckled_mob, "unbuckled")
+				balloon_alert(buckled_mob, "unbuckled")
 			unbuckle(buckled_mob)
 			add_fingerprint(user)
 			return 1
