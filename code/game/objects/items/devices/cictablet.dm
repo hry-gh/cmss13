@@ -43,6 +43,7 @@
 		tgui_interact(user)
 	else
 		to_chat(user, SPAN_DANGER("Access denied."))
+		balloon_alert(user, "access denied!")
 
 /obj/item/device/cotablet/ui_static_data(mob/user)
 	var/list/data = list()

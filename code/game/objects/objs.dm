@@ -432,9 +432,11 @@
 	// Checks for valid labelling/name length
 	if(!label || !length(label))
 		to_chat(user, SPAN_NOTICE("Invalid text."))
+		balloon_alert(user, "invalid!")
 		return
 	if((length(O.name) + length(label)) > MAX_NAME_LEN * 1.5)
 		to_chat(user, SPAN_NOTICE("You cannot fit any more labels on this item."))
+		balloon_alert(user, "won't fit!")
 		return
 
 	O.name += " ([label])"

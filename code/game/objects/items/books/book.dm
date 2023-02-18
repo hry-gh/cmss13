@@ -38,6 +38,7 @@
 			return
 		else
 			to_chat(user, SPAN_NOTICE("The pages of [title] have been cut out!"))
+			balloon_alert(user, "pages cut out!")
 			return
 	if(src.dat)
 		show_browser(user, "<body class='paper'><TT><I>Owner: [author].</I></TT> <BR>[dat]</body>", "window=book;size=800x600")
@@ -45,6 +46,7 @@
 		onclose(user, "book")
 	else
 		to_chat(user, "This book is completely blank!")
+		balloon_alert(user, "blank!")
 
 /obj/item/book/attackby(obj/item/W as obj, mob/user as mob)
 	if(carved)
@@ -64,6 +66,7 @@
 	if(HAS_TRAIT(W, TRAIT_TOOL_PEN))
 		if(unique)
 			to_chat(user, "These pages don't seem to take the ink well. Looks like you can't modify it.")
+			balloon_alert(user, "can't write!")
 			return
 		var/choice = tgui_input_list(usr, "What would you like to change?", "Change Book", list("Title", "Contents", "Author", "Cancel"))
 		switch(choice)
@@ -98,6 +101,7 @@
 	else if(istype(W, /obj/item/tool/kitchen/knife) || HAS_TRAIT(W, TRAIT_TOOL_WIRECUTTERS))
 		if(carved) return
 		to_chat(user, SPAN_NOTICE("You begin to carve out [title]."))
+		balloon_alert(user, "carving out...")
 		if(do_after(user, 30, INTERRUPT_ALL, BUSY_ICON_HOSTILE))
 			to_chat(user, SPAN_NOTICE("You carve out the pages from [title]! You didn't want to read it anyway."))
 			carved = 1

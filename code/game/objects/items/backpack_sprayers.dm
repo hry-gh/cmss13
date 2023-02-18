@@ -36,6 +36,7 @@
 		return
 	if(user.get_item_by_slot(WEAR_BACK) != src)
 		to_chat(user, SPAN_WARNING("\The [src] must be worn properly to use!"))
+		balloon_alert(user, "wear properly!")
 		return
 	if(user.is_mob_incapacitated())
 		return
@@ -47,6 +48,7 @@
 		//Detach the nozzle into the user's hands
 		if(!user.put_in_hands(noz))
 			to_chat(user, SPAN_WARNING("You need a free hand to hold \the [noz]!"))
+			balloon_alert(user, "free hand!")
 			update_icon()
 			return
 		update_icon()
@@ -168,10 +170,12 @@
 
 	if(W.reagents.total_volume < amount_per_transfer_from_this)
 		to_chat(user, SPAN_NOTICE("\The [W] is empty!"))
+		balloon_alert(user, "empty!")
 		return
 
 	if(safety)
 		to_chat(user, SPAN_WARNING("The safety is on!"))
+		balloon_alert(user, "safety on!")
 		return
 
 
@@ -296,19 +300,23 @@
 			nozzle_mode = METAL_LAUNCHER
 			tank.nozzle_mode = METAL_LAUNCHER
 			to_chat(user, SPAN_NOTICE("Swapped to metal foam launcher. Now using [launcher_cost] water per foam shot."))
+			balloon_alert(user, "launcher: [launcher_cost]u")
 		if(METAL_LAUNCHER)
 			nozzle_mode = METAL_FOAM
 			tank.nozzle_mode = METAL_FOAM
 			to_chat(user, SPAN_NOTICE("Swapped to metal foamer. Now using [foamer_cost] water per foam shot."))
+			balloon_alert(user, "foamer: [foamer_cost]u")
 		if(METAL_FOAM)
 			nozzle_mode = EXTINGUISHER
 			tank.nozzle_mode = EXTINGUISHER
 			to_chat(user, SPAN_NOTICE("Swapped to water extinguisher. Now using [extinguisher_cost] water per blast."))
+			balloon_alert(user, "extinguisher: [extinguisher_costu")
 	update_icon()
 
 /obj/item/reagent_container/spray/mister/atmos/afterattack(atom/target, mob/user)
 	if(!issynth(user))
 		to_chat(user, SPAN_WARNING("You have no idea how use \the [src]!"))
+		balloon_alert(user, "not trained!")
 		return
 	if(nozzle_mode == EXTINGUISHER)
 		if(istype(target, /atom/movable/screen)) //so we don't end up wasting water when clicking
@@ -318,6 +326,7 @@
 			return internal_extinguisher.afterattack(target, user)
 		else
 			to_chat(user, SPAN_WARNING("You need at least [extinguisher_cost] units of water to use the extinguisher!"))
+			balloon_alert(user, "need [extinguisher_cost] units")
 			return
 	var/Adj = user.Adjacent(target)
 	if(nozzle_mode == METAL_LAUNCHER)
@@ -326,10 +335,12 @@
 		for(var/S in target)
 			if(istype(S, /obj/effect/particle_effect/foam) || istype(S, /obj/structure/foamed_metal))
 				to_chat(user, SPAN_WARNING("There's already metal foam here!"))
+				balloon_alert(user, "already foam!")
 				return
 		//actually firing the launcher
 		if(tank.launcher_cooldown > world.time)
 			to_chat(user, SPAN_WARNING("\The [tank] cannot fire another foam ball just yet. Wait [round(tank.launcher_cooldown/10)] seconds."))
+			balloon_alert(user, "wait [round(tank.launcher_cooldown/10)]s")
 			return
 		if(tank.reagents.has_reagent("water", launcher_cost))
 			tank.reagents.remove_reagent("water", launcher_cost)
@@ -344,6 +355,7 @@
 			return
 		else
 			to_chat(user, SPAN_WARNING("You need at least [launcher_cost] units of water to use the metal foam launcher!"))
+			balloon_alert(user, "need [launcher_cost] units")
 			return
 
 	if(nozzle_mode == METAL_FOAM)
@@ -353,6 +365,7 @@
 		for(var/S in target)
 			if(istype(S, /obj/effect/particle_effect/foam) || istype(S, /obj/structure/foamed_metal))
 				to_chat(user, SPAN_WARNING("There's already metal foam here!"))
+				balloon_alert(user, "already foam!")
 				return
 		//check for tank reagents
 		if(tank.reagents.has_reagent("water", foamer_cost))
@@ -364,6 +377,7 @@
 			return
 		else
 			to_chat(user, SPAN_WARNING("You need at least [foamer_cost] units of water to use the metal foamer!"))
+			balloon_alert(user, "need [foamer_cost] units!")
 			return
 
 /obj/effect/resin_container //the projectile that the launcher fires

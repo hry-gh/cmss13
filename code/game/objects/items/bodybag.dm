@@ -101,9 +101,11 @@
 		var/tmp_label = sanitize(input(user, "Enter a label for [name]","Label", prior_label_text))
 		if(tmp_label == "" || !tmp_label)
 			to_chat(user, SPAN_NOTICE("You're going to need to use wirecutters to remove the label."))
+			balloon_alert(user, "use wirecutters!")
 			return
 		if(length(tmp_label) > MAX_NAME_LEN)
 			to_chat(user, SPAN_WARNING("The label can be at most [MAX_NAME_LEN] characters long."))
+			balloon_alert(user, "too long!")
 		else
 			user.visible_message(SPAN_NOTICE("[user] labels [src] as \"[tmp_label]\"."), \
 			SPAN_NOTICE("You label [src] as \"[tmp_label]\"."))
@@ -145,9 +147,10 @@
 
 /obj/structure/closet/bodybag/attack_hand(mob/living/user)
 	if(!opened)
-		open_cooldown = world.time + 10 //1s cooldown for opening and closing, stop that spam! - stan_albatross
+		open_cooldown = world.time + 1 SECONDS //1s cooldown for opening and closing, stop that spam! - stan_albatross
 	if(opened && open_cooldown > world.time)
 		to_chat(user, SPAN_WARNING("\The [src] has been opened too recently!"))
+		balloon_alert(user, "opened too recently!")
 		return
 	. = ..()
 

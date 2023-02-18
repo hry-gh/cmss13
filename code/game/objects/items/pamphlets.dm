@@ -30,9 +30,11 @@
 		return FALSE
 	if(trait in user.traits)
 		to_chat(user, SPAN_WARNING("You know this already!"))
+		balloon_alert(user, "already known!")
 		return FALSE
 	if(user.has_used_pamphlet == TRUE && !bypass_pamphlet_limit)
 		to_chat(user, SPAN_WARNING("You've already used a pamphlet!"))
+		balloon_alert(user, "already used!")
 		return FALSE
 	return TRUE
 
@@ -71,21 +73,26 @@
 	var/specialist_skill = user.skills.get_skill_level(SKILL_SPEC_WEAPONS)
 	if(specialist_skill == SKILL_SPEC_SNIPER)
 		to_chat(user, SPAN_WARNING("You don't need to use this! Give it to another marine to make them your spotter."))
+		balloon_alert(user, "already a sniper!")
 		return FALSE
 	if(specialist_skill != SKILL_SPEC_DEFAULT)
 		to_chat(user, SPAN_WARNING("You're already a specialist! Give this to a lesser trained marine."))
+		balloon_alert(user, "already a spec!")
 		return FALSE
 
 	if(user.job != JOB_SQUAD_MARINE)
 		to_chat(user, SPAN_WARNING("Only squad riflemen can use this."))
+		balloon_alert(user, "must be rifleman!")
 		return
 
 	var/obj/item/card/id/ID = user.wear_id
 	if(!istype(ID)) //not wearing an ID
 		to_chat(user, SPAN_WARNING("You should wear your ID before doing this."))
+		balloon_alert(user, "need id!")
 		return FALSE
 	if(ID.registered_ref != WEAKREF(user))
 		to_chat(user, SPAN_WARNING("You should wear your ID before doing this."))
+		balloon_alert(user, "need id!")
 		return FALSE
 
 	return ..()

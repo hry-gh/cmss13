@@ -337,6 +337,7 @@
 
 	if(user.get_inactive_hand())
 		to_chat(user, SPAN_WARNING("You need an empty hand to take out a pill."))
+		balloon_alert(user, "need empty hand!")
 		return
 	if(skilllock && !skillcheck(user, SKILL_MEDICAL, SKILL_MEDICAL_MEDIC))
 		error_idlock(user)
@@ -353,6 +354,7 @@
 			return
 	else
 		to_chat(user, SPAN_WARNING("The [name] is empty."))
+		balloon_alert(user, "empty!")
 		return
 
 
@@ -425,6 +427,7 @@
 
 /obj/item/storage/pill_bottle/proc/error_idlock(mob/user)
 	to_chat(user, SPAN_WARNING("It must have some kind of ID lock..."))
+	balloon_alert(user, "id locked!")
 
 /obj/item/storage/pill_bottle/verb/set_maptext()
 	set category = "Object"
@@ -580,19 +583,23 @@
 
 	if(!allowed(user))
 		to_chat(user, SPAN_NOTICE("It must have some kind of ID lock..."))
+		balloon_alert(user, "id locked!")
 		return 0
 
 	var/obj/item/card/id/I = H.wear_id
 	if(!istype(I)) //not wearing an ID
 		to_chat(H, SPAN_NOTICE("It must have some kind of ID lock..."))
+		balloon_alert(H, "id locked!")
 		return 0
 
 	if(I.registered_name != H.real_name)
 		to_chat(H, SPAN_WARNING("Wrong ID card owner detected."))
+		balloon_alert(H, "wrong id!")
 		return 0
 
 	if(req_role && I.rank != req_role)
 		to_chat(H, SPAN_NOTICE("It must have some kind of ID lock..."))
+		balloon_alert(H, "id locked!")
 		return 0
 
 	return 1

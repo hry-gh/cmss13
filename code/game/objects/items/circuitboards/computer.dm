@@ -171,11 +171,14 @@
 /obj/item/circuitboard/computer/supplycomp/attackby(obj/item/multitool, mob/user)
 	if(HAS_TRAIT(multitool, TRAIT_TOOL_MULTITOOL))
 		to_chat(user, SPAN_WARNING("You start messing around with the electronics of \the [src]..."))
+		balloon_alert(user, "messing with components...")
 		if(do_after(user, 8 SECONDS, INTERRUPT_ALL, BUSY_ICON_FRIENDLY))
 			if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_ENGI))
 				to_chat(user, SPAN_WARNING("You have no idea what you're doing."))
+				balloon_alert(user, "not trained!")
 				return
 			to_chat(user, SPAN_WARNING("Huh? You find a processor bus with the letters 'B.M.' written in white crayon over it. You start fiddling with it."))
+			balloon_alert(user, "fiddling with processor...")
 			if(do_after(user, 8 SECONDS, INTERRUPT_ALL, BUSY_ICON_HOSTILE))
 				if(!contraband_enabled)
 					to_chat(user, SPAN_WARNING("You amplify the broadcasting function with \the [multitool], and a red light starts blinking on and off on the board. Put it back in?"))
@@ -236,11 +239,14 @@
 		if(check_access(I))
 			locked = !locked
 			to_chat(user, SPAN_NOTICE(" You [locked ? "" : "un"]lock the circuit controls."))
+			balloon_alert(user, "[locked ? "" : "un"]locked")
 		else
 			to_chat(user, SPAN_DANGER("Access denied."))
+			balloon_alert(user, "access denied!")
 	else if(HAS_TRAIT(I, TRAIT_TOOL_MULTITOOL))
 		if(locked)
 			to_chat(user, SPAN_DANGER("Circuit controls are locked."))
+			balloon_alert(user, "locked!")
 			return
 		var/existing_networks = jointext(network,",")
 		var/input = strip_html(input(usr, "Which networks would you like to connect this camera console circuit to? Separate networks with a comma. No Spaces!\nFor example: military,Security,Secret ", "Multitool-Circuitboard interface", existing_networks))

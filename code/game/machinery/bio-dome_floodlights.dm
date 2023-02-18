@@ -73,6 +73,7 @@
 		return 0
 	if(!ispowered)
 		to_chat(user, "Nothing happens.")
+		balloon_alert(user, "unpowered!")
 		return 0
 	playsound(src,'sound/machines/click.ogg', 15, 1)
 	use_power(5)

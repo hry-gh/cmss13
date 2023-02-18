@@ -44,6 +44,7 @@
 	if ( iswelder(W))
 		if(!HAS_TRAIT(W, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
+			balloon_alert(user, "stronger blowtorch!")
 			return
 		var/obj/item/tool/weldingtool/WT = W
 		if(source_sheet_type) //can be melted into something
@@ -58,6 +59,7 @@
 						continue
 					G.attackby(NG, user)
 					to_chat(user, "You add the newly-formed glass to the stack. It now contains [NG.amount] sheets.")
+					balloon_alert(user, "[NG.amount] sheets")
 				qdel(src)
 				return
 	return ..()
@@ -115,6 +117,7 @@
 
 /obj/item/large_shrapnel/at_rocket_dud/try_to_throw(mob/living/user)
 	to_chat(user, SPAN_NOTICE("You heft \the [src] up, preparing to throw it."))
+	balloon_alert(user, "preparing to throw...")
 	user.visible_message(SPAN_DANGER("[user] strains to lift up \the [src]. It looks like they're trying to throw it!"))
 	throw_range = 5
 	throw_channel = 2 SECONDS
@@ -123,6 +126,7 @@
 		throw_channel = 1 SECONDS
 	if(!do_after(user, throw_channel, INTERRUPT_ALL, BUSY_ICON_HOSTILE))
 		to_chat(user, SPAN_WARNING("Your attempt to throw \the [src] was interrupted!"))
+		balloon_alert(user, "interrupted!")
 		return FALSE
 	cause = "manually triggered"
 	thrown = 1

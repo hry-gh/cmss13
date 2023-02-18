@@ -61,6 +61,7 @@ var/global/list/deployed_fultons = list()
 /obj/item/stack/fulton/attack_hand(mob/user as mob)
 	if (attached_atom)
 		to_chat(user, SPAN_WARNING("It's firmly secured to [attached_atom], and there's no way to remove it now!"))
+		balloon_alert(user, "already secured!")
 		return
 	else
 		..()
@@ -71,15 +72,18 @@ var/global/list/deployed_fultons = list()
 
 	if(get_dist(target_atom,user) > 1)
 		to_chat(user, SPAN_WARNING("You can't attach [src] to something that far away."))
+		balloon_alert(user, "too far!")
 		return
 
 	if(!is_ground_level(target_atom.z))
 		to_chat(user, SPAN_WARNING("You can't attach [src] to something here."))
+		balloon_alert(user, "not here!")
 		return
 
 	var/area/A = get_area(target_atom)
 	if(A && CEILING_IS_PROTECTED(A.ceiling, CEILING_PROTECTION_TIER_2))
 		to_chat(usr, SPAN_WARNING("You can't attach [src] to something when underground!"))
+		balloon_alert(user, "underground!")
 		return
 
 	var/can_attach = FALSE
@@ -91,6 +95,7 @@ var/global/list/deployed_fultons = list()
 				can_attach = TRUE
 			else if((H.stat != DEAD || H.mind && H.check_tod() && H.is_revivable()))
 				to_chat(user, SPAN_WARNING("You can't attach [src] to [target_atom], they still have a chance!"))
+				balloon_alert(user, "reviveable!")
 				return
 			else
 				can_attach = TRUE
@@ -98,6 +103,7 @@ var/global/list/deployed_fultons = list()
 			var/mob/living/carbon/xenomorph/X = target_atom
 			if(X.stat != DEAD)
 				to_chat(user, SPAN_WARNING("You can't attach [src] to [target_atom], kill it first!"))
+				balloon_alert(user, "kill it!")
 				return
 			can_attach = TRUE
 		else
@@ -127,6 +133,7 @@ var/global/list/deployed_fultons = list()
 			F.deploy_fulton()
 	else
 		to_chat(user, SPAN_WARNING("You can't attach [src] to [target_atom]."))
+		balloon_alert(user, "can't!")
 
 /obj/item/stack/fulton/proc/deploy_fulton()
 	if(!attached_atom)

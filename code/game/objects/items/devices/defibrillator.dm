@@ -154,6 +154,7 @@
 	if(user.skills)
 		if(!skillcheck(user, SKILL_MEDICAL, SKILL_MEDICAL_MEDIC))
 			to_chat(user, SPAN_WARNING("You don't seem to know how to use [src]..."))
+			balloon_alert(user, "not trained!")
 			return
 
 	if(!check_revive(H, user))

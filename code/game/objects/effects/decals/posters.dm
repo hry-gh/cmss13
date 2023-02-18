@@ -88,13 +88,16 @@
 	for(var/obj/O in contents) //Let's see if it already has a poster on it or too much stuff
 		if(istype(O,/obj/structure/sign/poster))
 			to_chat(user, SPAN_NOTICE("The wall is far too cluttered to place a poster!"))
+			balloon_alert(user, "too cluttered!")
 			return
 		stuff_on_wall++
 		if(stuff_on_wall == 3)
 			to_chat(user, SPAN_NOTICE("The wall is far too cluttered to place a poster!"))
+			balloon_alert(user, "too cluttered!")
 			return
 
 	to_chat(user, SPAN_NOTICE("You start placing the poster on the wall...")) //Looks like it's uncluttered enough. Place the poster.
+	balloon_alert(user, "placing poster...")
 
 	//declaring D because otherwise if P gets 'deconstructed' we lose our reference to P.resulting_poster
 	var/obj/structure/sign/poster/D = new(null, P.serial_number)
@@ -107,6 +110,7 @@
 
 	if(!do_after(user, 17, INTERRUPT_ALL, BUSY_ICON_HOSTILE))
 		D.roll_and_drop(temp_loc)
+		balloon_alert(user, "interrupted!")
 		return
 
 	to_chat(user, SPAN_NOTICE("You place the poster!"))
