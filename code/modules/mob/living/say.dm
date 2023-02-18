@@ -126,9 +126,6 @@ var/list/department_radio_keys = list(
 		var/speech_bubble_test = say_test(message)
 		var/image/speech_bubble = image('icons/mob/effects/talk.dmi', src, "[bubble_type][speech_bubble_test]", FLY_LAYER)
 
-		var/not_dead_speaker = (stat != DEAD)
-		if(not_dead_speaker)
-			langchat_speech(message, listening, speaking)
 		for(var/mob/M as anything in listening)
 			M.hear_say(message, verb, speaking, alt_name, italics, src, speech_sound, sound_vol)
 		overlays += speech_bubble

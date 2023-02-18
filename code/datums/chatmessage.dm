@@ -145,10 +145,10 @@
 
 	// Append radio icon if from a virtual speaker
 	if (extra_classes.Find("virtual-speaker"))
-		var/image/r_icon = image('icons/ui_icons/chat/chat_icons.dmi', icon_state = "radio")
+		var/image/r_icon = image('icons/mob/hud/chat_icons.dmi', icon_state = "radio")
 		LAZYADD(prefixes, "\icon[r_icon]")
 	else if (extra_classes.Find("emote"))
-		var/image/r_icon = image('icons/ui_icons/chat/chat_icons.dmi', icon_state = "emote")
+		var/image/r_icon = image('icons/mob/hud/chat_icons.dmi', icon_state = "emote")
 		LAZYADD(prefixes, "\icon[r_icon]")
 
 	text = "[prefixes?.Join("&nbsp;")][text]"
@@ -243,9 +243,6 @@
  * * spans - Additional classes to be added to the message
  */
 /mob/proc/create_chat_message(atom/movable/speaker, datum/language/message_language, raw_message, list/spans, runechat_flags = NONE)
-	if(HAS_TRAIT(speaker, TRAIT_RUNECHAT_HIDDEN))
-		return
-	// Ensure the list we are using, if present, is a copy so we don't modify the list provided to us
 	spans = spans ? spans.Copy() : list()
 
 	// Display visual above source
@@ -275,7 +272,7 @@
 	var/static/rseed = rand(1,26)
 
 	// get hsl using the selected 6 characters of the md5 hash
-	var/hash = copytext(md5(name + SSperf_logging.round_id), rseed, rseed + 6)
+	var/hash = copytext(md5(name + SSperf_logging.round.id), rseed, rseed + 6)
 	var/h = hex2num(copytext(hash, 1, 3)) * (360 / 255)
 	var/s = (hex2num(copytext(hash, 3, 5)) >> 2) * ((CM_COLOR_SAT_MAX - CM_COLOR_SAT_MIN) / 63) + CM_COLOR_SAT_MIN
 	var/l = (hex2num(copytext(hash, 5, 7)) >> 2) * ((CM_COLOR_LUM_MAX - CM_COLOR_LUM_MIN) / 63) + CM_COLOR_LUM_MIN
@@ -305,6 +302,10 @@
 			return "#[num2hex(x, 2)][num2hex(m, 2)][num2hex(c, 2)]"
 		if(5)
 			return "#[num2hex(c, 2)][num2hex(m, 2)][num2hex(x, 2)]"
+
+/mob/proc/send_runechat_to_group(datum/language/language, list/group, message, list/spans, runechat_flags)
+	for(var/mob/receiver as anything in group)
+		receiver.create_chat_message(src, language, message, spans, runechat_flags)
 
 #undef CHAT_MESSAGE_SPAWN_TIME
 #undef CHAT_MESSAGE_LIFESPAN

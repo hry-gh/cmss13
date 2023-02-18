@@ -208,7 +208,7 @@ window "mapwindow"
 		font-size = 7
 		is-default = true
 		saved-params = "zoom;letterbox;zoom-mode"
-		style = ".center { text-align: center; } .langchat { font-family: 'Small Fonts'; font-size: 7px; -dm-text-outline: 1px black; } .langchat_small { font-size: 6px; } .langchat_yell { font-weight: bold; font-size: 10px; } .langchat_bolded { font-weight: bold; font-size: 8px; } .langchat_announce { font-weight: bold; font-size: 12px; } .langchat_bolditalicbig {font-weight: bold; font-size: 24px; font-style: italic; } .langchat_italic {font-style: italic; }"
+		style = ".center { text-align: center; } .maptext { font-family: 'Small Fonts'; font-size: 7px; -dm-text-outline: 1px black; color: white; line-height: 1.1; } .command_headset { font-weight: bold;\tfont-size: 8px; } .small { font-size: 6px; } .big { font-size: 8px; } .reallybig { font-size: 10px; } .extremelybig { font-size: 12px; } .greentext { color: #00FF00; font-size: 7px; } .redtext { color: #FF0000; font-size: 7px; } .bold { font-weight: bold; } .italics { font-size: 6px; }"
 	elem "status_bar"
 		type = LABEL
 		pos = 0,464

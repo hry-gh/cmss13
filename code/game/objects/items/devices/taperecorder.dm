@@ -262,7 +262,8 @@
 			break
 
 		var/list/heard = get_mobs_in_view(world_view_size, src)
-		langchat_speech(mytape.storedinfo[i], heard, GLOB.all_languages, skip_language_check = TRUE, additional_styles = list("langchat_small"))
+		for(var/mob/receivers as anything in heard)
+			receivers.create_chat_message(src, raw_message = mytape.storedinfo[i], spans = "small")
 
 		audible_message(SPAN_MAROON("[icon2html(src, usr)] [mytape.storedinfo[i]]"))//We want to display this properly, don't double encode
 		if(mytape.storedinfo.len < i + 1)
@@ -272,7 +273,8 @@
 			playsleepseconds = mytape.timestamp[i + 1] - mytape.timestamp[i]
 		if(playsleepseconds > 14 SECONDS)
 			sleep(1 SECONDS)
-			langchat_speech("Skipping [playsleepseconds/10] seconds of silence", heard, GLOB.all_languages, skip_language_check = TRUE, additional_styles = list("langchat_small"))
+			for(var/mob/receivers as anything in heard)
+				receivers.create_chat_message(src, raw_message = "Skipping [playsleepseconds/10] seconds of silence", spans = "small")
 			audible_message(SPAN_MAROON("[icon2html(src, usr)] Skipping [playsleepseconds/10] seconds of silence."))
 			playsleepseconds = 1 SECONDS
 		i++

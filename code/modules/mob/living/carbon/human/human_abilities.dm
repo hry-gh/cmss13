@@ -299,7 +299,7 @@ CULT
 	message = trim(strip_html(message))
 
 	message = capitalize(trim(message))
-	message = process_chat_markup(message, list("~", "_"))
+	message = H.say_emphasis(message)
 
 	if(!(copytext(message, -1) in ENDING_PUNCT))
 		message += "."

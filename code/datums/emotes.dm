@@ -129,7 +129,7 @@
 		if(emote_type & EMOTE_VISIBLE)
 			var/list/viewers = get_mobs_in_view(7, user)
 			for(var/mob/current_mob in viewers)
-				if(!(current_mob.client?.prefs.toggles_langchat & LANGCHAT_SEE_EMOTES))
+				if(!(current_mob.client?.prefs.see_rc_emotes))
 					viewers -= current_mob
 			run_langchat(user, viewers)
 		else if(emote_type & EMOTE_AUDIBLE)
@@ -138,7 +138,7 @@
 				if(current_mob.ear_deaf)
 					heard -= current_mob
 					continue
-				if(!(current_mob.client?.prefs.toggles_langchat & LANGCHAT_SEE_EMOTES))
+				if(!(current_mob.client?.prefs.see_rc_emotes))
 					heard -= current_mob
 			run_langchat(user, heard)
 
@@ -153,7 +153,7 @@
  * * group - The list of people that will see this emote being
  */
 /datum/emote/proc/run_langchat(mob/user, list/group)
-	user.langchat_speech(message, group, GLOB.all_languages, skip_language_check = TRUE, additional_styles = list("emote", "langchat_small"))
+	user.send_runechat_to_group(group = group, message = message, runechat_flags = EMOTE_MESSAGE)
 
 /**
  * For handling emote cooldown, return true to allow the emote to happen.
@@ -319,6 +319,6 @@
 	visible_message(rendered_text)
 	var/list/viewers = get_mobs_in_view(7, src)
 	for(var/mob/current_mob in viewers)
-		if(!(current_mob.client?.prefs.toggles_langchat & LANGCHAT_SEE_EMOTES))
+		if(!(current_mob.client?.prefs.see_rc_emotes))
 			viewers -= current_mob
-	langchat_speech(text, viewers, GLOB.all_languages, skip_language_check = TRUE, additional_styles = list("emote", "langchat_small"))
+	send_runechat_to_group(group = group, message = text, runechat_flags = EMOTE_MESSAGE)

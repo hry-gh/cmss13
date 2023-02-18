@@ -56,8 +56,6 @@
 	if(!display_colour) // if invalid R_COLOR choice
 		display_colour = CONFIG_GET(string/ooc_color_default)
 
-	msg = process_chat_markup(msg, list("*"))
-
 	for(var/client/C in GLOB.clients)
 		if(C.prefs.toggles_chat & CHAT_OOC)
 			var/display_name = src.key
@@ -123,8 +121,6 @@
 	if(S.stat != DEAD && !isobserver(S))
 		display_name = S.name
 
-	msg = process_chat_markup(msg, list("*"))
-
 	// Handle non-admins
 	for(var/mob/M in heard)
 		if(!M.client)
@@ -136,9 +132,9 @@
 		if(C.prefs.toggles_chat & CHAT_LOOC)
 			to_chat(C, "<font color='#f557b8'><span class='ooc linkify'><span class='prefix'>LOOC:</span> <EM>[display_name]:</EM> <span class='message'>[msg]</span></span></font>")
 
-	if(mob.looc_overhead || ooc_allowed)
-		var/transmit_language = isxeno(mob) ? LANGUAGE_XENOMORPH : LANGUAGE_ENGLISH
-		mob.langchat_speech(msg, heard, GLOB.all_languages[transmit_language], "#ff47d7")
+		if(mob.looc_overhead || ooc_allowed)
+			var/transmit_language = isxeno(mob) ? LANGUAGE_XENOMORPH : LANGUAGE_ENGLISH
+			M.create_chat_message(S, GLOB.all_languages[transmit_language], "LOOC: [msg]", "looc")
 
 	// Now handle admins
 	display_name = S.key

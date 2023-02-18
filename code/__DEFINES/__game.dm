@@ -132,9 +132,6 @@ block( \
 #define FLASH_UNNEST (1<<4)
 #define FLASH_POOLSPAWN (1<<5)
 
-//toggles_langchat
-#define LANGCHAT_SEE_EMOTES (1<<0)
-
 //toggles_ert
 #define PLAY_LEADER (1<<0)
 #define PLAY_MEDIC (1<<1)

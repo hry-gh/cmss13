@@ -36,8 +36,6 @@
 	interactee = null
 	faction_group = null
 	lastarea = null
-	langchat_listeners = null
-	langchat_image = null
 	languages = null
 	last_damage_data = null
 	listed_turf = null
@@ -70,7 +68,6 @@
 
 	set_focus(src)
 	prepare_huds()
-	langchat_make_image()
 	create_player_panel()
 
 	return ..()

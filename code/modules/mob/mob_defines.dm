@@ -264,6 +264,9 @@
 	/// User is thinking in character. Used to revert to thinking state after stop_typing
 	var/thinking_IC = FALSE
 
+	/// Specific runechat styles for this mob
+	var/runechat_spans
+
 /mob/vv_get_dropdown()
 	. = ..()
 	VV_DROPDOWN_OPTION(VV_HK_EXPLODE, "Trigger Explosion")

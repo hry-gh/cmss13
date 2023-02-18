@@ -42,7 +42,7 @@
 
 	speaking_key = "h"
 	speaking_noise = "hiss_talk"
-	langchat_color = "#9c7463"
+	chat_color = "#9c7463"
 
 	slash_verb = "rend"
 	slashes_verb = "rends"

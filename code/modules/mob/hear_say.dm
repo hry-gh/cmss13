@@ -43,6 +43,9 @@
 	if(italics)
 		message = "<i>[message]</i>"
 
+	if(speaker.stat != DEAD)
+		create_chat_message(speaker, language, message, speaker.runechat_spans)
+
 
 	if(sdisabilities & DISABILITY_DEAF || ear_deaf)
 		if(speaker == src)

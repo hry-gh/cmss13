@@ -34,11 +34,11 @@
 				if("Squad") marine_rk = "leader_a"
 				if("Team") marine_rk = "soctl_a"
 
-			H.langchat_styles = "langchat_bolded" // bold text for bold leaders
+			H.runechat_spans = list("bold", "big") // bold text for bold leaders
 		else
-			H.langchat_styles = initial(H.langchat_styles)
+			H.runechat_spans = initial(H.runechat_spans)
 
-		H.langchat_color = squad_colors_chat[H.assigned_squad.color]
+		H.chat_color = squad_colors_chat[H.assigned_squad.color]
 
 		if(!marine_rk) marine_rk = H.rank_fallback
 		if(marine_rk)

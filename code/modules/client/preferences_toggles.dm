@@ -73,18 +73,18 @@
 	set category = "Preferences.Chat"
 	set desc = "Toggles abovehead chat until you change body"
 
-	prefs.lang_chat_disabled = ~prefs.lang_chat_disabled
+	prefs.chat_on_map = !prefs.chat_on_map
 	prefs.save_preferences()
-	to_chat(src,SPAN_BOLDNOTICE( "You will [(!prefs.lang_chat_disabled) ? "now" : "no longer"] see messages above head."))
+	to_chat(src, SPAN_BOLDNOTICE( "You will [(prefs.chat_on_map) ? "now" : "no longer"] see messages above head."))
 
 /client/verb/togglechatemotes()
 	set name = "Toggle Abovehead Chat Emotes"
 	set category = "Preferences.Chat"
 	set desc = "Toggles seeing emotes in abovehead chat"
 
-	prefs.toggles_langchat ^= LANGCHAT_SEE_EMOTES
+	prefs.see_rc_emotes = !prefs.see_rc_emotes
 	prefs.save_preferences()
-	to_chat(src,SPAN_BOLDNOTICE( "You will [(prefs.toggles_langchat & LANGCHAT_SEE_EMOTES) ? "now" : "no longer"] see emotes in abovehead chat."))
+	to_chat(src, SPAN_BOLDNOTICE( "You will [(prefs.see_rc_emotes) ? "now" : "no longer"] see emotes in abovehead chat."))
 
 /client/verb/toggle_permission_errors()
 	set name = "Toggle Permission Errors"

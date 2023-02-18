@@ -301,10 +301,10 @@ Works together with spawning an observer, noted above.
 	ghost.timeofdeath = timeofdeath //BS12 EDIT
 
 	// Carryover langchat settings since we kept the icon
-	ghost.langchat_height = langchat_height
+//HARRYTODO	ghost.langchat_height = langchat_height
 	ghost.icon_size = icon_size
-	ghost.langchat_image = null
-	ghost.langchat_make_image()
+//	ghost.langchat_image = null
+//	ghost.langchat_make_image()
 
 	SStgui.on_transfer(src, ghost)
 	if(is_admin_level(z))

@@ -988,7 +988,7 @@
 		msg = replacetext(msg, "s", "5")
 		msg = replacetext(msg, "l", "1")
 
-	caller.langchat_speech(msg, heard, GLOB.all_languages, overhead_color, TRUE)
+	caller.send_runechat_to_group(group = heard, message = msg, spans = span_class)
 
 	var/voice_name = "A strange voice"
 	if(caller.name == caller.real_name && caller.alpha == initial(caller.alpha))

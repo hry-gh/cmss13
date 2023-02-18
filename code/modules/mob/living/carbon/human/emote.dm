@@ -170,7 +170,7 @@
 		return
 
 	var/medic_message = pick("Medic!", "Doc!", "Help!")
-	user.langchat_speech(medic_message, group, GLOB.all_languages, skip_language_check = TRUE, animation_style = LANGCHAT_FAST_POP, additional_styles = list("langchat_bolded"))
+	user.send_runechat_to_group(group = group, message = medic_message, spans = "bold")
 
 /datum/emote/living/carbon/human/moan
 	key = "moan"
@@ -215,7 +215,8 @@
 		return
 
 	var/pain_message = pick("OW!!", "AGH!!", "ARGH!!", "OUCH!!", "ACK!!", "OUF!")
-	user.langchat_speech(pain_message, group, GLOB.all_languages, skip_language_check = TRUE, animation_style = LANGCHAT_FAST_POP, additional_styles = list("langchat_yell"))
+	user.send_runechat_to_group(group = group, message = pain_message, spans = "bold")
+
 /datum/emote/living/carbon/human/salute
 	key = "salute"
 	key_third_person = "salutes"
@@ -254,7 +255,7 @@
 		return
 
 	var/scream_message = pick("FUCK!!!", "AGH!!!", "ARGH!!!", "AAAA!!!", "HGH!!!", "NGHHH!!!", "NNHH!!!", "SHIT!!!")
-	user.langchat_speech(scream_message, group, GLOB.all_languages, skip_language_check = TRUE, animation_style = LANGCHAT_PANIC_POP, additional_styles = list("langchat_yell"))
+	user.send_runechat_to_group(group = group, message = scream_message, spans = "bold")
 
 /datum/emote/living/carbon/human/shakehead
 	key = "shakehead"

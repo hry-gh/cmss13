@@ -101,7 +101,7 @@
 			to_chat(M, "<span class='game deadsay'><span class='prefix'>DEAD:</span> <span class='name'>[name]</span> says, <span class='message'>\"[message]\"</span></span>") //Admins can hear deadchat, if they choose to, no matter if they're blind/deaf or not.
 
 	if(length(langchat_listeners))
-		langchat_speech(message, langchat_listeners, GLOB.all_languages, skip_language_check = TRUE)
+		send_runechat_to_group(group = langchat_listeners, message = message, spans = "dead")
 
 /mob/proc/say_understands(mob/other, datum/language/speaking = null)
 	if (src.stat == 2) //Dead

@@ -293,6 +293,9 @@
 #define PAINFUL 2
 #define EXTREMELY_PAINFUL 3
 
+//Used in visible_message_flags, audible_message_flags and runechat_flags
+#define EMOTE_MESSAGE (1<<0)
+
 // Xeno hivemind HREFs
 #define XENO_OVERWATCH_TARGET_HREF "target_ref"
 #define XENO_OVERWATCH_SRC_HREF "user_ref"

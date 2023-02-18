@@ -1,5 +1,5 @@
 #define SAVEFILE_VERSION_MIN 8
-#define SAVEFILE_VERSION_MAX 20
+#define SAVEFILE_VERSION_MAX 21
 
 //handles converting savefiles to new formats
 //MAKE SURE YOU KEEP THIS UP TO DATE!
@@ -80,6 +80,12 @@
 		sound_toggles |= (SOUND_ADMIN_MEME|SOUND_ADMIN_ATMOSPHERIC)
 		S["toggles_sound"] << sound_toggles
 
+	if(savefile_version < 21)
+		S["toggles_langchat"] >> see_rc_emotes
+		var/lang_chat_disabled
+		S["lang_chat_disabled"] >> lang_chat_disabled
+		chat_on_map = !lang_chat_disabled
+
 	savefile_version = SAVEFILE_VERSION_MAX
 	return 1
 
@@ -122,7 +128,7 @@
 	S["toggles_chat"] >> toggles_chat
 	S["chat_display_preferences"] >> chat_display_preferences
 	S["toggles_ghost"] >> toggles_ghost
-	S["toggles_langchat"] >> toggles_langchat
+	S["chat_on_map"] >> chat_on_map
 	S["toggles_sound"] >> toggles_sound
 	S["toggle_prefs"] >> toggle_prefs
 	S["toggles_flashing"] >> toggles_flashing
@@ -181,7 +187,7 @@
 	var/list/remembered_key_bindings
 	S["remembered_key_bindings"] >> remembered_key_bindings
 
-	S["lang_chat_disabled"] >> lang_chat_disabled
+	S["see_rc_emotes"] >> see_rc_emotes
 	S["show_permission_errors"] >> show_permission_errors
 	S["hear_vox"] >> hear_vox
 	S["hide_statusbar"] >> hide_statusbar
@@ -201,7 +207,8 @@
 	toggles_chat = sanitize_integer(toggles_chat, 0, 65535, initial(toggles_chat))
 	chat_display_preferences = sanitize_integer(chat_display_preferences, 0, 65535, initial(chat_display_preferences))
 	toggles_ghost = sanitize_integer(toggles_ghost, 0, 65535, initial(toggles_ghost))
-	toggles_langchat = sanitize_integer(toggles_langchat, 0, 65535, initial(toggles_langchat))
+	see_rc_emotes = sanitize_integer(see_rc_emotes, FALSE, TRUE, TRUE)
+	chat_on_map = sanitize_integer(chat_on_map, FALSE, TRUE, TRUE)
 	toggles_sound = sanitize_integer(toggles_sound, 0, 65535, initial(toggles_sound))
 	toggle_prefs = sanitize_integer(toggle_prefs, 0, 65535, initial(toggle_prefs))
 	toggles_flashing= sanitize_integer(toggles_flashing, 0, 65535, initial(toggles_flashing))
@@ -302,7 +309,7 @@
 	S["toggles_chat"] << toggles_chat
 	S["chat_display_preferences"] << chat_display_preferences
 	S["toggles_ghost"] << toggles_ghost
-	S["toggles_langchat"] << toggles_langchat
+	S["chat_on_map"] << chat_on_map
 	S["toggles_sound"] << toggles_sound
 	S["toggle_prefs"] << toggle_prefs
 	S["toggles_flashing"] << toggles_flashing
@@ -351,7 +358,7 @@
 	S["synth_status"] << synth_status
 	S["grade_path"] << sea_path
 
-	S["lang_chat_disabled"] << lang_chat_disabled
+	S["see_rc_emotes"] << see_rc_emotes
 	S["show_permission_errors"] << show_permission_errors
 	S["key_bindings"] << key_bindings
 	S["hotkeys"] << hotkeys
