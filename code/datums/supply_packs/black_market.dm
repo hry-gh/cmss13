@@ -719,7 +719,7 @@ USCM spare items, miscellaneous gear that's too niche and distant (or restricted
 		/obj/item/ammo_magazine/shotgun/beanbag,
 		/obj/item/storage/box/packet/m15/rubber,
 		/obj/item/storage/box/guncase/m79,
-		/obj/item/clothing/head/helmet/marine/MP,
+		/obj/item/clothing/head/helmet/marine/mp,
 		/obj/item/prop/helmetgarb/riot_shield,
 	)
 	dollar_cost = 55

@@ -238,7 +238,7 @@
 		/obj/item/device/flash = 5,
 		/obj/item/reagent_container/food/snacks/donut/normal = 12,
 		/obj/item/storage/box/evidence = 6,
-		/obj/item/clothing/head/helmet/marine/MP = 6,
+		/obj/item/clothing/head/helmet/marine/mp = 6,
 		/obj/item/clothing/head/beret/marine/mp/mppeaked = 6,
 		/obj/item/clothing/head/beret/marine/mp/mpcap = 6,
 		/obj/item/clothing/under/marine/mp = 2,

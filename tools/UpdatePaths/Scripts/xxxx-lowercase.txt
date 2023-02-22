@@ -1,0 +1,5 @@
+/obj/item/clothing/suit/storage/marine/mp : /obj/item/clothing/suit/storage/marine/mp{@OLD}
+/obj/item/clothing/suit/storage/marine/mp/SO : /obj/item/clothing/suit/storage/marine/mp/so{@OLD}
+/obj/item/clothing/suit/storage/marine/mp/CO : /obj/item/clothing/suit/storage/marine/mp/co{@OLD}
+/obj/item/clothing/head/helmet/marine/MP : /obj/item/clothing/head/helmet/marine/mp{@OLD}
+/obj/item/clothing/head/helmet/marine/mp/SO : /obj/item/clothing/head/helmet/marine/mp/so{@OLD}

@@ -6016,11 +6016,11 @@
 /turf/open/auto_turf/shale/layer0,
 /area/lv522/landing_zone_2)
 "dlI" = (
-/obj/item/clothing/suit/storage/marine/MP/SO{
+/obj/item/clothing/suit/storage/marine/mp/so{
 	pixel_x = 6;
 	pixel_y = -4
 	},
-/obj/item/clothing/head/helmet/marine/MP/SO{
+/obj/item/clothing/head/helmet/marine/mp/SO{
 	pixel_x = -9;
 	pixel_y = 5
 	},

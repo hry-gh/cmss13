@@ -725,7 +725,7 @@ GLOBAL_LIST_INIT(allowed_helmet_items, list(
 	specialty = "M10 pattern captain"
 	flags_atom = NO_SNOW_TYPE
 
-/obj/item/clothing/head/helmet/marine/MP
+/obj/item/clothing/head/helmet/marine/mp
 	name = "\improper M10 pattern MP helmet"
 	desc = "A special variant of the M10 Pattern Helmet worn by the Military Police of the USCM. Whether you're facing a crime syndicate or a mutiny, this bucket will keep your brains intact."
 	icon_state = "mp_helmet"
@@ -734,7 +734,7 @@ GLOBAL_LIST_INIT(allowed_helmet_items, list(
 	specialty = "M10 pattern military police"
 	flags_atom = NO_SNOW_TYPE
 
-/obj/item/clothing/head/helmet/marine/MP/SO
+/obj/item/clothing/head/helmet/marine/mp/SO
 	name = "\improper M10 pattern Officer Helmet"
 	desc = "A special variant of the M10 Pattern Helmet worn by Officers of the USCM, attracting the attention of the grunts and sniper fire alike."
 	icon_state = "d_helmet"
