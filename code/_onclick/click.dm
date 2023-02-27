@@ -403,3 +403,165 @@
 	user.do_click(A, null, params)
 	addtimer(CALLBACK(src, PROC_REF(autoclick), user, A, params), 0.1)
 #endif
+
+
+/mob/proc/change_next_move(num)
+	next_move = world.time + ((num + next_move_adjust) * next_move_modifier)
+
+
+/atom/click(location, control, params)
+	if(!(flags_atom & INITIALIZED))
+		return
+
+	SEND_SIGNAL(src, COMSIG_CLICK, location, control, params, usr)
+	usr.ClickOn(src, params)
+
+/atom/DblClick(location, control, params)
+	if(!(flags_atom & INITIALIZED))
+		return
+
+	usr.DblClickOn(src, params)
+
+/atom/MouseWheel(delta_x, delta_y, location, control, params)
+	if(!(flags_atom & INITIALIZED))
+		return
+
+	usr.MouseWheelOn(src, delta_x, delta_y, params)
+
+/mob/proc/ClickOn(atom/being_clicked, params)
+	if(world.time <= next_click)
+		return
+
+	next_click = world.time + 1
+
+	if(check_click_intercept(params, being_clicked))
+		return
+
+	if(notransform)
+		return
+
+	if(SENDSIGNAL(src, COMSIG_MOB_CLICKON, being_clicked, params) & COMSIG_MOB_CANCEL_CLICKON)
+		return
+
+	var/list/modifiers = params2list(params)
+	if(modifiers[SHIFT_CLICK] && modifiers[MIDDLE_CLICK])
+		ShiftMiddleClickOn(being_clicked)
+		return
+	if(modifiers[SHIFT_CLICK] && modifiers[CTRL_CLICK])
+		CtrlShiftClickOn(being_clicked)
+		return
+	if(modifiers[CTRL_CLICK] && modifiers[MIDDLE_CLICK])
+		CtrlMiddleClickOn(being_clicked)
+		return
+
+	if(modifiers[MIDDLE_CLICK])
+		MiddleClickOn(being_clicked)
+		return
+	if(modifiers[SHIFT_CLICK])
+		ShiftClickOn(being_clicked)
+		return
+	if(modifiers[ALT_CLICK])
+		AltClickOn(being_clicked)
+		return
+	if(modifiers[CTRL_CLICK])
+		CtrlClickOn(being_clicked)
+		return
+
+	if(is_mob_incapacitated(TRUE))
+		return
+
+	face_atom(being_clicked)
+
+	if(next_move > world.time)
+		return
+
+	if(!modifiers["catcher"] && being_clicked.IsObscured())
+
+	if(is_mob_restrained())
+		change_next_move(CLICK_CD_HANDCUFFED)
+		RestrainedClickOn(being_clicked)
+		return
+
+	if(throw_mode && being_clicked.loc != src && !isstorage(being_clicked.loc) && !istype(being_clicked, /atom/movable/screen))
+		throw_item(being_clicked)
+		return
+
+	var/obj/item/in_hand = get_active_hand()
+
+	if(in_hand == being_clicked)
+		in_hand.attack_self(src)
+		update_inv_l_hand()
+		update_inv_r_hand()
+		return
+
+	if(being_clicked in DirectAccess())
+		if(in_hand)
+			if(!being_clicked.attackby(in_hand, src, params))
+				in_hand.afterattack(in_hand, src, TRUE, params)
+		else
+			UnarmedAttack(being_clicked)
+		return
+
+	if(!loc.AllowClick())
+		return
+
+	if(CanReach(being_clicked, in_hand))
+		if(in_hand)
+			if(!being_clicked.attackby(in_hand, src, params))
+				in_hand.afterattack(in_hand, src, TRUE, params)
+		else
+			UnarmedAttack(being_clicked)
+	else
+		if(in_hand)
+			var/proximity = in_hand.Adjacent(src)
+			if(!proximity || !A.attackby(in_hand, src, params))
+				in_hand.afterattack(being_clicked, src, proximity, params)
+			else
+				if(being_clicked.Adjacent(src))
+					being_clicked.attack_hand(src)
+				RangedAttack(being_clicked)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/atom/proc/IsObscured()
+	if(!isturf(loc)) //This only makes sense for things directly on turfs for now
+		return FALSE
+	var/turf/T = get_turf_pixel(src)
+	if(!T)
+		return FALSE
+	for(var/atom/movable/AM in T)
+		if(AM.flags_atom & PREVENT_CLICK_UNDER && AM.density && AM.layer > layer)
+			return TRUE
+	return FALSE
+
+
+/turf/IsObscured()
+	for(var/atom/movable/AM in src)
+		if(AM.flags_atom & PREVENT_CLICK_UNDER && AM.density)
+			return TRUE
+	return FALSE
+
+
+
+/atom/movable/proc/DirectAccess()
+	return list(src, loc)
+
+
+/mob/DirectAccess(atom/target)
+	return ..() + contents
+
+
+/mob/living/DirectAccess(atom/target)
+	return ..() + GetAllContents()
