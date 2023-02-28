@@ -150,7 +150,7 @@ GLOBAL_LIST_EMPTY(jelly_awards)
 			recipient_player.track_medal_earned(medal_type, recipient_mob, recipient_rank, citation, usr)
 
 	// Inform staff of success
-	message_staff("[key_name_admin(usr)] awarded a <a href='?medals_panel=1'>[medal_type]</a> to [chosen_recipient] for: \'[citation]\'.")
+	message_admins("[key_name_admin(usr)] awarded a <a href='?medals_panel=1'>[medal_type]</a> to [chosen_recipient] for: \'[citation]\'.")
 
 	return TRUE
 
@@ -277,7 +277,7 @@ GLOBAL_LIST_EMPTY(jelly_awards)
 			recipient_player.track_medal_earned(medal_type, recipient_mob, recipient_caste, citation, usr)
 
 	// Inform staff of success
-	message_staff("[key_name_admin(usr)] awarded a <a href='?medals_panel=1'>[medal_type]</a> to [chosen_recipient] for: \'[citation]\'.")
+	message_admins("[key_name_admin(usr)] awarded a <a href='?medals_panel=1'>[medal_type]</a> to [chosen_recipient] for: \'[citation]\'.")
 
 	return TRUE
 
@@ -286,7 +286,7 @@ GLOBAL_LIST_EMPTY(jelly_awards)
 		return FALSE
 
 	// Because the DB is slow, give an early message so there aren't two jumping on it
-	message_staff("[key_name_admin(usr)] is deleting one of [recipient_name]'s medals...")
+	message_admins("[key_name_admin(usr)] is deleting one of [recipient_name]'s medals...")
 
 	// Find the award in the glob list
 	var/datum/recipient_awards/recipient_award
@@ -350,6 +350,6 @@ GLOBAL_LIST_EMPTY(jelly_awards)
 			recipient_player.untrack_medal_earned(medal_type, recipient_mob, citation)
 
 	// Inform staff of success
-	message_staff("[key_name_admin(usr)] deleted [recipient_name]'s <a href='?medals_panel=1'>[medal_type]</a> for: \'[citation]\'.")
+	message_admins("[key_name_admin(usr)] deleted [recipient_name]'s <a href='?medals_panel=1'>[medal_type]</a> for: \'[citation]\'.")
 
 	return TRUE

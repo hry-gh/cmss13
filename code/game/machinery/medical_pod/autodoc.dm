@@ -77,8 +77,8 @@
 		balloon_alert_to_viewers("release engaged")
 		occupant.take_limb_damage(rand(30,50),rand(30,50))
 		surgery = FALSE
-		// message_staff for now, may change to message_admins later
-		message_staff("[key_name(usr)] ejected [key_name(occupant)] from the autodoc during surgery causing damage.")
+		// message_admins for now, may change to message_admins later
+		message_admins("[key_name(usr)] ejected [key_name(occupant)] from the autodoc during surgery causing damage.")
 		return TRUE
 	return TRUE
 
