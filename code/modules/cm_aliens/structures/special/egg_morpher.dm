@@ -210,21 +210,21 @@
 	linked_hive.spawn_as_hugger(user, src)
 	stored_huggers--
 
-/mob/living/carbon/xenomorph/proc/set_hugger_reserve_for_morpher(obj/effect/alien/resin/special/eggmorph/morpher in oview(1))
+/obj/effect/alien/resin/special/eggmorph/verb/set_hugger_reserve_for_morpher()
 	set name = "Set Hugger Reserve"
-	set desc = "Set Hugger Reserve"
-	set category = null
 
-	if(!istype(morpher))
+	if(!istype(usr, /mob/living/carbon/xenomorph))
 		return
 
-	if(morpher.linked_hive)
-		if(hivenumber != morpher.linked_hive.hivenumber)
+	var/mob/living/carbon/xenomorph/current_xeno = usr
+
+	if(linked_hive)
+		if(current_xeno.hivenumber != linked_hive.hivenumber)
 			to_chat(usr, SPAN_WARNING("This belongs to another Hive! Yuck!"))
 			return
 
-	morpher.huggers_reserved = tgui_input_number(usr, "How many facehuggers would you like to keep safe from Observers wanting to join as facehuggers?", "How many to reserve?", 0, morpher.huggers_to_grow_max, morpher.huggers_reserved)
+	huggers_reserved = tgui_input_number(current_xeno, "How many facehuggers would you like to keep safe from Observers wanting to join as facehuggers?", "How many to reserve?", 0, huggers_to_grow_max, huggers_reserved)
 
-	to_chat(usr, SPAN_XENONOTICE("You reserved [morpher.huggers_reserved] facehuggers for your sisters."))
+	to_chat(current_xeno, SPAN_XENONOTICE("You reserved [huggers_reserved] facehuggers for your sisters."))
 
 #undef EGGMORPG_RANGE
