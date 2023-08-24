@@ -36,7 +36,8 @@
 /obj/structure/machinery/defenses/beacon/power_on_action(mob/user)
 	if(!is_ground_level(z))
 		power_off()
-		balloon_alert(user, "not here!")
+		if(user)
+			balloon_alert(user, "not here!")
 		return
 
 	GLOB.active_beacons += src

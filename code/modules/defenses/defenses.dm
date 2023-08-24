@@ -91,14 +91,14 @@
 		message += SPAN_INFO("\nIt has been assigned the name: [nickname]")
 	. += message
 
-/obj/structure/machinery/defenses/proc/power_on()
+/obj/structure/machinery/defenses/proc/power_on(mob/user)
 	if(stat == DEFENSE_DAMAGED)
 		return FALSE
 	if(!(placed||static))
 		return FALSE
 
 	turned_on = TRUE
-	power_on_action()
+	power_on_action(user)
 	update_icon()
 
 /obj/structure/machinery/defenses/proc/power_off()
@@ -185,7 +185,7 @@
 					H.electrocute_act(40, src, additional_shock)//god damn Hans...
 					setDir(get_dir(src, H))//Make sure he died
 					power_off()
-					power_on()
+					power_on(user)
 					return
 				else
 					H.electrocute_act(20, src)//god bless him for stupid move
@@ -377,7 +377,7 @@
 					to_chat(user, SPAN_WARNING("This is too close to a [def]!"))
 					return
 
-		power_on()
+		power_on(user)
 	else
 		power_off()
 

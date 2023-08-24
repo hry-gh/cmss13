@@ -273,7 +273,7 @@
 	not_weldable = 1
 
 /obj/structure/machinery/door/airlock/multi_tile/almayer/midway
-	name = "\improper Gettysburg blast door"
+	name = "\improper Midway blast door"
 	icon = 'icons/obj/structures/doors/midway-rear.dmi'
 
 /obj/structure/machinery/door/airlock/multi_tile/almayer/dropshiprear/ex_act(severity)

@@ -41,6 +41,7 @@
 	req_one_access = list(ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_LEADER)
 	shuttleId = SHUTTLE_MIDWAY
 	possible_destinations = list(SHUTTLE_MIDWAY, SHUTTLE_MIDWAY_CUSTOM)
+	density = TRUE
 
 /obj/structure/machinery/computer/camera_advanced/shuttle_docker/midway
 	name = "\"Midway\" navigation computer"
@@ -58,6 +59,7 @@
 	indestructible = TRUE
 	unacidable = TRUE
 	open_prompt = FALSE
+	density = TRUE
 
 	var/maximum_capacity = 8
 

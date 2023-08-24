@@ -1,4 +1,4 @@
-import { capitalizeAll } from 'common/string';
+import { capitalizeAll } from '../../common/string';
 import { useBackend } from '../backend';
 import { Box, Button, LabeledList, Section, Stack } from '../components';
 import { Window } from '../layouts';
@@ -16,7 +16,7 @@ export const MidwayConsole = (_props, context) => {
     <Window
       width={250}
       height={290}
-      title={'Gettysburg Navigation'}
+      title={'Midway Navigation'}
       theme={'crtyellow'}>
       <Window.Content>
         <MidwayStatus />
@@ -35,7 +35,7 @@ export const MidwayStatus = (_props, context) => {
     <Section title={'Dropship Status'}>
       <LabeledList>
         <LabeledList.Item label="Location">
-          {capitalizeAll(current_state)}
+          {capitalizeAll(current_mode)}
         </LabeledList.Item>
         <LabeledList.Item label="Status">
           {capitalizeAll(current_mode)}
@@ -106,12 +106,12 @@ export const MidwayGround = (_props, context) => {
           </Stack>
         </Stack.Item>
         <Stack.Item>
-          {data.current_beacons.length && (
+          {!!data.current_beacons.length && (
             <>
-              <p>Available Beacons:</p>
+              <Box>Available Beacons:</Box>
               <Box>
                 {data.current_beacons.map((x) => {
-                  return <p key={x}>{x}</p>;
+                  return <Box key={x}>{x}</Box>;
                 })}
               </Box>
             </>
