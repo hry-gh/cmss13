@@ -299,6 +299,12 @@
 	if (src && src.loc)
 		target.buckled = src
 		target.forceMove(src.loc)
+
+		if(pulledby)
+			target.set_glide_size(pulledby.glide_size)
+		else
+			target.set_glide_size(glide_size)
+
 		target.setDir(dir)
 		target.update_canmove()
 		src.buckled_mob = target

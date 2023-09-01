@@ -226,8 +226,6 @@
 	if(back && (back.flags_item & ITEM_OVERRIDE_NORTHFACE))
 		update_inv_back()
 
-
-
 /mob/proc/resist_grab(moving_resist)
 	return //returning 1 means we successfully broke free
 

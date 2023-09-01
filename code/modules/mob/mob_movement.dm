@@ -160,6 +160,7 @@
 		return O.relaymove(mob, direct)
 	else
 		move_delay = mob.move_delay
+		var/old_move_delay = move_delay
 		if(mob.recalculate_move_delay)// && mob.next_delay_update <= world.time)
 			recalculate_move_delay()
 		if(mob.next_move_slowdown)
@@ -172,6 +173,16 @@
 		//We are now going to move
 		moving = TRUE
 		mob.move_intentionally = TRUE
+
+		var/new_glide_size = mob.glide_size
+
+		if(old_move_delay + world.tick_lag > world.time)
+			new_glide_size = DELAY_TO_GLIDE_SIZE((move_delay - old_move_delay) * ( (NSCOMPONENT(direct) && EWCOMPONENT(direct)) ? sqrt(2) : 1 ) )
+		else
+			new_glide_size = DELAY_TO_GLIDE_SIZE((move_delay - world.time) * ( (NSCOMPONENT(direct) && EWCOMPONENT(direct)) ? sqrt(2) : 1 ) )
+
+		mob.set_glide_size(new_glide_size)
+
 		if(mob.lying)
 			//check for them not being a limbless blob (only humans have limbs)
 			if(ishuman(mob))

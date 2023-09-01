@@ -81,6 +81,8 @@
 	update_icon()
 	if(buckling_y)
 		buckled_bodybag.pixel_y = buckled_bodybag.buckle_offset + buckling_y
+	if(pulledby)
+		B.set_glide_size(pulledby.glide_size)
 	add_fingerprint(user)
 
 /obj/structure/bed/unbuckle()

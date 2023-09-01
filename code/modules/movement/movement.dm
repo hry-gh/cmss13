@@ -55,7 +55,7 @@
 
 	return NO_BLOCKED_MOVEMENT
 
-/atom/movable/Move(NewLoc, direct)
+/atom/movable/Move(NewLoc, direct, glide_size_override)
 	// If Move is not valid, exit
 	if (SEND_SIGNAL(src, COMSIG_MOVABLE_PRE_MOVE, NewLoc) & COMPONENT_CANCEL_MOVE)
 		return FALSE
@@ -72,6 +72,10 @@
 	if ((oldloc != loc && oldloc && oldloc.z == z))
 		last_move_dir = get_dir(oldloc, loc)
 	if (.)
+
+		if(glide_size_override)
+			set_glide_size(glide_size_override)
+
 		Moved(oldloc, direct)
 
 /// Called when a movable atom has hit an atom via movement
