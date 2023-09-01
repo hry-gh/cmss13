@@ -56,7 +56,7 @@
 
 	return NO_BLOCKED_MOVEMENT
 
-/atom/movable/Move(NewLoc, direct)
+/atom/movable/Move(NewLoc, direct, glide_size_override)
 	// If Move is not valid, exit
 	if (SEND_SIGNAL(src, COMSIG_MOVABLE_PRE_MOVE, NewLoc) & COMPONENT_CANCEL_MOVE)
 		return FALSE
@@ -75,6 +75,10 @@
 	if(. && buckled_mob && !handle_buckled_mob_movement(loc,direct)) //movement fails if buckled mob's move fails.
 		. = FALSE
 	if (.)
+
+		if(glide_size_override)
+			set_glide_size(glide_size_override)
+
 		Moved(oldloc, direct)
 
 	handle_rotation()

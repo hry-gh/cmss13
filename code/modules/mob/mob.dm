@@ -506,6 +506,10 @@
 		M = AM
 		if(!M.can_be_pulled_by(src))
 			return
+		if(M.buckled)
+			M.buckled.set_glide_size(glide_size)
+		else
+			M.set_glide_size(glide_size)
 	else if(istype(AM, /obj))
 		if(recently_grabbed > world.time)
 			return FALSE

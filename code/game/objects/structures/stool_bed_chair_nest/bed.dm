@@ -87,6 +87,8 @@
 	update_icon()
 	if(buckling_y)
 		buckled_bodybag.pixel_y = buckled_bodybag.buckle_offset + buckling_y
+	if(pulledby)
+		B.set_glide_size(pulledby.glide_size)
 	add_fingerprint(user)
 	var/mob/living/carbon/human/contained_mob = locate() in B.contents
 	if(contained_mob)

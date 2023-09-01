@@ -548,3 +548,25 @@
 		return NO_BLOCKED_MOVEMENT
 
 	return ..()
+
+/atom/movable/proc/set_glide_size(target = 8)
+	SEND_SIGNAL(src, COMSIG_MOVABLE_UPDATE_GLIDE_SIZE, target)
+	glide_size = target
+
+/obj/set_glide_size(target = 8)
+	. = ..()
+	if(!.)
+		return
+
+	if(buckled_mob.glide_size == target)
+		return
+
+	buckled_mob.set_glide_size(target)
+
+/obj/structure/bed/set_glide_size(target = 8)
+	. = ..()
+	if(!.)
+		return
+	if(buckled_bodybag && buckled_bodybag.glide_size != target)
+		buckled_bodybag.set_glide_size(target)
+	glide_size = target
