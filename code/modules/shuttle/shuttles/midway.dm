@@ -439,12 +439,12 @@ GLOBAL_LIST_EMPTY(dropship3_lights)
 
 /obj/structure/machinery/landinglight/midway/delayone/turn_on()
 	icon_state = initial(icon_state) + "1"
-	SetLuminosity(2)
+	set_light(2)
 
 /obj/structure/machinery/landinglight/midway/delaytwo/turn_on()
 	icon_state = initial(icon_state) + "2"
-	SetLuminosity(2)
+	set_light(2)
 
 /obj/structure/machinery/landinglight/midway/delaythree/turn_on()
 	icon_state = initial(icon_state) + "3"
-	SetLuminosity(2)
+	set_light(2)

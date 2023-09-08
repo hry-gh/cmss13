@@ -22,7 +22,6 @@
 #define LIGHT_RANGE_FIRE 3 //How many tiles standard fires glow.
 
 #define LIGHTING_PLANE_ALPHA_VISIBLE 255
-#define LIGHTING_PLANE_ALPHA_MOSTLY_VISIBLE 192
 ///The dim natural vision of Yautja
 #define LIGHTING_PLANE_ALPHA_YAUTJA 235
 #define LIGHTING_PLANE_ALPHA_MOSTLY_VISIBLE 192

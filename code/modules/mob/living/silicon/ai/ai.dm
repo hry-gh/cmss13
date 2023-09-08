@@ -639,10 +639,10 @@ var/list/ai_verbs_default = list(
 
 	for(var/obj/structure/machinery/camera/C in remove)
 		lit_cameras -= C //Removed from list before turning off the light so that it doesn't check the AI looking away.
-		C.SetLuminosity(0)
+		C.set_light(0)
 
 	for(var/obj/structure/machinery/camera/C in add)
-		C.SetLuminosity(1)
+		C.set_light(1)
 		lit_cameras |= C
 
 /mob/living/silicon/ai/proc/camera_visibility(mob/camera/eye/moved_eye)
