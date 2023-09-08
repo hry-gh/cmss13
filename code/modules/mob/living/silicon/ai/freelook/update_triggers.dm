@@ -29,12 +29,12 @@
 	. = ..()
 // STRUCTURES
 
-/obj/structure/Destroy()
+/obj/structure/Destroy(force)
 	if(z && SSatoms.initialized != INITIALIZATION_INSSATOMS)
 		GLOB.cameranet.updateVisibility(src)
 	. = ..()
 
-/obj/structure/Initialize()
+/obj/structure/Initialize(mapload, ...)
 	. = ..()
 	if(z && SSatoms.initialized != INITIALIZATION_INSSATOMS)
 		GLOB.cameranet.updateVisibility(src)
@@ -97,8 +97,8 @@
 	if(can_use())
 		GLOB.cameranet.addCamera(src)
 	else
-		SetLuminosity(0)
 		GLOB.cameranet.removeCamera(src)
+		set_light(0)
 
 /obj/structure/machinery/camera/Initialize()
 	. = ..()

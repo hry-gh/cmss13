@@ -273,6 +273,8 @@
 
 	/// Calls relaymove() to whatever it is
 	var/atom/movable/remote_control
+	// contains /atom/movable/screen/alert only
+	var/list/alerts = list()
 
 /mob/vv_get_dropdown()
 	. = ..()
