@@ -32,16 +32,19 @@
 	port_direction = SOUTH
 	shuttle_flags = GAMEMODE_IMMUNE
 
-/obj/structure/machinery/computer/shuttle/midway
+/obj/structure/machinery/prop/almayer/computer/midway
 	name = "\"Midway\" transit computer"
 	icon = 'icons/obj/structures/machinery/shuttle-parts.dmi'
 	icon_state = "consoleright"
 	unacidable = TRUE
 	indestructible = TRUE
-	req_one_access = list(ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_LEADER)
-	shuttleId = SHUTTLE_MIDWAY
-	possible_destinations = list(SHUTTLE_MIDWAY, SHUTTLE_MIDWAY_CUSTOM)
 	density = TRUE
+
+/obj/structure/machinery/prop/almayer/computer/midway/ex_act(severity)
+	return
+
+/obj/structure/machinery/prop/almayer/computer/midway/update_icon()
+	return
 
 /obj/structure/machinery/computer/camera_advanced/shuttle_docker/midway
 	name = "\"Midway\" navigation computer"
@@ -92,6 +95,8 @@
 		jump_action.target = user
 		actions += jump_action
 
+/obj/structure/machinery/computer/camera_advanced/shuttle_docker/midway/ex_act(severity)
+	return
 
 /obj/structure/machinery/computer/camera_advanced/shuttle_docker/midway/attack_hand(mob/user)
 	. = ..()

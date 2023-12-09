@@ -242,7 +242,7 @@
 	not_weldable = 1
 	var/queen_pryable = TRUE
 
-/obj/structure/machinery/door/airlock/multi_tile/almayer/midway
+/obj/structure/machinery/door/airlock/multi_tile/almayer/dropshiprear/midway
 	name = "\improper Midway blast door"
 	icon = 'icons/obj/structures/doors/midway-rear.dmi'
 
