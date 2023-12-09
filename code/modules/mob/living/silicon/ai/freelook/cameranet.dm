@@ -167,3 +167,9 @@ GLOBAL_DATUM_INIT(cameranet, /datum/cameranet, new)
 
 	layer = CAMERA_STATIC_LAYER
 	plane = CAMERA_STATIC_PLANE
+
+/*
+	if(GLOB.cameranet.chunkGenerated(x, y, z))
+		var/datum/camerachunk/chunk = GLOB.cameranet.getCameraChunk(x, y, z)
+		usr.client.debug_variables(chunk)
+*/

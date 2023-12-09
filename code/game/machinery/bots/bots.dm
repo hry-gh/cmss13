@@ -92,7 +92,7 @@
 		else
 			..()
 
-/obj/structure/machinery/bot/bullet_act(obj/item/projectile/Proj)
+/obj/structure/machinery/bot/bullet_act(obj/projectile/Proj)
 	health -= Proj.ammo.damage
 	..()
 	healthcheck()
@@ -114,6 +114,7 @@
 
 
 /obj/structure/machinery/bot/emp_act(severity)
+	. = ..()
 	var/was_on = on
 	stat |= EMPED
 	new /obj/effect/overlay/temp/emp_sparks (loc)
@@ -150,7 +151,7 @@
 /turf/proc/CardinalTurfsWithAccess(obj/item/card/id/ID)
 	var/L[] = new()
 
-	for(var/d in cardinal)
+	for(var/d in GLOB.cardinals)
 		var/turf/T = get_step(src, d)
 		if(istype(T) && !T.density)
 			if(!LinkBlockedWithAccess(src, T, ID))

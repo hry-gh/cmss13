@@ -28,9 +28,8 @@
 		material_sheet = new parts_type(current_turf, 2)
 
 	// Move the objects back to the turf, above the crate material
-	for(var/atom/movable/moving_atom in contents)
-		var/atom/movable/current_atom = contents[1]
-		current_atom.forceMove(current_turf)
+	for(var/atom/movable/moving_atom as anything in contents)
+		moving_atom.forceMove(current_turf)
 
 	deconstruct(TRUE)
 
@@ -76,7 +75,7 @@
 	if(health <= 0)
 		unpack()
 
-/obj/structure/largecrate/bullet_act(obj/item/projectile/P)
+/obj/structure/largecrate/bullet_act(obj/projectile/P)
 	take_damage(P.calculate_damage(P.damage))
 	return TRUE
 

@@ -158,7 +158,7 @@
 		/obj/item/attachable/stock/vulture,
 	)
 	civilian_usable_override = FALSE
-	projectile_type = /obj/item/projectile/vulture
+	projectile_type = /obj/projectile/vulture
 	actions_types = list(
 		/datum/action/item_action/vulture,
 	)
@@ -214,7 +214,7 @@
 		return .
 
 	for(var/mob/current_mob as anything in get_mobs_in_z_level_range(get_turf(user), fire_message_range) - user)
-		var/relative_dir = get_dir(current_mob, user)
+		var/relative_dir = Get_Compass_Dir(current_mob, user)
 		var/final_dir = dir2text(relative_dir)
 		to_chat(current_mob, SPAN_HIGHDANGER("You hear a massive boom coming from [final_dir ? "the [final_dir]" : "nearby"]!"))
 		if(current_mob.client)
@@ -275,3 +275,7 @@
 			to_chat(user, SPAN_DANGER("The splint on your [limb.display_name] comes apart under the recoil!"))
 			user.pain.apply_pain(PAIN_BONE_BREAK_SPLINTED)
 			user.update_med_icon()
+
+
+/obj/item/weapon/gun/boltaction/vulture/skillless
+	bypass_trait = TRUE

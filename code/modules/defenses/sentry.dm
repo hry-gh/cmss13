@@ -308,7 +308,7 @@
 	low_ammo_timer = null
 
 /obj/structure/machinery/defenses/sentry/proc/actual_fire(atom/target)
-	var/obj/item/projectile/new_projectile = new(src, create_cause_data(initial(name), owner_mob, src))
+	var/obj/projectile/new_projectile = new(src, create_cause_data(initial(name), owner_mob, src))
 	new_projectile.generate_bullet(new ammo.default_ammo)
 	new_projectile.damage *= damage_mult
 	new_projectile.accuracy *= accuracy_mult
@@ -525,6 +525,10 @@
 	. = ..()
 	choice_categories[SENTRY_CATEGORY_IFF] = list(FACTION_COLONY, FACTION_WEYLAND)
 	selected_categories[SENTRY_CATEGORY_IFF] = FACTION_COLONY
+
+/obj/structure/machinery/defenses/sentry/premade/deployable/almayer
+	fire_delay = 4
+	omni_directional = TRUE
 
 //the turret inside the shuttle sentry deployment system
 /obj/structure/machinery/defenses/sentry/premade/dropship

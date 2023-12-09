@@ -98,7 +98,7 @@
 		new /obj/effect/decal/cleanable/blood/oil(src.loc)
 	healthcheck()
 
-/obj/vehicle/bullet_act(obj/item/projectile/P)
+/obj/vehicle/bullet_act(obj/projectile/P)
 	var/damage = P.damage
 	health -= damage
 	..()
@@ -112,6 +112,7 @@
 	return
 
 /obj/vehicle/emp_act(severity)
+	. = ..()
 	var/was_on = on
 	stat |= EMPED
 	new /obj/effect/overlay/temp/emp_sparks (loc)

@@ -149,7 +149,7 @@
 	if(!see_hidden)
 		to_remove += SSshuttle.hidden_shuttle_turf_images
 	user.client.images -= to_remove
-	user.client.view = world_view_size
+	user.client.view = GLOB.world_view_size
 	user.update_sight()
 
 /// Handles the creation of the custom landing spot

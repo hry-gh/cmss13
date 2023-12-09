@@ -271,7 +271,7 @@
 /atom/movable/clone/get_examine_text(mob/user)
 	return src.mstr.get_examine_text(user)
 
-/atom/movable/clone/bullet_act(obj/item/projectile/P)
+/atom/movable/clone/bullet_act(obj/projectile/P)
 	return src.mstr.bullet_act(P)
 /////////////////////
 
@@ -281,7 +281,7 @@
 	C.proj_x = shift_x
 	C.proj_y = shift_y
 
-	clones.Add(C)
+	GLOB.clones.Add(C)
 	C.mstr = src //Link clone and master
 	src.clone = C
 
@@ -313,7 +313,7 @@
 			clone.set_light(0) //Kill clone light
 
 /atom/movable/proc/destroy_clone()
-	clones.Remove(src.clone)
+	GLOB.clones.Remove(src.clone)
 	qdel(src.clone)
 	src.clone = null
 
