@@ -55,7 +55,7 @@
 
 	return NO_BLOCKED_MOVEMENT
 
-/atom/movable/Move(NewLoc, direct)
+/atom/movable/Move(NewLoc, direct, glide_size_override)
 	// If Move is not valid, exit
 	if (SEND_SIGNAL(src, COMSIG_MOVABLE_PRE_MOVE, NewLoc) & COMPONENT_CANCEL_MOVE)
 		return FALSE
