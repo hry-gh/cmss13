@@ -114,13 +114,18 @@
 	if(. && buckled_bodybag && !handle_buckled_bodybag_movement(loc,direct)) //Movement fails if buckled mob's move fails.
 		return 0
 
+/obj/structure/bed/set_glide_size(target)
+	. = ..()
+
+	if(buckled_bodybag)
+		buckled_bodybag.set_glide_size(target)
+
 /obj/structure/bed/proc/handle_buckled_bodybag_movement(NewLoc, direct)
-	if(!(direct & (direct - 1))) //Not diagonal move. the obj's diagonal move is split into two cardinal moves and those moves will handle the buckled bodybag's movement.
-		if(!buckled_bodybag.Move(NewLoc, direct))
-			forceMove(buckled_bodybag.loc)
-			last_move_dir = buckled_bodybag.last_move_dir
-			return 0
-	return 1
+	if(!buckled_bodybag.Move(NewLoc, direct))
+		forceMove(buckled_bodybag.loc)
+		last_move_dir = buckled_bodybag.last_move_dir
+		return FALSE
+	return TRUE
 
 /obj/structure/bed/roller/BlockedPassDirs(atom/movable/mover, target_dir)
 	if(mover == buckled_bodybag)
