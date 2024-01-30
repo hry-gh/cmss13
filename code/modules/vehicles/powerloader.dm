@@ -51,7 +51,8 @@
 			setDir(direction)
 			handle_rotation()
 			if(!(dir & (dir - 1))) // too much noise when moving diagonally, otherwise
-				pick(playsound(src.loc, 'sound/mecha/powerloader_turn.ogg', 25, 1), playsound(src.loc, 'sound/mecha/powerloader_turn2.ogg', 25, 1))			. = TRUE
+				pick(playsound(src.loc, 'sound/mecha/powerloader_turn.ogg', 25, 1), playsound(src.loc, 'sound/mecha/powerloader_turn2.ogg', 25, 1))
+				. = TRUE
 		else
 			. = step(src, direction)
 			if(.)
