@@ -55,7 +55,13 @@
 		return FALSE
 
 	if(package)
-		to_chat(M, SPAN_WARNING("How do you expect to eat this with the package still on?"))
+		if(user.a_intent == INTENT_HARM)
+			return ..() // chunk box gaming
+
+		if(user == M)
+			to_chat(M, SPAN_WARNING("How do you expect to eat this with the package still on?"))
+		else
+			to_chat(M, SPAN_WARNING("[user] made an endearing attempt to force feed you a snack with the packaging still on."))
 		return FALSE
 
 	if(istype(M, /mob/living/carbon))
@@ -206,7 +212,7 @@
 			SPAN_NOTICE("[user] crudely slices \the [src] with [W]!"), \
 			SPAN_NOTICE("You crudely slice \the [src] with your [W]!") \
 		)
-		slices_lost = rand(1,max(1,round(slices_num/2)))
+		slices_lost = rand(1,max(1,floor(slices_num/2)))
 	var/reagents_per_slice = reagents.total_volume/slices_num
 	for(var/i=1 to (slices_num-slices_lost))
 		var/obj/slice = new slice_path (src.loc)
@@ -2738,6 +2744,10 @@
 	var/list/boxes = list() // If the boxes are stacked, they come here
 	var/boxtag = ""
 
+/obj/item/pizzabox/Destroy(force)
+	QDEL_NULL(pizza)
+	return ..()
+
 /obj/item/pizzabox/update_icon()
 
 	overlays = list()
@@ -2745,10 +2755,10 @@
 	// Set appropriate description
 	if( open && pizza )
 		desc = "A box suited for pizzas. It appears to have a [pizza.name] inside."
-	else if( boxes.len > 0 )
-		desc = "A pile of boxes suited for pizzas. There appears to be [boxes.len + 1] boxes in the pile."
+	else if( length(boxes) > 0 )
+		desc = "A pile of boxes suited for pizzas. There appears to be [length(boxes) + 1] boxes in the pile."
 
-		var/obj/item/pizzabox/topbox = boxes[boxes.len]
+		var/obj/item/pizzabox/topbox = boxes[length(boxes)]
 		var/toptag = topbox.boxtag
 		if( toptag != "" )
 			desc = "[desc] The box on top has a tag, it reads: '[toptag]'."
@@ -2774,8 +2784,8 @@
 	else
 		// Stupid code because byondcode sucks
 		var/doimgtag = 0
-		if( boxes.len > 0 )
-			var/obj/item/pizzabox/topbox = boxes[boxes.len]
+		if( length(boxes) > 0 )
+			var/obj/item/pizzabox/topbox = boxes[length(boxes)]
 			if( topbox.boxtag != "" )
 				doimgtag = 1
 		else
@@ -2784,10 +2794,10 @@
 
 		if( doimgtag )
 			var/image/tagimg = image("food.dmi", icon_state = "pizzabox_tag")
-			tagimg.pixel_y = boxes.len * 3
+			tagimg.pixel_y = length(boxes) * 3
 			overlays += tagimg
 
-	icon_state = "pizzabox[boxes.len+1]"
+	icon_state = "pizzabox[length(boxes)+1]"
 
 /obj/item/pizzabox/attack_hand( mob/user as mob )
 
@@ -2799,12 +2809,12 @@
 		update_icon()
 		return
 
-	if( boxes.len > 0 )
+	if( length(boxes) > 0 )
 		if( user.get_inactive_hand() != src )
 			..()
 			return
 
-		var/obj/item/pizzabox/box = boxes[boxes.len]
+		var/obj/item/pizzabox/box = boxes[length(boxes)]
 		boxes -= box
 
 		user.put_in_hands( box )
@@ -2837,7 +2847,7 @@
 			for(var/obj/item/pizzabox/i in box.boxes)
 				boxestoadd += i
 
-			if( (boxes.len+1) + boxestoadd.len <= 5 )
+			if( (length(boxes)+1) + length(boxestoadd) <= 5 )
 				user.drop_inv_item_to_loc(box, src)
 				box.boxes = list() // Clear the box boxes so we don't have boxes inside boxes. - Xzibit
 				src.boxes.Add( boxestoadd )
@@ -2874,8 +2884,8 @@
 		var/t = stripped_input(user,"Enter what you want to add to the tag:", "Write", "", 30)
 
 		var/obj/item/pizzabox/boxtotagto = src
-		if( boxes.len > 0 )
-			boxtotagto = boxes[boxes.len]
+		if( length(boxes) > 0 )
+			boxtotagto = boxes[length(boxes)]
 
 		boxtotagto.boxtag = "[boxtotagto.boxtag][t]"
 		playsound(src, "paper_writing", 15, TRUE)
@@ -3289,8 +3299,11 @@
 	name = "CHUNK box"
 	desc = "A bar of \"The <b>CHUNK</b>\" brand chocolate. <i>\"The densest chocolate permitted to exist according to federal law. We are legally required to ask you not to use this blunt object for anything other than nutrition.\"</i>"
 	icon_state = "chunk"
-	force = 15 //LEGAL LIMIT OF CHOCOLATE
+	hitsound = "swing_hit"
+	force = 15
 	throwforce = 10
+	attack_speed = 10
+	demolition_mod = 0.3
 	bitesize = 2
 	wrapper = /obj/item/trash/chunk
 
@@ -3304,8 +3317,7 @@
 	desc = "A 'crate', as the marketing called it, of \"The <b>HUNK</b>\" brand chocolate. An early version of the CHUNK box, the HUNK bar was hit by a class action lawsuit and forced to go into bankruptcy and get bought out by the Company when hundreds of customers had their teeth crack from simply attempting to eat the bar."
 	icon_state = "hunk"
 	w_class = SIZE_MEDIUM
-	hitsound = "swing_hit"
-	force = 35 //ILLEGAL LIMIT OF CHOCOLATE
+	force = 35
 	throwforce = 50
 	bitesize = 20
 	wrapper = /obj/item/trash/chunk/hunk

@@ -377,7 +377,7 @@
 	else
 		to_chat(user, SPAN_WARNING("You cut \the [src] away with \the [attacking_item]."))
 
-	var/damage = attacking_item.force / 3
+	var/damage = (attacking_item.force * attacking_item.demolition_mod) / 3
 	playsound(loc, "alien_resin_break", 25)
 
 	if(iswelder(attacking_item))
@@ -624,7 +624,7 @@
 	return
 
 /obj/effect/alien/weeds/node/pylon/cluster
-	spread_on_semiweedable = FALSE
+	spread_on_semiweedable = TRUE
 
 /obj/effect/alien/weeds/node/pylon/cluster/set_parent_damaged()
 	if(!resin_parent)

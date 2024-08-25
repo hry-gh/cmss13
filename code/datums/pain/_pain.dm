@@ -82,7 +82,7 @@
 	if(current_pain - new_pain_reduction > max_pain)
 		return 100
 
-	var/percentage = round(((current_pain - new_pain_reduction) / max_pain) * 100)
+	var/percentage = floor(((current_pain - new_pain_reduction) / max_pain) * 100)
 	if(percentage < 0)
 		return 0
 	else
@@ -193,7 +193,7 @@
 			if(!isnull(threshold_horrible))
 				activate_horrible()
 
-	if(new_level >= PAIN_LEVEL_SEVERE)
+	if(new_level >= PAIN_LEVEL_SEVERE && feels_pain)
 		RegisterSignal(source_mob, COMSIG_MOB_DRAGGED, PROC_REF(oxyloss_drag), override = TRUE)
 		RegisterSignal(source_mob, COMSIG_MOB_DEVOURED, PROC_REF(handle_devour), override = TRUE)
 		RegisterSignal(source_mob, COMSIG_MOVABLE_PRE_THROW, PROC_REF(oxy_kill), override = TRUE)
