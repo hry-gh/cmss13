@@ -188,10 +188,10 @@
 	var/J = job_pref_to_gear_preset()
 	if(isnull(preview_dummy))
 		preview_dummy = new()
-	
+
 	preview_dummy.blocks_emissive = FALSE
 	preview_dummy.update_emissive_block()
-	
+
 	clear_equipment()
 	if(refresh_limb_status)
 		for(var/obj/limb/L in preview_dummy.limbs)
@@ -216,19 +216,22 @@
 	if(isnull(preview_front))
 		preview_front = new()
 		preview_front.vis_contents += preview_dummy
+		preview_front.assigned_map = "preview"
 		preview_front.screen_loc = "preview:0,0"
 	preview_front.icon_state = bg_state
-	owner.add_to_screen(preview_front)
+	owner.register_map_obj(preview_front)
 
 	if(isnull(rotate_left))
 		rotate_left = new(null, preview_dummy)
+		rotate_left.assigned_map = "preview"
 		rotate_left.screen_loc = "preview:-1:16,0"
-	owner.add_to_screen(rotate_left)
+	owner.register_map_obj(rotate_left)
 
 	if(isnull(rotate_right))
 		rotate_right = new(null, preview_dummy)
+		rotate_right.assigned_map = "preview"
 		rotate_right.screen_loc = "preview:1:-16,0"
-	owner.add_to_screen(rotate_right)
+	owner.register_map_obj(rotate_right)
 
 /datum/preferences/proc/job_pref_to_gear_preset()
 	var/high_priority

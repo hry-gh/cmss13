@@ -266,6 +266,8 @@ GLOBAL_LIST_INIT(bgstate_options, list(
 	gear = list()
 
 /datum/preferences/tgui_interact(mob/user, datum/tgui/ui)
+	update_preview_icon()
+
 	if(!ui)
 		ui = new(user, src, "CharacterSetup", "[user.ckey]'s Character Setup")
 		ui.open()
@@ -334,6 +336,7 @@ GLOBAL_LIST_INIT(bgstate_options, list(
 	.["predator_mask_type"] = predator_mask_type
 	.["predator_armor_type"] = predator_armor_type
 	.["predator_boot_type"] = predator_boot_type
+	.["predator_armor_material"] = predator_armor_material
 	.["predator_mask_material"] = predator_mask_material
 	.["predator_greave_material"] = predator_greave_material
 	.["predator_caster_material"] = predator_caster_material
@@ -373,6 +376,7 @@ GLOBAL_LIST_INIT(bgstate_options, list(
 	.["hear_faxes"] = !!(toggles_sound & SOUND_FAX_MACHINE)
 	.["hear_lobby_music"] = !!(toggles_sound & SOUND_LOBBY)
 	.["hear_vox"] = hear_vox
+	.["ghost_nightvision"] = ghost_vision_pref
 
 	.["hurt_self"] = !!(toggle_prefs & TOGGLE_IGNORE_SELF)
 	.["help_intent_safety"] = !!(toggle_prefs & TOGGLE_HELP_INTENT_SAFETY)
@@ -381,12 +385,20 @@ GLOBAL_LIST_INIT(bgstate_options, list(
 	.["directional_assist"] = !!(toggle_prefs & TOGGLE_DIRECTIONAL_ATTACK)
 	.["magazine_autoeject"] = !!(toggle_prefs & TOGGLE_AUTO_EJECT_MAGAZINE_OFF)
 	.["magazine_autoeject_to_hand"] = !!(toggle_prefs & TOGGLE_AUTO_EJECT_MAGAZINE_TO_HAND)
+	.["auto_punctuation"] = !!(toggle_prefs & TOGGLE_AUTOMATIC_PUNCTUATION)
 	.["magazine_eject_to_hand"] = !!(toggle_prefs & TOGGLE_EJECT_MAGAZINE_TO_HAND)
 	.["combat_clickdrag_override"] = !!(toggle_prefs & TOGGLE_COMBAT_CLICKDRAG_OVERRIDE)
 	.["middle_mouse_swap_hands"] = !!(toggle_prefs & TOGGLE_MIDDLE_MOUSE_SWAP_HANDS)
 	.["vend_item_to_hand"] = !!(toggle_prefs & TOGGLE_VEND_ITEM_TO_HAND)
 	.["semi_auto_display_limiter"] = !!(toggle_prefs & TOGGLE_AMMO_DISPLAY_TYPE)
 
+	.["play_leader"] = !!(toggles_ert & PLAY_LEADER)
+	.["play_medic"] = !!(toggles_ert & PLAY_MEDIC)
+	.["play_engineer"] = !!(toggles_ert & PLAY_ENGINEER)
+	.["play_heavy"] = !!(toggles_ert & PLAY_HEAVY)
+	.["play_smartgunner"] = !!(toggles_ert & PLAY_SMARTGUNNER)
+	.["play_synth"] = !!(toggles_ert & PLAY_SYNTH)
+	.["play_misc"] = !!(toggles_ert & PLAY_MISC)
 
 /datum/preferences/proc/client_reconnected(client/C)
 	owner = C
