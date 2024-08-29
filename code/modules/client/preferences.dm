@@ -265,6 +265,121 @@ GLOBAL_LIST_INIT(bgstate_options, list(
 	real_name = random_name(gender)
 	gear = list()
 
+/datum/preferences/tgui_interact(mob/user, datum/tgui/ui)
+	. = ..()
+
+	if(!ui)
+		ui = new(user, src, "CharacterSetup", "[user.ckey]'s Character Setup")
+		ui.open()
+
+/datum/preferences/ui_data(mob/user)
+	. = ..()
+
+	.["real_name"] = real_name
+	.["be_random_name"] = be_random_name
+	.["age"] = age
+	.["gender"] = gender
+	.["skin_color"] = skin_color
+	.["body_size"] = body_size
+	.["body_type"] = body_type
+	.["hair_style"] = h_style
+	.["hair_color"] = "[num2hex(r_hair, 2)][num2hex(g_hair, 2)][num2hex(b_hair)]"
+	.["gradient_style"] = grad_style
+	.["gradient_color"] = "[num2hex(r_gradient, 2)][num2hex(g_gradient, 2)][num2hex(b_gradient)]"
+	.["facial_hair_style"] = f_style
+	.["facial_hair_color"] = "[num2hex(r_facial, 2)][num2hex(g_facial, 2)][num2hex(b_facial)]"
+	.["eye_color"] = "[num2hex(r_eyes, 2)][num2hex(g_eyes, 2)][num2hex(b_eyes)]"
+	.["underwear"] = underwear
+	.["undershirt"] = undershirt
+	.["bag"] = GLOB.backbaglist[backbag]
+	.["preferred_armor"] = preferred_armor
+	.["show_job_gear"] = show_job_gear
+	.["origin"] = origin
+	.["religion"] = religion
+	.["corporate_relation"] = weyland_yutani_relation
+	.["preferred_squad"] = preferred_armor
+	.["flavor_text"] = flavor_texts["general"]
+
+	.["xeno_prefix"] = xeno_prefix
+	.["xeno_postfix"] = xeno_postfix
+	.["playtime_perks"] = playtime_perks
+	.["xeno_night_vision_level"] = xeno_vision_level_pref
+
+	.["commander_status"] = commander_status
+	.["commander_sidearm"] = commander_sidearm
+	.["commander_affilitation"] = affiliation
+
+	.["synthetic_name"] = synthetic_name
+	.["synthetic_type"] = synthetic_type
+	.["synthetic_status"] = synth_status
+
+	.["predator_name"] = predator_name
+	.["predator_gender"] = predator_gender
+	.["predator_age"] = predator_age
+	.["predator_h_style"] = predator_h_style
+	.["predator_skin_color"] = predator_skin_color
+	.["predator_flavor_text"] = predator_flavor_text
+	.["predator_status"] = yautja_status
+
+	.["predator_use_legacy"] = predator_use_legacy
+	.["predator_translator_type"] = predator_translator_type
+	.["predator_mask_type"] = predator_mask_type
+	.["predator_armor_type"] = predator_armor_type
+	.["predator_boot_type"] = predator_boot_type
+	.["predator_mask_material"] = predator_mask_material
+	.["predator_greave_material"] = predator_greave_material
+	.["predator_caster_material"] = predator_caster_material
+	.["predator_cape_type"] = predator_cape_type
+	.["predator_cape_color"] = predator_cape_color
+
+	.["hotkeys_mode"] = hotkeys
+	.["tgui_say"] = tgui_say
+	.["tgui_say_light_mode"] = tgui_say_light_mode
+	.["ui_style"] = UI_style
+	.["ui_style_color"] = UI_style_color
+	.["ui_style_alpha"] = UI_style_alpha
+	.["stylesheet"] = stylesheet
+	.["hide_statusbar"] = hide_statusbar
+	.["no_radials"] = no_radials_preference
+	.["no_radial_labels"] = no_radial_labels_preference
+	.["custom_cursors"] = custom_cursors
+	.["ooc_flag"] = (toggle_prefs & TOGGLE_OOC_FLAG)
+	.["view_mc"] = View_MC
+	.["membership_publicity"] = (toggle_prefs & TOGGLE_MEMBER_PUBLIC)
+	.["ghost_ears"] = (toggles_chat & CHAT_GHOSTEARS)
+	.["ghost_sight"] = (toggles_chat & CHAT_GHOSTSIGHT)
+	.["ghost_radio"] = (toggles_chat & CHAT_GHOSTRADIO)
+	.["ghost_spy_radio"] = (toggles_chat & CHAT_LISTENINGBUG)
+	.["ghost_hivemind"] = (toggles_chat & CHAT_GHOSTHIVEMIND)
+	.["langchat"] = lang_chat_disabled
+	.["langchat_emotes"] = (toggles_langchat & LANGCHAT_SEE_EMOTES)
+
+	.["ambient_occlusion"] = (toggle_prefs & TOGGLE_AMBIENT_OCCLUSION)
+	.["auto_fit_viewport"] = auto_fit_viewport
+	.["adaptive_zoom"] = adaptive_zoom
+	.["tooltips"] = tooltips
+	.["tgui_fancy"] = tgui_fancy
+	.["tgui_lock"] = tgui_lock
+	.["hear_admin_sounds"] = (toggles_sound & SOUND_MIDI)
+	.["hear_observer_announcements"] = (toggles_sound & SOUND_OBSERVER_ANNOUNCEMENTS)
+	.["hear_faxes"] = (toggles_sound & SOUND_FAX_MACHINE)
+	.["hear_lobby_music"] = (toggles_sound & SOUND_LOBBY)
+	.["hear_vox"] = hear_vox
+
+	.["hurt_self"] = (toggle_prefs & TOGGLE_IGNORE_SELF)
+	.["help_intent_safety"] = (toggle_prefs & TOGGLE_HELP_INTENT_SAFETY)
+	.["middle_mouse_click"] = (toggle_prefs & TOGGLE_MIDDLE_MOUSE_CLICK)
+	.["ability_deactivation"] = (toggle_prefs & TOGGLE_ABILITY_DEACTIVATION_OFF)
+	.["directional_assist"] = (toggle_prefs & TOGGLE_DIRECTIONAL_ATTACK)
+	.["magazine_autoeject"] = (toggle_prefs & TOGGLE_AUTO_EJECT_MAGAZINE_OFF)
+	.["magazine_autoeject_to_hand"] = (toggle_prefs & TOGGLE_AUTO_EJECT_MAGAZINE_TO_HAND)
+	.["magazine_eject_to_hand"] = (toggle_prefs & TOGGLE_EJECT_MAGAZINE_TO_HAND)
+	.["combat_clickdrag_override"] = (toggle_prefs & TOGGLE_COMBAT_CLICKDRAG_OVERRIDE)
+	.["middle_mouse_swap_hands"] = (toggle_prefs & TOGGLE_MIDDLE_MOUSE_SWAP_HANDS)
+	.["vend_item_to_hand"] = (toggle_prefs & TOGGLE_VEND_ITEM_TO_HAND)
+	.["semi_auto_display_limiter"] = (toggle_prefs & TOGGLE_AMMO_DISPLAY_TYPE)
+
+
 /datum/preferences/proc/client_reconnected(client/C)
 	owner = C
 	macros.owner = C
