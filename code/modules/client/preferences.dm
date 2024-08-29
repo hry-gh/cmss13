@@ -266,17 +266,19 @@ GLOBAL_LIST_INIT(bgstate_options, list(
 	gear = list()
 
 /datum/preferences/tgui_interact(mob/user, datum/tgui/ui)
-	. = ..()
-
 	if(!ui)
 		ui = new(user, src, "CharacterSetup", "[user.ckey]'s Character Setup")
 		ui.open()
+
+/datum/preferences/ui_state(mob/user)
+	return GLOB.always_state
 
 /datum/preferences/ui_data(mob/user)
 	. = ..()
 
 	.["real_name"] = real_name
 	.["be_random_name"] = be_random_name
+	.["be_random_body"] = be_random_body
 	.["age"] = age
 	.["gender"] = gender
 	.["skin_color"] = skin_color
@@ -299,11 +301,17 @@ GLOBAL_LIST_INIT(bgstate_options, list(
 	.["corporate_relation"] = weyland_yutani_relation
 	.["preferred_squad"] = preferred_armor
 	.["flavor_text"] = flavor_texts["general"]
+	.["medical_record"] = med_record
+	.["security_record"] = sec_record
+	.["employment_record"] = gen_record
 
 	.["xeno_prefix"] = xeno_prefix
 	.["xeno_postfix"] = xeno_postfix
 	.["playtime_perks"] = playtime_perks
 	.["xeno_night_vision_level"] = xeno_vision_level_pref
+
+	.["be_xeno_after_unrevivably_dead"] = !!(be_special & BE_ALIEN_AFTER_DEATH)
+	.["be_agent"] = !!(be_special & BE_AGENT)
 
 	.["commander_status"] = commander_status
 	.["commander_sidearm"] = commander_sidearm
@@ -316,7 +324,7 @@ GLOBAL_LIST_INIT(bgstate_options, list(
 	.["predator_name"] = predator_name
 	.["predator_gender"] = predator_gender
 	.["predator_age"] = predator_age
-	.["predator_h_style"] = predator_h_style
+	.["predator_hair_style"] = predator_h_style
 	.["predator_skin_color"] = predator_skin_color
 	.["predator_flavor_text"] = predator_flavor_text
 	.["predator_status"] = yautja_status
@@ -343,41 +351,41 @@ GLOBAL_LIST_INIT(bgstate_options, list(
 	.["no_radials"] = no_radials_preference
 	.["no_radial_labels"] = no_radial_labels_preference
 	.["custom_cursors"] = custom_cursors
-	.["ooc_flag"] = (toggle_prefs & TOGGLE_OOC_FLAG)
+	.["ooc_flag"] = !!(toggle_prefs & TOGGLE_OOC_FLAG)
 	.["view_mc"] = View_MC
-	.["membership_publicity"] = (toggle_prefs & TOGGLE_MEMBER_PUBLIC)
-	.["ghost_ears"] = (toggles_chat & CHAT_GHOSTEARS)
-	.["ghost_sight"] = (toggles_chat & CHAT_GHOSTSIGHT)
-	.["ghost_radio"] = (toggles_chat & CHAT_GHOSTRADIO)
-	.["ghost_spy_radio"] = (toggles_chat & CHAT_LISTENINGBUG)
-	.["ghost_hivemind"] = (toggles_chat & CHAT_GHOSTHIVEMIND)
+	.["membership_publicity"] = !!(toggle_prefs & TOGGLE_MEMBER_PUBLIC)
+	.["ghost_ears"] = !!(toggles_chat & CHAT_GHOSTEARS)
+	.["ghost_sight"] = !!(toggles_chat & CHAT_GHOSTSIGHT)
+	.["ghost_radio"] = !!(toggles_chat & CHAT_GHOSTRADIO)
+	.["ghost_spy_radio"] = !!(toggles_chat & CHAT_LISTENINGBUG)
+	.["ghost_hivemind"] = !!(toggles_chat & CHAT_GHOSTHIVEMIND)
 	.["langchat"] = lang_chat_disabled
-	.["langchat_emotes"] = (toggles_langchat & LANGCHAT_SEE_EMOTES)
+	.["langchat_emotes"] = !!(toggles_langchat & LANGCHAT_SEE_EMOTES)
 
-	.["ambient_occlusion"] = (toggle_prefs & TOGGLE_AMBIENT_OCCLUSION)
+	.["ambient_occlusion"] = !!(toggle_prefs & TOGGLE_AMBIENT_OCCLUSION)
 	.["auto_fit_viewport"] = auto_fit_viewport
 	.["adaptive_zoom"] = adaptive_zoom
 	.["tooltips"] = tooltips
 	.["tgui_fancy"] = tgui_fancy
 	.["tgui_lock"] = tgui_lock
-	.["hear_admin_sounds"] = (toggles_sound & SOUND_MIDI)
-	.["hear_observer_announcements"] = (toggles_sound & SOUND_OBSERVER_ANNOUNCEMENTS)
-	.["hear_faxes"] = (toggles_sound & SOUND_FAX_MACHINE)
-	.["hear_lobby_music"] = (toggles_sound & SOUND_LOBBY)
+	.["hear_admin_sounds"] = !!(toggles_sound & SOUND_MIDI)
+	.["hear_observer_announcements"] = !!(toggles_sound & SOUND_OBSERVER_ANNOUNCEMENTS)
+	.["hear_faxes"] = !!(toggles_sound & SOUND_FAX_MACHINE)
+	.["hear_lobby_music"] = !!(toggles_sound & SOUND_LOBBY)
 	.["hear_vox"] = hear_vox
 
-	.["hurt_self"] = (toggle_prefs & TOGGLE_IGNORE_SELF)
-	.["help_intent_safety"] = (toggle_prefs & TOGGLE_HELP_INTENT_SAFETY)
-	.["middle_mouse_click"] = (toggle_prefs & TOGGLE_MIDDLE_MOUSE_CLICK)
-	.["ability_deactivation"] = (toggle_prefs & TOGGLE_ABILITY_DEACTIVATION_OFF)
-	.["directional_assist"] = (toggle_prefs & TOGGLE_DIRECTIONAL_ATTACK)
-	.["magazine_autoeject"] = (toggle_prefs & TOGGLE_AUTO_EJECT_MAGAZINE_OFF)
-	.["magazine_autoeject_to_hand"] = (toggle_prefs & TOGGLE_AUTO_EJECT_MAGAZINE_TO_HAND)
-	.["magazine_eject_to_hand"] = (toggle_prefs & TOGGLE_EJECT_MAGAZINE_TO_HAND)
-	.["combat_clickdrag_override"] = (toggle_prefs & TOGGLE_COMBAT_CLICKDRAG_OVERRIDE)
-	.["middle_mouse_swap_hands"] = (toggle_prefs & TOGGLE_MIDDLE_MOUSE_SWAP_HANDS)
-	.["vend_item_to_hand"] = (toggle_prefs & TOGGLE_VEND_ITEM_TO_HAND)
-	.["semi_auto_display_limiter"] = (toggle_prefs & TOGGLE_AMMO_DISPLAY_TYPE)
+	.["hurt_self"] = !!(toggle_prefs & TOGGLE_IGNORE_SELF)
+	.["help_intent_safety"] = !!(toggle_prefs & TOGGLE_HELP_INTENT_SAFETY)
+	.["middle_mouse_click"] = !!(toggle_prefs & TOGGLE_MIDDLE_MOUSE_CLICK)
+	.["ability_deactivation"] = !!(toggle_prefs & TOGGLE_ABILITY_DEACTIVATION_OFF)
+	.["directional_assist"] = !!(toggle_prefs & TOGGLE_DIRECTIONAL_ATTACK)
+	.["magazine_autoeject"] = !!(toggle_prefs & TOGGLE_AUTO_EJECT_MAGAZINE_OFF)
+	.["magazine_autoeject_to_hand"] = !!(toggle_prefs & TOGGLE_AUTO_EJECT_MAGAZINE_TO_HAND)
+	.["magazine_eject_to_hand"] = !!(toggle_prefs & TOGGLE_EJECT_MAGAZINE_TO_HAND)
+	.["combat_clickdrag_override"] = !!(toggle_prefs & TOGGLE_COMBAT_CLICKDRAG_OVERRIDE)
+	.["middle_mouse_swap_hands"] = !!(toggle_prefs & TOGGLE_MIDDLE_MOUSE_SWAP_HANDS)
+	.["vend_item_to_hand"] = !!(toggle_prefs & TOGGLE_VEND_ITEM_TO_HAND)
+	.["semi_auto_display_limiter"] = !!(toggle_prefs & TOGGLE_AMMO_DISPLAY_TYPE)
 
 
 /datum/preferences/proc/client_reconnected(client/C)
