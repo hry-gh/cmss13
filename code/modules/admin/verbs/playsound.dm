@@ -28,14 +28,14 @@
 			to_chat(src, SPAN_BOLDWARNING("Your server host has not set up any web media players."))
 			return
 
-		var/web_sound_input = input("Enter content URL (supported sites only)", "Play Internet Sound via youtube-dl") as text|null
+		web_sound_input = input("Enter content URL (supported sites only)", "Play Internet Sound") as text|null
 		if(!istext(web_sound_input) || !length(web_sound_input))
 			return
 
 		web_sound_input = trim(web_sound_input)
 
 		var/datum/media_response/response = media_player.get_media(web_sound_input)
-		data = response.get_json()
+		data = response.get_list()
 
 	else if(sound_mode == "Upload")
 		var/current_transport = CONFIG_GET(string/asset_transport)
@@ -80,6 +80,7 @@
 		to_chat(src, SPAN_BOLDWARNING("BLOCKED: Content URL not using http(s) protocol"), confidential = TRUE)
 		to_chat(src, SPAN_WARNING("The media provider returned a content URL that isn't using the HTTP or HTTPS protocol"), confidential = TRUE)
 		return
+
 
 	switch(tgui_alert(src, "Show the name of this sound to the players?", "Sound Name", list("Yes","No","Cancel")))
 		if("No")
