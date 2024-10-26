@@ -1,11 +1,13 @@
-/// Mapping helper placed on turfs to remove the turf after a specified duration
+/// Mapping helper placed on turfs to remove the turf after a specified duration.
+/// It's best to group these durations, as to not spam all players every minute
 /obj/effect/timed_scrapeaway
-	var/static/list/notification_timers = list()
+	icon = 'icons/landmarks.dmi'
+	icon_state = "o_red"
 
 	var/static/list/notification_areas = list()
 
 	/// How long to wait until this turf should be scraped away and replaced with the turf below.
-	/// This value is in seconds, not deciseconds
+	/// This value is in minutes, not deciseconds
 	var/time
 
 /obj/effect/timed_scrapeaway/Initialize(mapload, ...)
@@ -22,14 +24,14 @@
 /obj/effect/timed_scrapeaway/proc/handle_round_start()
 	var/turf/to_be_scraped = get_turf(src)
 
-	var/actual_time = time SECONDS
+	var/actual_time = time MINUTES
 
 	addtimer(CALLBACK(to_be_scraped, TYPE_PROC_REF(/turf, ScrapeAway)), actual_time)
 
-	if(notification_timers["[actual_time]"])
+	if(notification_areas["[actual_time]"])
 		LAZYDISTINCTADD(notification_areas["[actual_time]"], get_area(src))
 	else
-		notification_timers["[actual_time]"] = addtimer(CALLBACK(src, PROC_REF(announce_geological_shifts), actual_time), actual_time)
+		addtimer(CALLBACK(src, PROC_REF(announce_geological_shifts), actual_time), actual_time)
 		LAZYDISTINCTADD(notification_areas["[actual_time]"], get_area(src))
 
 /obj/effect/timed_scrapeaway/proc/announce_geological_shifts(time_to_grab)
