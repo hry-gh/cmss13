@@ -1861,22 +1861,37 @@ not all weapons use normal magazines etc. load_into_chamber() itself is designed
 	if(!istype(user) || !isturf(user.loc))
 		return
 
+
+	/*
 	var/prev_light = light_range
 	if(!light_on && (light_range <= muzzle_flash_lum))
 		set_light_range(muzzle_flash_lum)
 		set_light_on(TRUE)
 		set_light_color(muzzle_flash_color)
 		addtimer(CALLBACK(src, PROC_REF(reset_light_range), prev_light), 0.5 SECONDS)
+	*/
 
 	var/image/I = image('icons/obj/items/weapons/projectiles.dmi', user, muzzle_flash, user.dir == NORTH ? ABOVE_LYING_MOB_LAYER : FLOAT_LAYER)
 	var/matrix/rotate = matrix() //Change the flash angle.
-	if(iscarbonsizexeno(user))
-		var/mob/living/carbon/xenomorph/xeno = user
-		I.pixel_x = xeno.xeno_inhand_item_offset //To center it on the xeno sprite without being thrown off by rotation.
-	rotate.Translate(0, 5) //Y offset to push the flash overlay outwards.
+//	if(iscarbonsizexeno(user))
+//		var/mob/living/carbon/xenomorph/xeno = user
+//		I.pixel_x = xeno.xeno_inhand_item_offset //To center it on the xeno sprite without being thrown off by rotation.
+//	rotate.Translate(0, 5) //Y offset to push the flash overlay outwards.
 	rotate.Turn(angle)
 	I.transform = rotate
-	I.flick_overlay(user, 3)
+	user.overlays += I
+
+/mob/verb/minimal_repro()
+
+	for(var/i in 1 to 5)
+		var/image/I = image('icons/obj/items/weapons/projectiles.dmi', usr, "plasma", FLOAT_LAYER)
+		var/matrix/rotate = matrix() //Change the flash angle.
+		rotate.Turn(i * 5)
+		I.transform = rotate
+		usr.overlays += I
+		sleep(5)
+
+	usr.client.toggle_fullscreen_preference()
 
 /// called by a timer to remove the light range from muzzle flash
 /obj/item/weapon/gun/proc/reset_light_range(lightrange)
