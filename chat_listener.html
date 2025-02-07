@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+
+<script>
+    var hasOwn = Object.prototype.hasOwnProperty;
+    var assign = function (target) {
+        for (var i = 1; i < arguments.length; i++) {
+            var source = arguments[i];
+            for (var key in source) {
+                if (hasOwn.call(source, key)) {
+                    target[key] = source[key];
+                }
+            }
+        }
+        return target;
+    };
+    var Byond = window.Byond = {}
+
+    // Makes a BYOND call.
+    // See: https://secure.byond.com/docs/ref/skinparams.html
+    Byond.call = function (path, params) {
+        // Build the URL
+        var url = (path || '') + '?';
+        var i = 0;
+        if (params) {
+        for (var key in params) {
+            if (hasOwn.call(params, key)) {
+            if (i++ > 0) {
+                url += '&';
+            }
+            var value = params[key];
+            if (value === null || value === undefined) {
+                value = '';
+            }
+            url += encodeURIComponent(key)
+                + '=' + encodeURIComponent(value)
+            }
+        }
+        }
+
+        // Perform a standard call via location.href
+        location.href = 'byond://' + url;
+        console.log(url);
+    };
+
+    Byond.winset = function (id, propName, propValue) {
+        if (id === null) {
+            id = '';
+        }
+        else if (typeof id === 'object') {
+            return Byond.call('winset', id);
+        }
+        var props = {};
+        if (typeof propName === 'string') {
+            props[propName] = propValue;
+        }
+        else {
+            assign(props, propName);
+        }
+        props.id = id;
+        return Byond.call('winset', props);
+    };
+
+    var x;
+    var y;
+
+    function mainLoop() {
+        var changedX = false;
+
+        if(x !== window.screenLeft) {
+            x = window.screenLeft;
+            changedX = true;
+        }
+
+        var changedY = false;
+        if(y !== window.screenTop) {
+            y = screenTop;
+            changedY = true;
+        }
+
+        if(changedX || changedY) {
+            var setX = screenLeft - 640;
+            var setY = screenTop - 480;
+
+            Byond.winset("output_browser", {pos: setX + "x" + setY})
+        }
+
+        setTimeout(mainLoop, 10)
+    }
+
+    window.onload = mainLoop()
+</script>
+
+<style>
+    * {
+        display: none;
+    }
+</style>
+</head>
+
+<body>
+</body>
+</html>

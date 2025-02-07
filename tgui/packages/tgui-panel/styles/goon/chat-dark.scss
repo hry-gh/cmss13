@@ -3,6 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
+.Section {
+  background-color: #010101;
+}
+
+body:not(.NoHover) .Layout:hover .Section {
+  background-color: #1b1c1e;
+}
+
 em {
   font-style: normal;
   font-weight: bold;

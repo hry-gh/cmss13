@@ -19,7 +19,6 @@ body {
 .menu-container {
 	background-color: #F0F0F0;
 	position: fixed;
-	top: 35px;
 	width: 100%;
 	z-index: 100;
 	display: flex;
@@ -149,12 +148,14 @@ i {
 
 #statcontent {
 	flex: 1;
-	padding: 0.75em 0.5em;
-	overflow-y: scroll;
+	padding: 0.5em 0.5em;
+	overflow-y: auto;
 	overflow-x: hidden;
 	border-top-style: solid;
 	border-top-width: 5px;
 	border-top-color: #F9F9F9;
+
+	background-color: #010101;
 }
 
 .grid-container {

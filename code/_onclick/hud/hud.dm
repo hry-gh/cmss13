@@ -15,6 +15,9 @@
 	var/show_intent_icons = 0
 	var/hotkey_ui_hidden = 0 //This is to hide the buttons that can be used via hotkeys. (hotkeybuttons list of buttons)
 
+	/// If the screenloc should be crammed a bit more together to make up for a panel in the way
+	var/positioning_reduced = FALSE
+
 	var/atom/movable/screen/r_hand_hud_object
 	var/atom/movable/screen/l_hand_hud_object
 	var/atom/movable/screen/action_intent

@@ -44,6 +44,10 @@
 #define COMSIG_KB_CLIENT_WHISPER_DOWN "keybinding_client_whisper_down"
 #define COMSIG_KG_CLIENT_RADIO_DOWN "keybinding_client_radio_down"
 
+// Panels
+#define COMSIG_KB_CLIENT_STATPANEL_DOWN "keybinding_client_statpanel_down"
+#define COMSIG_KB_CLIENT_CHAT_DOWN "keybinding_client_chat_down"
+
 //Human
 #define COMSIG_KB_HUMAN_ISSUE_ORDER "keybinding_human_issue_order"
 #define COMSIG_KB_HUMAN_ISSUE_ORDER_MOVE "keybinding_human_issue_order_move"
@@ -224,6 +228,7 @@
 #define CATEGORY_MISC "MISC"
 #define CATEGORY_MOVEMENT "MOVEMENT"
 #define CATEGORY_COMMUNICATION "COMMUNICATION"
+#define CATEGORY_PANELS "PANELS"
 #define CATEGORY_OBSERVER "OBSERVER"
 
 #define CATEGORY_XENO_EMOTE "XENO EMOTE"

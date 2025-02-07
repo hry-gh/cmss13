@@ -62,7 +62,7 @@ GLOBAL_LIST_INIT(bgstate_options, list(
 	var/xeno_ability_click_mode = XENO_ABILITY_CLICK_MIDDLE
 	var/auto_fit_viewport = FALSE
 	var/adaptive_zoom = 0
-	var/UI_style = "midnight"
+	var/UI_style = HUD_DARK
 	var/toggles_admin = TOGGLES_ADMIN_DEFAULT
 	var/toggles_chat = TOGGLES_CHAT_DEFAULT
 	var/toggles_ghost = TOGGLES_GHOST_DEFAULT

@@ -41,6 +41,9 @@
 	flags_item    ^= WIELDED
 	name    += " (Wielded)"
 	item_state += "_w"
+
+	user.client?.set_hoverable_panels(FALSE)
+
 	place_offhand(user,initial(name))
 	return 1
 
@@ -51,6 +54,9 @@
 	SEND_SIGNAL(src, COMSIG_ITEM_UNWIELD, user)
 	name = copytext(name,1,-10)
 	item_state  = copytext(item_state,1,-2)
+
+	user.client?.set_hoverable_panels(TRUE)
+
 	remove_offhand(user)
 	return TRUE
 

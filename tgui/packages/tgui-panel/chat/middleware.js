@@ -27,6 +27,7 @@ import {
   toggleAcceptedType,
   updateMessageCount,
 } from './actions';
+import { handleClick } from './click';
 import { MAX_PERSISTED_MESSAGES, MESSAGE_SAVE_INTERVAL } from './constants';
 import { createMessage, serializeMessage } from './model';
 import { chatRenderer } from './renderer';
@@ -180,6 +181,15 @@ export const chatMiddleware = (store) => {
       );
 
       return;
+    }
+    if (type === 'hoverable') {
+      if (payload.on) {
+        window.document.body.classList.remove('NoHover');
+        window.document.onclick = null;
+      } else {
+        window.document.body.classList.add('NoHover');
+        window.document.onclick = handleClick;
+      }
     }
     if (type === 'roundrestart') {
       // Save chat as soon as possible

@@ -41,6 +41,9 @@
 	/// If FALSE, this will not be cleared when calling /client/clear_screen()
 	var/clear_with_screen = TRUE
 
+	/// Before any manipulation by squishing, where this screen object was stored
+	var/default_location
+
 /atom/movable/screen/Destroy()
 	master = null
 	hud = null // Not currently ever used

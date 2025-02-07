@@ -1706,3 +1706,13 @@ GLOBAL_LIST_INIT(duplicate_forbidden_vars,list(
 		return TRUE
 
 	return FALSE
+
+/// Figures out the turf someone is clicking on, based on where they clicked on their screen
+/proc/parse_relayed_click(x, y, turf/origin, client/viewer)
+	x = x / world.icon_size
+	y = y / world.icon_size
+
+	var/click_turf_x = round(origin.x + x, 1)
+	var/click_turf_y = round(origin.y - y, 1)
+
+	return locate(clamp(click_turf_x, 1, world.maxx), clamp(click_turf_y, 1, world.maxy), origin.z)

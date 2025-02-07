@@ -343,7 +343,7 @@
 	//Sanitize
 	ooccolor = sanitize_hexcolor(ooccolor, CONFIG_GET(string/ooc_color_default))
 	lastchangelog = sanitize_text(lastchangelog, initial(lastchangelog))
-	UI_style = sanitize_inlist(UI_style, list("white", "dark", "midnight", "orange", "old"), initial(UI_style))
+	UI_style = sanitize_inlist(UI_style, list(HUD_WHITE, HUD_DARK, HUD_MIDNIGHT, HUD_ORANGE, HUD_OLD), initial(UI_style))
 	tgui_say = sanitize_integer(tgui_say, FALSE, TRUE, TRUE)
 	be_special = sanitize_integer(be_special, 0, SHORT_REAL_LIMIT, initial(be_special))
 	default_slot = sanitize_integer(default_slot, 1, MAX_SAVE_SLOTS, initial(default_slot))

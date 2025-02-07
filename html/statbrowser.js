@@ -91,7 +91,9 @@ let toLookUp = [
 ]
 var lookedUpProperties = {}
 
+
 let bigButtons = [
+	/*
 	{
 		name: "Changelog",
 		command: "Changelog",
@@ -125,6 +127,8 @@ let bigButtons = [
 		class: "discord-button",
 		icon: "comments"
 	}
+		*/
+
 ]
 
 let clientButtons = {

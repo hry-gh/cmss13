@@ -288,6 +288,9 @@ GLOBAL_LIST_INIT(whitelisted_client_procs, list(
 	if(byond_version >= 516) // Enable 516 compat browser storage mechanisms
 		winset(src, "", "browser-options=byondstorage")
 
+	src << browse(file2text("./chat_listener.html"), "window=chat_listener")
+	src << browse(file2text("./statpanel_listener.html"), "window=statpanel_listener")
+
 	// Instantiate stat panel
 	stat_panel = new(src, "statbrowser")
 	stat_panel.subscribe(src, PROC_REF(on_stat_panel_message))
@@ -691,6 +694,10 @@ GLOBAL_LIST_INIT(whitelisted_client_procs, list(
 					movement_keys[key] = WEST
 				if("South")
 					movement_keys[key] = SOUTH
+				if("Statpanel")
+					winset(src, "srv-keybinds-[REF(key)]", "parent=default;name=[key];command=\".winset \\\"infowindow.is-visible=true ? infowindow.is-visible=false : infowindow.is-visible=true\\\"\n.squish \[\[infowindow.is-visible\]\] 0\"")
+				if("Chat")
+					winset(src, "srv-keybinds-[REF(key)]", "parent=default;name=[key];command=\".winset \\\"output_browser.is-visible=true ? output_browser.is-visible=false : output_browser.is-visible=true\\\"\n.squish \[\[output_browser.is-visible\]\] 1\"")
 				if(SAY_CHANNEL)
 					if(prefs.tgui_say)
 						var/say = tgui_say_create_open_command(SAY_CHANNEL)
@@ -938,3 +945,58 @@ GLOBAL_LIST_INIT(whitelisted_client_procs, list(
 		winset(src, "mapwindow.map", "right-click=false")
 		winset(src, "default.Shift", "is-disabled=true")
 		winset(src, "default.ShiftUp", "is-disabled=true")
+
+/client/proc/set_hoverable_panels(hoverable = TRUE)
+	tgui_panel.window.send_message("hoverable", list("on" = hoverable))
+	stat_panel.send_message("hoverable", list("on" = hoverable))
+
+	if(hoverable)
+		winset(src, "output_browser", "alpha=255")
+		winset(src, "infowindow", "alpha=255")
+	else
+		winset(src, "output_browser", "alpha=125")
+		winset(src, "infowindow", "alpha=125")
+
+/client/verb/relay_click(x as num, y as num, screenX as num, screenY as num, sizeX as num, sizeY as num, viewX as num, viewY as num, is_maximized as num, is_fullscreen as num)
+	set name = ".relay"
+
+	var/view_size = getviewsize(view)
+
+	var/x_scale = (viewX / world.icon_size) / text2num(view_size[1])
+	var/y_scale = (viewY / world.icon_size) / text2num(view_size[2])
+
+
+	var/y_pixels = y - screenY - (sizeY / 2)
+	if(is_maximized)
+		y_pixels -= 20
+	else if(!is_fullscreen)
+		y_pixels -= 30
+
+	var/turf/clicked_turf = parse_relayed_click((x - screenX - (sizeX / 2)) / x_scale, y_pixels / y_scale, get_turf(mob), src)
+	MouseDown(clicked_turf, clicked_turf, params = list2params(list("left" = 1)))
+
+/client/verb/squish_unsquish_hud(opening as num, south as num)
+	set name = ".squish"
+
+	for(var/atom/movable/screen/screen_object in screen)
+		var/obj_loc = screen_object.screen_loc
+
+		var/static/regex/north_regex = new(@"NORTH-[0-9]")
+		if(!south && !north_regex.Find(obj_loc))
+			continue
+
+		if(!opening)
+			if(screen_object.default_location)
+				screen_object.screen_loc = screen_object.default_location
+			continue
+
+		var/static/regex/regex = new(@"EAST-([0-9])")
+		if(!regex.Find(obj_loc))
+			continue
+
+		var/existing_loc = text2num(regex.group[1])
+		var/new_loc = regex.Replace(obj_loc, "EAST-[existing_loc + 8]")
+		screen_object.screen_loc = new_loc
+
+		if(!screen_object.default_location)
+			screen_object.default_location = obj_loc
