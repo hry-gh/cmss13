@@ -488,12 +488,12 @@ SUBSYSTEM_DEF(minimaps)
 
 	if(mods[SHIFT_CLICK])
 		transform.Translate(delta_y / 32, delta_x / 32)
-		cur_x_shift += delta_x / 32
-		cur_y_shift += delta_y / 32
+		cur_x_shift -= delta_y / 32
+		cur_y_shift -= delta_x / 32
 	else
 		transform.Translate(delta_x / 32, delta_y / 32)
-		cur_y_shift += delta_y / 32
-		cur_y_shift += delta_y / 32
+		cur_x_shift -= delta_x / 32
+		cur_y_shift -= delta_y / 32
 
 	plane_master.transform = transform
 
@@ -1001,20 +1001,39 @@ SUBSYSTEM_DEF(minimaps)
 		linked_map.active_draw_tool = null
 		return
 
-	winset(usr, "drawingtools", "parent=default;name=SHIFT+B+REP;command=\".mouse-draw \[\[mapwindow.map.mouse-pos.x]] \[\[mapwindow.map.mouse-pos.y]]\"")
+	winset(usr, "drawingtools", "parent=default;name=SHIFT+B+REP;command=\".mouse-draw \[\[mapwindow.map.mouse-pos.x]] \[\[mapwindow.map.mouse-pos.y]] \[\[mapwindow.map.size.x]] \[\[mapwindow.map.size.y]] \[\[mapwindow.map.view-size.x]] \[\[mapwindow.map.view-size.y]]\"")
 	add_verb(usr.client, /client/proc/handle_draw)
 	linked_map.active_draw_tool = src
 	usr.client.active_draw_tool = src
 
 /client/var/atom/movable/screen/minimap_tool/draw_tool/active_draw_tool
 /client/var/last_drawn
-/client/proc/handle_draw(mouse_x as num, mouse_y as num)
+/client/proc/handle_draw(mouse_x as num, mouse_y as num, size_x as num, size_y as num, view_size_x as num, view_size_y as num)
 	set instant = TRUE
 	set category = null
 	set hidden = TRUE
 	set name = ".mouse-draw"
 
-	to_chat(world, "received [mouse_x] [mouse_y]")
+	to_chat(world, "received [mouse_x] [mouse_y] [size_x] [size_y] [view_size_x] [view_size_y]")
+
+	mouse_y = size_y - mouse_y
+
+	var/horizontal_letterbox = size_x - view_size_x
+	var/vertical_letterbox = size_y - view_size_y
+
+	if(horizontal_letterbox)
+		mouse_x -= floor(horizontal_letterbox / 2)
+
+	if(vertical_letterbox)
+		mouse_y -= floor(vertical_letterbox / 2)
+
+	mouse_x = floor(mouse_x * (SCREEN_PIXEL_SIZE / view_size_x))
+	mouse_y = floor(mouse_y * (SCREEN_PIXEL_SIZE / view_size_y))
+
+	if(mouse_x < 0 || mouse_y < 0)
+		return
+
+	to_chat(world, "flipped [mouse_x] [mouse_y]")
 
 	if(!active_draw_tool)
 		return
@@ -1035,7 +1054,7 @@ SUBSYSTEM_DEF(minimaps)
 	for(var/vector/vector in freedraw_queue)
 		var/px = vector.x + linked_map.cur_x_shift
 		var/py = vector.y + linked_map.cur_y_shift
-		to_chat(world, "drawing a box")
+		slate.DrawBox(color, px, py, px + 1, py + 1)
 
 	drawn_image.icon = slate
 	freedraw_queue = list()
