@@ -467,6 +467,8 @@ SUBSYSTEM_DEF(minimaps)
 	/// Is drawing enbabled
 	var/drawing
 
+	var/atom/movable/screen/minimap_tool/draw_tool/active_draw_tool
+
 /atom/movable/screen/minimap/MouseWheel(delta_x, delta_y, location, control, params)
 	var/mob/user = usr
 	var/list/mods = params2list(params)
@@ -486,8 +488,12 @@ SUBSYSTEM_DEF(minimaps)
 
 	if(mods[SHIFT_CLICK])
 		transform.Translate(delta_y / 32, delta_x / 32)
+		cur_x_shift += delta_x / 32
+		cur_y_shift += delta_y / 32
 	else
 		transform.Translate(delta_x / 32, delta_y / 32)
+		cur_y_shift += delta_y / 32
+		cur_y_shift += delta_y / 32
 
 	plane_master.transform = transform
 
@@ -967,6 +973,7 @@ SUBSYSTEM_DEF(minimaps)
 		source.client.mouse_pointer_icon = null
 		return NONE
 	if(istype(object, /atom/movable/screen/minimap_tool))
+		linked_map.active_draw_tool = null
 		UnregisterSignal(usr, COMSIG_MOB_MOUSEDOWN)
 		usr.client.mouse_pointer_icon = null
 		return NONE
@@ -981,12 +988,57 @@ SUBSYSTEM_DEF(minimaps)
 	///temporary existing list used to calculate a line between the start of a click and the end of a click
 	var/list/starting_coords
 
+	var/list/freedraw_queue = list()
+
 /atom/movable/screen/minimap_tool/draw_tool/clicked(location, list/modifiers)
 	. = ..()
 	if(LAZYACCESS(modifiers, MIDDLE_CLICK) && last_drawn)
 		last_drawn += list(null)
 		draw_line(arglist(last_drawn))
 		last_drawn = null
+
+		usr.client.active_draw_tool = null
+		linked_map.active_draw_tool = null
+		return
+
+	winset(usr, "drawingtools", "parent=default;name=SHIFT+B+REP;command=\".mouse-draw \[\[mapwindow.map.mouse-pos.x]] \[\[mapwindow.map.mouse-pos.y]]\"")
+	add_verb(usr.client, /client/proc/handle_draw)
+	linked_map.active_draw_tool = src
+	usr.client.active_draw_tool = src
+
+/client/var/atom/movable/screen/minimap_tool/draw_tool/active_draw_tool
+/client/var/last_drawn
+/client/proc/handle_draw(mouse_x as num, mouse_y as num)
+	set instant = TRUE
+	set category = null
+	set hidden = TRUE
+	set name = ".mouse-draw"
+
+	to_chat(world, "received [mouse_x] [mouse_y]")
+
+	if(!active_draw_tool)
+		return
+
+	active_draw_tool.freedraw_queue += vector(mouse_x, mouse_y)
+
+	if(last_drawn == world.time)
+		return
+	last_drawn = world.time
+
+	sleep(0) // to reschedule us to the end of the tick
+	active_draw_tool.process_queue()
+
+
+/atom/movable/screen/minimap_tool/draw_tool/proc/process_queue()
+	var/icon/slate = icon(drawn_image.icon)
+
+	for(var/vector/vector in freedraw_queue)
+		var/px = vector.x + linked_map.cur_x_shift
+		var/py = vector.y + linked_map.cur_y_shift
+		to_chat(world, "drawing a box")
+
+	drawn_image.icon = slate
+	freedraw_queue = list()
 
 /atom/movable/screen/minimap_tool/draw_tool/on_mousedown(mob/source, atom/object, location, control, params)
 	. = ..()
