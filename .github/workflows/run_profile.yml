@@ -1,0 +1,54 @@
+name: Tracy Startup Profiling
+on:
+  pull_request:
+
+jobs:
+  run_tracy_profiling:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Restore BYOND cache
+        uses: actions/cache@v3
+        with:
+          path: ~/BYOND
+          key: ${{ runner.os }}-byond-${{ secrets.CACHE_PURGE_KEY }}
+
+      - name: Install rust-g
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt update || true
+          sudo apt install -o APT::Immediate-Configure=false zlib1g-dev:i386 libssl-dev:i386
+          bash tools/ci/install_rust_g.sh
+
+      - name: Install Tracy tools
+        env:
+          TRACY_VERSION: "0.11.1"
+        run: |
+          wget -q "https://github.com/wolfpld/tracy/releases/download/v${TRACY_VERSION}/tracy-capture-${TRACY_VERSION}-x86_64.tar.gz"
+          tar xf "tracy-capture-${TRACY_VERSION}-x86_64.tar.gz"
+          chmod +x tracy-capture tracy-csvexport
+
+      - name: Install byond-tracy
+        run: |
+          wget -q "https://github.com/spacestation13/byond-tracy/releases/download/latest/libprof.so"
+
+      - name: Compile for profiling
+        run: |
+          bash tools/ci/install_byond.sh
+          source $HOME/BYOND/byond/bin/byondsetup
+          tools/build/build --ci dm -DCIBUILDING -DANSICOLORS -DTRACY_PROFILE_AND_EXIT -Werror
+
+      - name: Run profiling capture
+        run: |
+          source $HOME/BYOND/byond/bin/byondsetup
+          bash tools/ci/profile_startup.sh startup.csv
+
+      - name: Upload Tracy capture
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tracy-profile
+          path: |
+            startup.csv
+            startup.tracy
