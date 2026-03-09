@@ -42,7 +42,7 @@ jobs:
         run: |
           bash tools/ci/install_byond.sh
           source $HOME/BYOND/byond/bin/byondsetup
-          tools/build/build.sh -DTRACY_PROFILE_AND_EXIT -Werror
+          tools/build/build.sh -DTRACY_PROFILE_AND_EXIT -DBYOND_TRACY
 
       - name: Run profiling capture
         run: |
