@@ -9,7 +9,8 @@
 #   - DreamDaemon     (from BYOND install, sourced via byondsetup)
 #
 # libprof.so (byond-tracy) must be present next to the DMB. The DM code calls
-# its init() proc directly; this script does not use LD_PRELOAD.
+# its init() proc, which connects outward to tracy-capture on TRACY_PORT.
+# tracy-capture must therefore be started first as the listening server.
 
 set -euo pipefail
 
@@ -43,7 +44,7 @@ TRACY_CSVEXPORT="$(_find_tool tracy-csvexport)"
 DREAM_DAEMON="$(_find_tool DreamDaemon)"
 
 # libprof.so must sit next to the DMB so BYOND can find it when the DM code
-# calls its init() proc. Copy it there if it isn't already in place.
+# calls its init() proc.
 BYOND_TRACY_LIB="${BYOND_TRACY_LIB:-./libprof.so}"
 if [[ ! -f "$BYOND_TRACY_LIB" ]]; then
     echo "ERROR: byond-tracy library not found at '$BYOND_TRACY_LIB'" >&2
@@ -81,10 +82,28 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 # ---------------------------------------------------------------------------
-# Step 1: Start DreamDaemon
+# Step 1: Start tracy-capture first
 #
-# byond-tracy's init() is called from DM code early in startup. Once called,
-# it opens TRACY_PORT and waits for tracy-capture to connect.
+# tracy-capture listens on TRACY_PORT. byond-tracy (loaded by BYOND via the
+# DM code's init() call) acts as the client and connects outward to it.
+# ---------------------------------------------------------------------------
+
+echo "==> Starting tracy-capture loop (output: $OUTPUT_TRACY)..."
+# byond-tracy is the server; tracy-capture is the client. It will exit and
+# reconnect until it captures the full session once byond-tracy is ready.
+(
+    while kill -0 "$DD_PID" 2>/dev/null; do
+        "$TRACY_CAPTURE" -o "$OUTPUT_TRACY" -f -a 127.0.0.1 -p "$TRACY_PORT" 2>/dev/null || true
+        sleep 0.5
+    done
+) &
+TRACY_PID=$!
+echo "    tracy-capture loop pid: $TRACY_PID"
+
+# ---------------------------------------------------------------------------
+# Step 2: Start DreamDaemon
+#
+# When DM code calls byond-tracy's init(), it connects to tracy-capture.
 #
 # -trusted    — required for proc/process access in many codebases
 # -invisible  — no window; safe for headless CI
@@ -99,44 +118,7 @@ DD_PID=$!
 echo "    DreamDaemon pid: $DD_PID"
 
 # ---------------------------------------------------------------------------
-# Step 2: Wait for byond-tracy to open its listen port, then connect
-#
-# Poll until TRACY_PORT is open (DM code has called init()), then start
-# tracy-capture to connect to it.
-# ---------------------------------------------------------------------------
-
-echo "==> Waiting for byond-tracy to open port $TRACY_PORT..."
-WAIT_TIMEOUT=60
-elapsed=0
-while ! ss -tlnp 2>/dev/null | grep -q ":${TRACY_PORT} "; do
-    sleep 0.2
-    elapsed=$(echo "$elapsed + 0.2" | bc)
-    if (( $(echo "$elapsed >= $WAIT_TIMEOUT" | bc -l) )); then
-        echo "ERROR: byond-tracy did not open port $TRACY_PORT within ${WAIT_TIMEOUT}s." >&2
-        exit 1
-    fi
-    if ! kill -0 "$DD_PID" 2>/dev/null; then
-        echo "ERROR: DreamDaemon exited before byond-tracy opened its port." >&2
-        exit 1
-    fi
-done
-echo "    Port $TRACY_PORT is open after ${elapsed}s. Starting tracy-capture..."
-
-# ---------------------------------------------------------------------------
-# Step 3: Start tracy-capture
-# ---------------------------------------------------------------------------
-
-"$TRACY_CAPTURE" \
-    -o "$OUTPUT_TRACY" \
-    -f \
-    -a 127.0.0.1 \
-    -p "$TRACY_PORT" \
-    &
-TRACY_PID=$!
-echo "    tracy-capture pid: $TRACY_PID"
-
-# ---------------------------------------------------------------------------
-# Step 4: Wait for DreamDaemon to exit
+# Step 3: Wait for DreamDaemon to exit
 # -DTRACY_PROFILE_AND_EXIT causes the gamecode to call del(world) once
 # initialisation completes, so this should be a clean, prompt exit.
 # ---------------------------------------------------------------------------
@@ -164,7 +146,7 @@ fi
 echo "    DreamDaemon exited (code $DD_EXIT) after ${elapsed}s."
 
 # ---------------------------------------------------------------------------
-# Step 5: Allow tracy-capture to finish flushing, then stop it
+# Step 4: Allow tracy-capture to finish flushing, then stop it
 # ---------------------------------------------------------------------------
 
 echo "==> Waiting ${TRACY_SETTLE_SECONDS}s for tracy-capture to flush..."
@@ -186,7 +168,7 @@ fi
 echo "    Capture file: $OUTPUT_TRACY ($(du -sh "$OUTPUT_TRACY" | cut -f1))"
 
 # ---------------------------------------------------------------------------
-# Step 6: Export CSV
+# Step 5: Export CSV
 # ---------------------------------------------------------------------------
 
 echo "==> Exporting CSV..."
