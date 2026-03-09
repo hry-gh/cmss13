@@ -22,12 +22,8 @@ jobs:
           bash tools/ci/install_rust_g.sh
 
       - name: Install Tracy tools
-        env:
-          TRACY_VERSION: "0.11.1"
         run: |
-          wget -q "https://github.com/wolfpld/tracy/releases/download/v${TRACY_VERSION}/tracy-capture-${TRACY_VERSION}-x86_64.tar.gz"
-          tar xf "tracy-capture-${TRACY_VERSION}-x86_64.tar.gz"
-          chmod +x tracy-capture tracy-csvexport
+          sudo apt-get install -y tracy-capture
 
       - name: Install byond-tracy
         run: |
