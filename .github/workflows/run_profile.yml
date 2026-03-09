@@ -40,9 +40,15 @@ jobs:
 
       - name: Compile for profiling
         run: |
+          echo "==> PWD before install_byond: $(pwd)"
+          echo "==> GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
           bash tools/ci/install_byond.sh
+          echo "==> PWD after install_byond: $(pwd)"
           source $HOME/BYOND/byond/bin/byondsetup
+          echo "==> PWD after byondsetup: $(pwd)"
           cd $GITHUB_WORKSPACE
+          echo "==> PWD after cd GITHUB_WORKSPACE: $(pwd)"
+          ls tools/build/
           tools/build/build --ci dm -DCIBUILDING -DANSICOLORS -DTRACY_PROFILE_AND_EXIT -Werror
 
       - name: Run profiling capture
