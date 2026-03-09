@@ -1,6 +1,6 @@
 name: Tracy Startup Profiling
 on:
-  pull_request:
+  push:
 
 jobs:
   run_tracy_profiling:
