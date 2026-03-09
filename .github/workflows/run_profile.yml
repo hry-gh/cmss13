@@ -36,7 +36,7 @@ jobs:
 
       - name: Install byond-tracy
         run: |
-          wget -q "https://github.com/spacestation13/byond-tracy/releases/download/latest/libprof.so"
+          wget -q "https://github.com/spacestation13/byond-tracy/releases/latest/download/libprof.so"
 
       - name: Compile for profiling
         run: |
