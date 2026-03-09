@@ -21,11 +21,18 @@ jobs:
           sudo apt install -o APT::Immediate-Configure=false zlib1g-dev:i386 libssl-dev:i386
           bash tools/ci/install_rust_g.sh
 
-      - name: Install Tracy tools
+      - name: Build Tracy tools
+        env:
+          TRACY_VERSION: "0.11.1"
         run: |
-          sudo add-apt-repository universe
-          sudo apt-get update
-          sudo apt-get install -y tracy-capture tracy-csvexport
+          sudo apt-get install -y cmake libtbb-dev
+          git clone --depth 1 --branch v${TRACY_VERSION} https://github.com/wolfpld/tracy.git tracy-src
+          cmake -S tracy-src/capture  -B tracy-src/capture/build  -DCMAKE_BUILD_TYPE=Release
+          cmake --build tracy-src/capture/build  --parallel
+          cmake -S tracy-src/csvexport -B tracy-src/csvexport/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build tracy-src/csvexport/build --parallel
+          cp tracy-src/capture/build/tracy-capture   ./tracy-capture
+          cp tracy-src/csvexport/build/tracy-csvexport ./tracy-csvexport
 
       - name: Install byond-tracy
         run: |
