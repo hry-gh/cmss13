@@ -114,8 +114,6 @@ env LD_PRELOAD="$(realpath "$BYOND_TRACY_LIB")" \
     "$DREAM_DAEMON" "$DMB" \
         -port "$DD_PORT" \
         -trusted \
-        -invisible \
-        -core 0 \
         &
 DD_PID=$!
 echo "    DreamDaemon pid: $DD_PID"
