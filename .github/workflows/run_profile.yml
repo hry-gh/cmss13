@@ -23,7 +23,9 @@ jobs:
 
       - name: Install Tracy tools
         run: |
-          sudo apt-get install -y tracy-capture
+          sudo add-apt-repository universe
+          sudo apt-get update
+          sudo apt-get install -y tracy-capture tracy-csvexport
 
       - name: Install byond-tracy
         run: |
