@@ -93,7 +93,6 @@ echo "==> Starting tracy-capture (output: $OUTPUT_TRACY)..."
 "$TRACY_CAPTURE" \
     -o "$OUTPUT_TRACY" \
     -f \
-    -a 127.0.0.1 \
     -p "$TRACY_PORT" \
     &
 TRACY_PID=$!
