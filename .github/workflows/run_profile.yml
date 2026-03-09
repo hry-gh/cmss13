@@ -5,9 +5,6 @@ on:
 jobs:
   run_tracy_profiling:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v3
 
@@ -39,17 +36,19 @@ jobs:
 
       - name: Install byond-tracy
         run: |
-          wget -q "https://github.com/spacestation13/byond-tracy/releases/latest/download/libprof.so"
+          wget -q "https://github.com/spacestation13/byond-tracy/releases/download/latest/libprof.so"
 
       - name: Compile for profiling
         run: |
           bash tools/ci/install_byond.sh
           source $HOME/BYOND/byond/bin/byondsetup
+          cd $GITHUB_WORKSPACE
           tools/build/build --ci dm -DCIBUILDING -DANSICOLORS -DTRACY_PROFILE_AND_EXIT -Werror
 
       - name: Run profiling capture
         run: |
           source $HOME/BYOND/byond/bin/byondsetup
+          cd $GITHUB_WORKSPACE
           bash tools/ci/profile_startup.sh startup.csv
 
       - name: Upload Tracy capture
