@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 # profile-startup.sh
 # Profiles DreamDaemon startup using byond-tracy + Tracy capture tools.
+# Usage: ./profile-startup.sh [output.csv]
+#
+# Expects the following to be on PATH or in the working directory:
+#   - tracy-capture   (from Tracy releases)
+#   - tracy-csvexport (from Tracy releases)
+#   - DreamDaemon     (from BYOND install, sourced via byondsetup)
+#
+# libprof.so (byond-tracy) must be present next to the DMB. The DM code calls
+# its init() proc directly; this script does not use LD_PRELOAD.
 
 set -euo pipefail
 
@@ -12,8 +21,7 @@ OUTPUT_CSV="${1:-startup.csv}"
 OUTPUT_TRACY="startup.tracy"
 
 TRACY_PORT="${TRACY_PORT:-8086}"
-DD_PORT="${DD_PORT:-1337}"       # BYOND world port; avoid conflicts in CI
-DD_TIMEOUT="${DD_TIMEOUT:-600}"  # Max seconds to wait for DD exit (BUMPED TO 10 MINUTES)
+DD_TIMEOUT="${DD_TIMEOUT:-600}"  # Max seconds to wait for DreamDaemon exit
 TRACY_SETTLE_SECONDS=2           # Grace period after DD exits before killing capture
 
 # Locate the DMB — find the first .dmb in the repo root
@@ -34,8 +42,8 @@ TRACY_CAPTURE="$(_find_tool tracy-capture)"
 TRACY_CSVEXPORT="$(_find_tool tracy-csvexport)"
 DREAM_DAEMON="$(_find_tool DreamDaemon)"
 
-# byond-tracy shared library — must live next to the DMB so DreamDaemon can
-# find it via call_ext() at runtime.
+# libprof.so must sit next to the DMB so BYOND can find it when the DM code
+# calls its init() proc. Copy it there if it isn't already in place.
 BYOND_TRACY_LIB="${BYOND_TRACY_LIB:-./libprof.so}"
 if [[ ! -f "$BYOND_TRACY_LIB" ]]; then
     echo "ERROR: byond-tracy library not found at '$BYOND_TRACY_LIB'" >&2
@@ -51,7 +59,7 @@ if [[ "$(dirname "$BYOND_TRACY_LIB")" != "$DMB_DIR" ]]; then
 fi
 
 # ---------------------------------------------------------------------------
-# Cleanup trap
+# Cleanup trap — ensures no orphaned processes on exit/failure
 # ---------------------------------------------------------------------------
 
 TRACY_PID=""
@@ -73,35 +81,64 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 # ---------------------------------------------------------------------------
-# Step 1: Start tracy-capture in the background
+# Step 1: Start DreamDaemon
+#
+# byond-tracy's init() is called from DM code early in startup. Once called,
+# it opens TRACY_PORT and waits for tracy-capture to connect.
+#
+# -trusted    — required for proc/process access in many codebases
+# -invisible  — no window; safe for headless CI
 # ---------------------------------------------------------------------------
 
-echo "==> Starting tracy-capture (output: $OUTPUT_TRACY)..."
+echo "==> Starting DreamDaemon ($DMB)..."
+"$DREAM_DAEMON" "$DMB" \
+    -trusted \
+    -invisible \
+    &
+DD_PID=$!
+echo "    DreamDaemon pid: $DD_PID"
+
+# ---------------------------------------------------------------------------
+# Step 2: Wait for byond-tracy to open its listen port, then connect
+#
+# Poll until TRACY_PORT is open (DM code has called init()), then start
+# tracy-capture to connect to it.
+# ---------------------------------------------------------------------------
+
+echo "==> Waiting for byond-tracy to open port $TRACY_PORT..."
+WAIT_TIMEOUT=60
+elapsed=0
+while ! ss -tlnp 2>/dev/null | grep -q ":${TRACY_PORT} "; do
+    sleep 0.2
+    elapsed=$(echo "$elapsed + 0.2" | bc)
+    if (( $(echo "$elapsed >= $WAIT_TIMEOUT" | bc -l) )); then
+        echo "ERROR: byond-tracy did not open port $TRACY_PORT within ${WAIT_TIMEOUT}s." >&2
+        exit 1
+    fi
+    if ! kill -0 "$DD_PID" 2>/dev/null; then
+        echo "ERROR: DreamDaemon exited before byond-tracy opened its port." >&2
+        exit 1
+    fi
+done
+echo "    Port $TRACY_PORT is open after ${elapsed}s. Starting tracy-capture..."
+
+# ---------------------------------------------------------------------------
+# Step 3: Start tracy-capture
+# ---------------------------------------------------------------------------
+
 "$TRACY_CAPTURE" \
     -o "$OUTPUT_TRACY" \
     -f \
+    -a 127.0.0.1 \
     -p "$TRACY_PORT" \
     &
 TRACY_PID=$!
 echo "    tracy-capture pid: $TRACY_PID"
 
 # ---------------------------------------------------------------------------
-# Step 2: Start DreamDaemon
-# ---------------------------------------------------------------------------
-
-echo "==> Starting DreamDaemon ($DMB) on port $DD_PORT..."
-# Removed LD_PRELOAD as the game code loads the .so natively.
-# Changed TRACY_PORT to UTRACY_BIND_PORT which byond-tracy expects.
-env UTRACY_BIND_PORT="$TRACY_PORT" \
-    "$DREAM_DAEMON" "$DMB" \
-        -port "$DD_PORT" \
-        -trusted \
-        &
-DD_PID=$!
-echo "    DreamDaemon pid: $DD_PID"
-
-# ---------------------------------------------------------------------------
-# Step 3: Wait for DreamDaemon to exit
+# Step 4: Wait for DreamDaemon to exit
+# -DTRACY_PROFILE_AND_EXIT causes the gamecode to call del(world) once
+# initialisation completes, so this should be a clean, prompt exit.
 # ---------------------------------------------------------------------------
 
 echo "==> Waiting for DreamDaemon to exit (timeout: ${DD_TIMEOUT}s)..."
@@ -127,7 +164,7 @@ fi
 echo "    DreamDaemon exited (code $DD_EXIT) after ${elapsed}s."
 
 # ---------------------------------------------------------------------------
-# Step 4: Allow tracy-capture to finish flushing
+# Step 5: Allow tracy-capture to finish flushing, then stop it
 # ---------------------------------------------------------------------------
 
 echo "==> Waiting ${TRACY_SETTLE_SECONDS}s for tracy-capture to flush..."
@@ -149,7 +186,7 @@ fi
 echo "    Capture file: $OUTPUT_TRACY ($(du -sh "$OUTPUT_TRACY" | cut -f1))"
 
 # ---------------------------------------------------------------------------
-# Step 5: Export CSV
+# Step 6: Export CSV
 # ---------------------------------------------------------------------------
 
 echo "==> Exporting CSV..."
@@ -160,6 +197,8 @@ echo ""
 
 # Print a brief summary to stdout for easy CI log scanning
 echo "--- Zone timing summary (top 20 by total time) ---"
+# CSV columns: Name, src_file, src_line, total_ns, count, mean_ns, min_ns, max_ns, std_ns
+# Sort by total_ns descending, skip header, take top 20
 if command -v awk &>/dev/null; then
     awk -F',' 'NR==1 { print; next } { print | "sort -t, -k4 -rn" }' "$OUTPUT_CSV" \
         | head -n 21 \
