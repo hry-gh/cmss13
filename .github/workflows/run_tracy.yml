@@ -95,7 +95,7 @@ jobs:
         if: github.event_name == 'pull_request_target'
         run: |
           awk -F',' '
-            NR==1 { next }
+            FNR==1 { next }
             FILENAME == ARGV[1] { baseline[$1] = $4; baseline_total += $4; next }
             {
               name = $1; total = $4
@@ -157,7 +157,7 @@ jobs:
         if: github.event_name == 'push'
         run: |
           awk -F',' '
-            NR==1 { if (!header) { print; header=1 } next }
+            FNR==1 { if (!header) { print; header=1 } next }
             {
               name = $1; sum[name] += $4; count[name]++
               row[name] = $0
@@ -186,7 +186,7 @@ jobs:
         if: github.event_name == 'pull_request_target'
         run: |
           awk -F',' '
-            NR==1 { if (!header) { print; header=1 } next }
+            FNR==1 { if (!header) { print; header=1 } next }
             {
               name = $1; sum[name] += $4; count[name]++
               row[name] = $0
