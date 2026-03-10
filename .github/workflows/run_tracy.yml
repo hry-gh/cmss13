@@ -10,9 +10,6 @@ jobs:
   run_tracy_profiling:
     runs-on: ubuntu-latest
 
-    permissions:
-      pull-requests: write
-
     env:
       TRACY_VERSION: "0.13.1"
 
@@ -98,16 +95,16 @@ jobs:
           sudo unshare -n bash -c "\
             ip link set lo up && \
             source $HOME/BYOND/byond/bin/byondsetup && \
-            bash base/tools/ci/profile_server.sh base-1.csv base-1.tracy base && \
-            bash base/tools/ci/profile_server.sh pr-1.csv   pr-1.tracy   pr  && \
-            bash base/tools/ci/profile_server.sh base-2.csv base-2.tracy base && \
-            bash base/tools/ci/profile_server.sh pr-2.csv   pr-2.tracy   pr  && \
-            bash base/tools/ci/profile_server.sh base-3.csv base-3.tracy base && \
-            bash base/tools/ci/profile_server.sh pr-3.csv   pr-3.tracy   pr  && \
-            bash base/tools/ci/profile_server.sh base-4.csv base-4.tracy base && \
-            bash base/tools/ci/profile_server.sh pr-4.csv   pr-4.tracy   pr  && \
-            bash base/tools/ci/profile_server.sh base-5.csv base-5.tracy base && \
-            bash base/tools/ci/profile_server.sh pr-5.csv   pr-5.tracy   pr
+            cd base && bash tools/ci/profile_server.sh ../base-1.csv ../base-1.tracy && cd .. && \
+            cd pr   && bash tools/ci/profile_server.sh ../pr-1.csv   ../pr-1.tracy   && cd .. && \
+            cd base && bash tools/ci/profile_server.sh ../base-2.csv ../base-2.tracy && cd .. && \
+            cd pr   && bash tools/ci/profile_server.sh ../pr-2.csv   ../pr-2.tracy   && cd .. && \
+            cd base && bash tools/ci/profile_server.sh ../base-3.csv ../base-3.tracy && cd .. && \
+            cd pr   && bash tools/ci/profile_server.sh ../pr-3.csv   ../pr-3.tracy   && cd .. && \
+            cd base && bash tools/ci/profile_server.sh ../base-4.csv ../base-4.tracy && cd .. && \
+            cd pr   && bash tools/ci/profile_server.sh ../pr-4.csv   ../pr-4.tracy   && cd .. && \
+            cd base && bash tools/ci/profile_server.sh ../base-5.csv ../base-5.tracy && cd .. && \
+            cd pr   && bash tools/ci/profile_server.sh ../pr-5.csv   ../pr-5.tracy
           "
 
       - name: Generate PR comment
