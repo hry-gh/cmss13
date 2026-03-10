@@ -53,7 +53,7 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt update || true
           sudo apt install -o APT::Immediate-Configure=false zlib1g-dev:i386 libssl-dev:i386
-          bash base/tools/ci/install_rust_g.sh
+          cd base && bash tools/ci/install_rust_g.sh
 
       - name: Build Tracy tools
         if: steps.tracy-cache.outputs.cache-hit != 'true'
