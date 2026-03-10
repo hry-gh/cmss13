@@ -82,15 +82,8 @@ jobs:
         run: |
           source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
-          sudo unshare -n bash -c "
-            ip link set lo up
-            echo PATH=\$PATH
-            echo LD_LIBRARY_PATH=\$LD_LIBRARY_PATH
-            echo HOME=\$HOME
-            which DreamDaemon && ldd \$(which DreamDaemon) || true
-            which tracy-capture && ldd \$(which tracy-capture) || true
-            PATH='$PATH' LD_LIBRARY_PATH='$LD_LIBRARY_PATH' bash tools/ci/profile_server.sh startup.csv
-          "
+          printf 'ip link set lo up\nexport PATH="%s"\nexport LD_LIBRARY_PATH="%s"\necho PATH=$PATH\necho LD_LIBRARY_PATH=$LD_LIBRARY_PATH\nldd $(which tracy-capture) || true\nbash tools/ci/profile_server.sh startup.csv\n' "$PATH" "$LD_LIBRARY_PATH" > /tmp/run_profile.sh
+          sudo unshare -n bash /tmp/run_profile.sh
 
       - name: Generate PR comment
         if: github.event_name == 'pull_request_target'
