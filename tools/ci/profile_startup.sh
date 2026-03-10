@@ -92,10 +92,8 @@ echo "==> Starting tracy-capture loop (output: $OUTPUT_TRACY)..."
 # byond-tracy is the server; tracy-capture is the client. It will exit and
 # reconnect until it captures the full session once byond-tracy is ready.
 (
-    while kill -0 "$DD_PID" 2>/dev/null; do
-        "$TRACY_CAPTURE" -o "$OUTPUT_TRACY" -f -a 127.0.0.1 -p "$TRACY_PORT" 2>/dev/null || true
-        sleep 0.5
-    done
+    "$TRACY_CAPTURE" -o "$OUTPUT_TRACY" -f -a 127.0.0.1 -p "$TRACY_PORT" 2>/dev/null || true
+    "$TRACY_CAPTURE" -o "$OUTPUT_TRACY" -f -a 127.0.0.1 -p "$TRACY_PORT" 2>/dev/null || true
 ) &
 TRACY_PID=$!
 echo "    tracy-capture loop pid: $TRACY_PID"
@@ -136,12 +134,14 @@ while kill -0 "$DD_PID" 2>/dev/null; do
     fi
 done
 
-wait "$DD_PID"
+wait "$DD_PID" || true
 DD_EXIT=$?
 DD_PID=""
 
-if [[ $DD_EXIT -ne 0 ]]; then
-    echo "WARNING: DreamDaemon exited with code $DD_EXIT" >&2
+if [[ $DD_EXIT -eq 139 ]]; then
+    echo "    DreamDaemon exited with segfault (expected when byond-tracy is attached)."
+elif [[ $DD_EXIT -ne 0 ]]; then
+    echo "    DreamDaemon exited with code $DD_EXIT."
 fi
 echo "    DreamDaemon exited (code $DD_EXIT) after ${elapsed}s."
 
@@ -172,7 +172,7 @@ echo "    Capture file: $OUTPUT_TRACY ($(du -sh "$OUTPUT_TRACY" | cut -f1))"
 # ---------------------------------------------------------------------------
 
 echo "==> Exporting CSV..."
-"$TRACY_CSVEXPORT" "$OUTPUT_TRACY" -o "$OUTPUT_CSV"
+"$TRACY_CSVEXPORT" "$OUTPUT_TRACY" > "$OUTPUT_CSV"
 
 echo "==> Done. CSV written to: $OUTPUT_CSV"
 echo ""
