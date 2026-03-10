@@ -77,7 +77,7 @@ jobs:
         run: |
           bash tools/ci/install_byond.sh
           source $HOME/BYOND/byond/bin/byondsetup
-          tools/build/build.sh -DTRACY_PROFILE_AND_EXIT -DBYOND_TRACY
+          tools/build/build.sh -DTRACY_PROFILE_AND_EXIT -DBYOND_TRACY -DREPRODUCIBLE_ENVIRONMENT
 
       - name: Run profiling capture
         run: |
@@ -95,47 +95,7 @@ jobs:
 
       - name: Generate PR comment
         if: github.event_name == 'pull_request_target'
-        run: |
-          awk -F',' '
-            FNR==1 { next }
-            FILENAME == ARGV[1] { baseline[$1] = $4; baseline_total += $4; next }
-            {
-              name = $1
-              vals[name][++valcount[name]] = $4
-              row[name] = $0
-            }
-            END {
-              for (name in vals) {
-                n = valcount[name]
-                asort(vals[name])
-                median = vals[name][int((n+1)/2)]
-                new_total += median
-                if (name in baseline) {
-                  delta = median - baseline[name]
-                  pct = (delta / baseline[name]) * 100
-                  abs_delta = delta < 0 ? -delta : delta
-                  if (abs_delta >= 5e6 && pct >= 5)
-                    regressions[name] = sprintf("| `%s` | %.1fms | %.1fms | %+.1fms | %+.1f%% |", name, baseline[name]/1e6, median/1e6, delta/1e6, pct)
-                }
-              }
-              total_delta = new_total - baseline_total
-              total_pct = (total_delta / baseline_total) * 100
-              print "<!-- tracy-profile-comment -->"
-              print "## Startup Profile"
-              printf "**Total startup delta: %+.0fms (%+.1f%% vs baseline)**\n\n", total_delta/1e6, total_pct
-              found = 0
-              for (name in regressions) { found = 1; break }
-              if (found) {
-                print "### Regressions (> 5ms and > 5%)"
-                print "| Zone | Baseline | New | Delta | Change |"
-                print "|------|----------|-----|-------|--------|"
-                for (name in regressions) print regressions[name]
-              } else {
-                print ":white_check_mark: No significant regressions detected."
-              }
-              print "\n_Full breakdown available in the [workflow artifact](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})._"
-            }
-          ' tools/ci/baseline_profile.csv startup-1.csv startup-2.csv startup-3.csv startup-4.csv startup-5.csv > pr-comment.md
+        run: python3 tools/ci/profile_compare.py
 
       - name: Post or update PR comment
         if: github.event_name == 'pull_request_target'
@@ -158,26 +118,7 @@ jobs:
           fi
 
       - name: Generate median CSV
-        run: |
-          awk -F',' '
-            FNR==1 { if (!header) { print; header=1 } next }
-            {
-              name = $1
-              vals[name][++valcount[name]] = $4
-              row[name] = $0
-            }
-            END {
-              for (name in vals) {
-                n = valcount[name]
-                asort(vals[name])
-                median = vals[name][int((n+1)/2)]
-                m = split(row[name], f, ",")
-                f[4] = median
-                out = f[1]; for (i=2; i<=m; i++) out = out "," f[i]
-                print out
-              }
-            }
-          ' startup-1.csv startup-2.csv startup-3.csv startup-4.csv startup-5.csv > startup-median.csv
+        run: python3 tools/ci/profile_median.py
 
       - name: Commit baseline profile
         if: github.event_name == 'push'
@@ -194,11 +135,11 @@ jobs:
         with:
           github_token: ${{ steps.app-token-generation.outputs.token }}
 
-      - name: Upload Tracy capture
+      - name: Upload CSV profiles
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: tracy-profile
+          name: tracy-profile-csv
           path: |
             startup-1.csv
             startup-2.csv
@@ -206,6 +147,13 @@ jobs:
             startup-4.csv
             startup-5.csv
             startup-median.csv
+
+      - name: Upload Tracy captures
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tracy-profile-tracy
+          path: |
             startup-1.tracy
             startup-2.tracy
             startup-3.tracy
