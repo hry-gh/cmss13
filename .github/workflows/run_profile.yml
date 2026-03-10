@@ -1,10 +1,11 @@
 name: Tracy Startup Profiling
 on:
   push:
-
 jobs:
   run_tracy_profiling:
     runs-on: ubuntu-latest
+    env:
+      TRACY_VERSION: "0.13.1"
     steps:
       - uses: actions/checkout@v3
 
@@ -14,6 +15,15 @@ jobs:
           path: ~/BYOND
           key: ${{ runner.os }}-byond-${{ secrets.CACHE_PURGE_KEY }}
 
+      - name: Restore Tracy build cache
+        id: tracy-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./tracy-capture
+            ./tracy-csvexport
+          key: ${{ runner.os }}-tracy-${{ env.TRACY_VERSION }}
+
       - name: Install rust-g
         run: |
           sudo dpkg --add-architecture i386
@@ -22,8 +32,7 @@ jobs:
           bash tools/ci/install_rust_g.sh
 
       - name: Build Tracy tools
-        env:
-          TRACY_VERSION: "0.13.1"
+        if: steps.tracy-cache.outputs.cache-hit != 'true'
         run: |
           sudo apt-get install -y cmake libtbb-dev libdbus-1-dev
           git clone --depth 1 --branch v${TRACY_VERSION} https://github.com/wolfpld/tracy.git tracy-src
