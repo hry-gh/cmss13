@@ -31,7 +31,7 @@ wait
 
 [[ ! -f "$OUTPUT_TRACY" ]] && { echo "ERROR: Tracy capture file not created." >&2; exit 1; }
 
-"$TRACY_CSVEXPORT" "$OUTPUT_TRACY" > "$OUTPUT_CSV"
+"$TRACY_CSVEXPORT" -e "$OUTPUT_TRACY" > "$OUTPUT_CSV"
 
 echo "--- Zone timing summary (top 20 by total time) ---"
 if command -v awk &>/dev/null; then
