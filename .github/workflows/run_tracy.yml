@@ -1,14 +1,8 @@
 name: Tracy Startup Profiling
 
 on:
-  push:
-    branches:
-      - master
   pull_request_target:
     paths-ignore:
-      - tools/ci/profile_server.sh
-      - tools/ci/install_byond.sh
-      - tools/ci/install_rust_g.sh
       - tools/bootstrap/**
       - tools/build/**
 
@@ -16,23 +10,28 @@ jobs:
   run_tracy_profiling:
     runs-on: ubuntu-latest
 
+    permissions:
+      pull-requests: write
+
     env:
       TRACY_VERSION: "0.13.1"
 
     steps:
-      - name: Generate App Token
-        id: app-token-generation
-        if: github.event_name == 'push'
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - uses: actions/checkout@v3
+      - name: Checkout PR head
+        uses: actions/checkout@v3
         with:
           persist-credentials: false
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
-          token: ${{ github.event_name == 'push' && steps.app-token-generation.outputs.token || github.token }}
+          path: pr
+          ref: ${{ github.event.pull_request.head.sha }}
+          token: ${{ github.token }}
+
+      - name: Checkout base branch
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          path: base
+          ref: ${{ github.event.pull_request.base.sha }}
+          token: ${{ github.token }}
 
       - name: Restore BYOND cache
         uses: actions/cache@v3
@@ -54,8 +53,7 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt update || true
           sudo apt install -o APT::Immediate-Configure=false zlib1g-dev:i386 libssl-dev:i386
-          bash tools/ci/install_rust_g.sh
-          cp ~/.byond/bin/librust_g.so ./librust_g.so
+          bash base/tools/ci/install_rust_g.sh
 
       - name: Build Tracy tools
         if: steps.tracy-cache.outputs.cache-hit != 'true'
@@ -73,32 +71,49 @@ jobs:
         run: |
           wget -q "https://github.com/spacestation13/byond-tracy/releases/latest/download/libprof.so"
 
-      - name: Compile for profiling
+      - name: Compile PR build
         run: |
-          bash tools/ci/install_byond.sh
+          bash base/tools/ci/install_byond.sh
           source $HOME/BYOND/byond/bin/byondsetup
-          tools/build/build.sh -DTRACY_PROFILE_AND_EXIT -DBYOND_TRACY -DREPRODUCIBLE_ENVIRONMENT
+          cd pr && tools/build/build.sh -DTRACY_PROFILE_AND_EXIT -DBYOND_TRACY
+
+      - name: Compile base build
+        run: |
+          source $HOME/BYOND/byond/bin/byondsetup
+          cd base && tools/build/build.sh -DTRACY_PROFILE_AND_EXIT -DBYOND_TRACY
+
+      - name: Prepare run assets
+        run: |
+          for dir in pr base; do
+            cp libprof.so $dir/libprof.so
+            cp ~/.byond/bin/librust_g.so $dir/librust_g.so
+            cp tracy-capture $dir/tracy-capture
+            cp tracy-csvexport $dir/tracy-csvexport
+          done
 
       - name: Run profiling capture
         run: |
-          source $HOME/BYOND/byond/bin/byondsetup
-          git remote remove origin
+          cd pr && git remote remove origin && cd ..
+          cd base && git remote remove origin && cd ..
           sudo unshare -n bash -c "\
             ip link set lo up && \
             source $HOME/BYOND/byond/bin/byondsetup && \
-            bash tools/ci/profile_server.sh startup-1.csv startup-1.tracy && \
-            bash tools/ci/profile_server.sh startup-2.csv startup-2.tracy && \
-            bash tools/ci/profile_server.sh startup-3.csv startup-3.tracy && \
-            bash tools/ci/profile_server.sh startup-4.csv startup-4.tracy && \
-            bash tools/ci/profile_server.sh startup-5.csv startup-5.tracy
+            bash base/tools/ci/profile_server.sh base-1.csv base-1.tracy base && \
+            bash base/tools/ci/profile_server.sh pr-1.csv   pr-1.tracy   pr  && \
+            bash base/tools/ci/profile_server.sh base-2.csv base-2.tracy base && \
+            bash base/tools/ci/profile_server.sh pr-2.csv   pr-2.tracy   pr  && \
+            bash base/tools/ci/profile_server.sh base-3.csv base-3.tracy base && \
+            bash base/tools/ci/profile_server.sh pr-3.csv   pr-3.tracy   pr  && \
+            bash base/tools/ci/profile_server.sh base-4.csv base-4.tracy base && \
+            bash base/tools/ci/profile_server.sh pr-4.csv   pr-4.tracy   pr  && \
+            bash base/tools/ci/profile_server.sh base-5.csv base-5.tracy base && \
+            bash base/tools/ci/profile_server.sh pr-5.csv   pr-5.tracy   pr
           "
 
       - name: Generate PR comment
-        if: github.event_name == 'pull_request_target'
-        run: python3 tools/ci/profile_compare.py
+        run: python3 base/tools/ci/profile_compare.py
 
       - name: Post or update PR comment
-        if: github.event_name == 'pull_request_target'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -117,36 +132,22 @@ jobs:
               -f body="$(cat pr-comment.md)"
           fi
 
-      - name: Generate median CSV
-        run: python3 tools/ci/profile_median.py
-
-      - name: Commit baseline profile
-        if: github.event_name == 'push'
-        run: |
-          cp startup-median.csv tools/ci/baseline_profile.csv
-          git config --local user.email "${{ secrets.APP_PUBLIC_ID }}+${{ secrets.APP_PUBLIC_NAME }}[bot]@users.noreply.github.com"
-          git config --local user.name "${{ secrets.APP_PUBLIC_NAME }}[bot]"
-          git add tools/ci/baseline_profile.csv
-          git commit -m "Automatic startup profile update [ci skip]" || true
-
-      - name: Push
-        if: github.event_name == 'push'
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ steps.app-token-generation.outputs.token }}
-
       - name: Upload CSV profiles
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: tracy-profile-csv
           path: |
-            startup-1.csv
-            startup-2.csv
-            startup-3.csv
-            startup-4.csv
-            startup-5.csv
-            startup-median.csv
+            base-1.csv
+            base-2.csv
+            base-3.csv
+            base-4.csv
+            base-5.csv
+            pr-1.csv
+            pr-2.csv
+            pr-3.csv
+            pr-4.csv
+            pr-5.csv
 
       - name: Upload Tracy captures
         uses: actions/upload-artifact@v4
@@ -154,8 +155,13 @@ jobs:
         with:
           name: tracy-profile-tracy
           path: |
-            startup-1.tracy
-            startup-2.tracy
-            startup-3.tracy
-            startup-4.tracy
-            startup-5.tracy
+            base-1.tracy
+            base-2.tracy
+            base-3.tracy
+            base-4.tracy
+            base-5.tracy
+            pr-1.tracy
+            pr-2.tracy
+            pr-3.tracy
+            pr-4.tracy
+            pr-5.tracy
