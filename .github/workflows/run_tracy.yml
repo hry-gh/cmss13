@@ -83,7 +83,6 @@ jobs:
         run: |
           source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
-          unset $(env | grep -oE '^[A-Z_]+SECRET[A-Z_]*|^[A-Z_]*TOKEN[A-Z_]*|^[A-Z_]*KEY[A-Z_]*' | tr '\n' ' ') 2>/dev/null || true
           sudo unshare -n bash -c "ip link set lo up && source $HOME/BYOND/byond/bin/byondsetup && bash tools/ci/profile_server.sh startup.csv"
 
       - name: Generate PR comment
@@ -93,16 +92,22 @@ jobs:
             NR==1 { next }
             FILENAME == ARGV[1] { baseline[$1] = $4; baseline_total += $4; next }
             {
-              name = $1; total = $4; new_total += $4
-              if (name in baseline) {
-                delta = total - baseline[name]
-                pct = (delta / baseline[name]) * 100
-                abs_delta = delta < 0 ? -delta : delta
-                if (abs_delta >= 5e6 && pct >= 5)
-                  regressions[name] = sprintf("| `%s` | %.1fms | %.1fms | %+.1fms | %+.1f%% |", name, baseline[name]/1e6, total/1e6, delta/1e6, pct)
-              }
+              name = $1; total = $4
+              new_sum[name] += total
+              new_count[name]++
             }
             END {
+              for (name in new_sum) {
+                avg = new_sum[name] / new_count[name]
+                new_total += avg
+                if (name in baseline) {
+                  delta = avg - baseline[name]
+                  pct = (delta / baseline[name]) * 100
+                  abs_delta = delta < 0 ? -delta : delta
+                  if (abs_delta >= 5e6 && pct >= 5)
+                    regressions[name] = sprintf("| `%s` | %.1fms | %.1fms | %+.1fms | %+.1f%% |", name, baseline[name]/1e6, avg/1e6, delta/1e6, pct)
+                }
+              }
               total_delta = new_total - baseline_total
               total_pct = (total_delta / baseline_total) * 100
               print "<!-- tracy-profile-comment -->"
@@ -120,7 +125,7 @@ jobs:
               }
               print "\n_Full breakdown available in the [workflow artifact](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})._"
             }
-          ' tools/ci/baseline_profile.csv startup.csv > pr-comment.md
+          ' tools/ci/baseline_profile.csv startup-1.csv startup-2.csv startup-3.csv > pr-comment.md
 
       - name: Post or update PR comment
         if: github.event_name == 'pull_request_target'
@@ -145,7 +150,21 @@ jobs:
       - name: Commit baseline profile
         if: github.event_name == 'push'
         run: |
-          cp startup.csv tools/ci/baseline_profile.csv
+          awk -F',' '
+            NR==1 { if (!header) { print; header=1 } next }
+            {
+              name = $1; sum[name] += $4; count[name]++
+              row[name] = $0
+            }
+            END {
+              for (name in sum) {
+                n = split(row[name], f, ",")
+                f[4] = sum[name] / count[name]
+                out = f[1]; for (i=2; i<=n; i++) out = out "," f[i]
+                print out
+              }
+            }
+          ' startup-1.csv startup-2.csv startup-3.csv > tools/ci/baseline_profile.csv
           git config --local user.email "${{ secrets.APP_PUBLIC_ID }}+${{ secrets.APP_PUBLIC_NAME }}[bot]@users.noreply.github.com"
           git config --local user.name "${{ secrets.APP_PUBLIC_NAME }}[bot]"
           git add tools/ci/baseline_profile.csv
