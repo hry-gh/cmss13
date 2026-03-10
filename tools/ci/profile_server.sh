@@ -2,7 +2,7 @@
 set -euo pipefail
 
 OUTPUT_CSV="${1:-startup.csv}"
-OUTPUT_TRACY="startup.tracy"
+OUTPUT_TRACY="${2:startup.tracy}"
 TRACY_PORT="${TRACY_PORT:-8086}"
 
 DMB="${DMB_PATH:-$(find . -maxdepth 1 -name "*.dmb" | head -n1)}"
