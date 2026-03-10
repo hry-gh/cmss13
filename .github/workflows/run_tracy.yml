@@ -84,8 +84,7 @@ jobs:
           source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
           unset $(env | grep -oE '^[A-Z_]+SECRET[A-Z_]*|^[A-Z_]*TOKEN[A-Z_]*|^[A-Z_]*KEY[A-Z_]*' | tr '\n' ' ') 2>/dev/null || true
-          printf 'ip link set lo up\nexport PATH="%s"\nexport LD_LIBRARY_PATH="%s:%s"\ncd "%s"\necho PATH=$PATH\necho LD_LIBRARY_PATH=$LD_LIBRARY_PATH\nldd ./tracy-capture || true\nldd ./librust_g.so || true\nbash tools/ci/profile_server.sh startup.csv\n' "$PATH" "$LD_LIBRARY_PATH" "$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE" > /tmp/run_profile.sh
-          sudo unshare -n bash /tmp/run_profile.sh
+          sudo unshare -n bash -c "ip link set lo up && source $HOME/BYOND/byond/bin/byondsetup && bash tools/ci/profile_server.sh startup.csv"
 
       - name: Generate PR comment
         if: github.event_name == 'pull_request_target'
