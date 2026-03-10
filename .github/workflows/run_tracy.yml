@@ -82,7 +82,7 @@ jobs:
         run: |
           source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
-          sudo --preserve-env=PATH,LD_LIBRARY_PATH,HOME unshare -n bash -c "ip link set lo up && bash tools/ci/profile_server.sh startup.csv"
+          sudo unshare -n bash -c "ip link set lo up && PATH='$PATH' LD_LIBRARY_PATH='$LD_LIBRARY_PATH' bash tools/ci/profile_server.sh startup.csv"
 
       - name: Generate PR comment
         if: github.event_name == 'pull_request_target'
