@@ -80,9 +80,8 @@ jobs:
 
       - name: Run profiling capture
         run: |
-          source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
-          sudo unshare -n sh -c 'ip link set lo up && bash tools/ci/profile_server.sh startup.csv'
+          sudo unshare -n sh -c "ip link set lo up && source $HOME/BYOND/byond/bin/byondsetup && bash tools/ci/profile_startup.sh startup.csv"
 
       - name: Generate PR comment
         if: github.event_name == 'pull_request_target'
