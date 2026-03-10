@@ -83,7 +83,13 @@ jobs:
         run: |
           source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
-          sudo unshare -n bash -c "ip link set lo up && source $HOME/BYOND/byond/bin/byondsetup && bash tools/ci/profile_server.sh startup.csv"
+          sudo unshare -n bash -c "\
+            ip link set lo up && \
+            source $HOME/BYOND/byond/bin/byondsetup && \
+            bash tools/ci/profile_server.sh startup-1.csv startup-1.tracy && \
+            bash tools/ci/profile_server.sh startup-2.csv startup-2.tracy && \
+            bash tools/ci/profile_server.sh startup-3.csv startup-3.tracy
+          "
 
       - name: Generate PR comment
         if: github.event_name == 'pull_request_target'
@@ -176,11 +182,35 @@ jobs:
         with:
           github_token: ${{ steps.app-token-generation.outputs.token }}
 
+      - name: Generate averaged CSV
+        if: github.event_name == 'pull_request_target'
+        run: |
+          awk -F',' '
+            NR==1 { if (!header) { print; header=1 } next }
+            {
+              name = $1; sum[name] += $4; count[name]++
+              row[name] = $0
+            }
+            END {
+              for (name in sum) {
+                n = split(row[name], f, ",")
+                f[4] = sum[name] / count[name]
+                out = f[1]; for (i=2; i<=n; i++) out = out "," f[i]
+                print out
+              }
+            }
+          ' startup-1.csv startup-2.csv startup-3.csv > startup-averaged.csv
+
       - name: Upload Tracy capture
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: tracy-profile
           path: |
-            startup.csv
-            startup.tracy
+            startup-1.csv
+            startup-2.csv
+            startup-3.csv
+            startup-averaged.csv
+            startup-1.tracy
+            startup-2.tracy
+            startup-3.tracy
