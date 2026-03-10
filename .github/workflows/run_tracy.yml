@@ -2,6 +2,8 @@ name: Tracy Startup Profiling
 
 on:
   push:
+    branches:
+      - master
   pull_request_target:
     paths-ignore:
       - tools/ci/profile_server.sh
