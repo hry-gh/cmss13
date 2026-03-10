@@ -47,7 +47,7 @@ jobs:
           path: |
             ./tracy-capture
             ./tracy-csvexport
-          key: ${{ runner.os }}-tracy-${{ env.TRACY_VERSION }}
+          key: ${{ runner.os }}-tracy-${{ env.TRACY_VERSION }}-v2
 
       - name: Install rust-g
         run: |
@@ -55,15 +55,16 @@ jobs:
           sudo apt update || true
           sudo apt install -o APT::Immediate-Configure=false zlib1g-dev:i386 libssl-dev:i386
           bash tools/ci/install_rust_g.sh
+          cp ~/.byond/bin/librust_g.so ./librust_g.so
 
       - name: Build Tracy tools
         if: steps.tracy-cache.outputs.cache-hit != 'true'
         run: |
           sudo apt-get install -y cmake libtbb-dev libdbus-1-dev
           git clone --depth 1 --branch v${TRACY_VERSION} https://github.com/wolfpld/tracy.git tracy-src
-          cmake -S tracy-src/capture  -B tracy-src/capture/build  -DCMAKE_BUILD_TYPE=Release
+          cmake -S tracy-src/capture  -B tracy-src/capture/build  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-march=x86-64"
           cmake --build tracy-src/capture/build  --parallel
-          cmake -S tracy-src/csvexport -B tracy-src/csvexport/build -DCMAKE_BUILD_TYPE=Release
+          cmake -S tracy-src/csvexport -B tracy-src/csvexport/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-march=x86-64"
           cmake --build tracy-src/csvexport/build --parallel
           cp tracy-src/capture/build/tracy-capture   ./tracy-capture
           cp tracy-src/csvexport/build/tracy-csvexport ./tracy-csvexport
@@ -83,7 +84,7 @@ jobs:
           source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
           unset $(env | grep -oE '^[A-Z_]+SECRET[A-Z_]*|^[A-Z_]*TOKEN[A-Z_]*|^[A-Z_]*KEY[A-Z_]*' | tr '\n' ' ') 2>/dev/null || true
-          printf 'ip link set lo up\nexport PATH="%s"\nexport LD_LIBRARY_PATH="%s:%s/.byond/bin"\ncd "%s"\necho PATH=$PATH\necho LD_LIBRARY_PATH=$LD_LIBRARY_PATH\nldd ./tracy-capture || true\nldd %s/.byond/bin/librust_g.so || true\nbash tools/ci/profile_server.sh startup.csv\n' "$PATH" "$LD_LIBRARY_PATH" "$HOME" "$GITHUB_WORKSPACE" "$HOME" > /tmp/run_profile.sh
+          printf 'ip link set lo up\nexport PATH="%s"\nexport LD_LIBRARY_PATH="%s:%s"\ncd "%s"\necho PATH=$PATH\necho LD_LIBRARY_PATH=$LD_LIBRARY_PATH\nldd ./tracy-capture || true\nldd ./librust_g.so || true\nbash tools/ci/profile_server.sh startup.csv\n' "$PATH" "$LD_LIBRARY_PATH" "$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE" > /tmp/run_profile.sh
           sudo unshare -n bash /tmp/run_profile.sh
 
       - name: Generate PR comment
