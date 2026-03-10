@@ -80,8 +80,7 @@ jobs:
         run: |
           source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
-          unset $(env | grep -oE '^[A-Z_]+SECRET[A-Z_]*|^[A-Z_]*TOKEN[A-Z_]*|^[A-Z_]*KEY[A-Z_]*' | tr '\n' ' ') 2>/dev/null || true
-          unshare -n sh -c 'ip link set lo up && bash tools/ci/profile_server.sh startup.csv'
+          sudo unshare -n sh -c 'ip link set lo up && bash tools/ci/profile_startup.sh startup.csv'
 
       - name: Generate PR comment
         if: github.event_name == 'pull_request_target'
