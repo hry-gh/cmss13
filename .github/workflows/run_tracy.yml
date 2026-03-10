@@ -4,7 +4,7 @@ on:
   push:
   pull_request_target:
     paths-ignore:
-      - tools/ci/profile_startup.sh
+      - tools/ci/profile_server.sh
       - tools/ci/install_byond.sh
       - tools/ci/install_rust_g.sh
       - tools/bootstrap/**
@@ -80,7 +80,7 @@ jobs:
         run: |
           source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
-          sudo unshare -n sh -c 'ip link set lo up && bash tools/ci/profile_startup.sh startup.csv'
+          sudo unshare -n sh -c 'ip link set lo up && bash tools/ci/profile_server.sh startup.csv'
 
       - name: Generate PR comment
         if: github.event_name == 'pull_request_target'
