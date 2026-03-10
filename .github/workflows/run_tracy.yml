@@ -61,7 +61,7 @@ jobs:
         run: |
           sudo apt-get install -y cmake libtbb-dev libdbus-1-dev
           git clone --depth 1 --branch v${TRACY_VERSION} https://github.com/wolfpld/tracy.git tracy-src
-          cmake -S tracy-src/capture  -B tracy-src/capture/build -DCMAKE_BUILD_TYPE=Release
+          cmake -S tracy-src/capture  -B tracy-src/capture/build  -DCMAKE_BUILD_TYPE=Release
           cmake --build tracy-src/capture/build  --parallel
           cmake -S tracy-src/csvexport -B tracy-src/csvexport/build -DCMAKE_BUILD_TYPE=Release
           cmake --build tracy-src/csvexport/build --parallel
@@ -82,7 +82,8 @@ jobs:
         run: |
           source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
-          printf 'ip link set lo up\nexport PATH="%s"\nexport LD_LIBRARY_PATH="%s"\necho PATH=$PATH\necho LD_LIBRARY_PATH=$LD_LIBRARY_PATH\nldd $(which tracy-capture) || true\nbash tools/ci/profile_server.sh startup.csv\n' "$PATH" "$LD_LIBRARY_PATH" > /tmp/run_profile.sh
+          unset $(env | grep -oE '^[A-Z_]+SECRET[A-Z_]*|^[A-Z_]*TOKEN[A-Z_]*|^[A-Z_]*KEY[A-Z_]*' | tr '\n' ' ') 2>/dev/null || true
+          printf 'ip link set lo up\nexport PATH="%s"\nexport LD_LIBRARY_PATH="%s"\ncd "%s"\necho PATH=$PATH\necho LD_LIBRARY_PATH=$LD_LIBRARY_PATH\nldd ./tracy-capture || true\nbash tools/ci/profile_server.sh startup.csv\n' "$PATH" "$LD_LIBRARY_PATH" "$GITHUB_WORKSPACE" > /tmp/run_profile.sh
           sudo unshare -n bash /tmp/run_profile.sh
 
       - name: Generate PR comment
