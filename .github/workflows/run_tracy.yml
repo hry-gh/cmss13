@@ -61,7 +61,7 @@ jobs:
         run: |
           sudo apt-get install -y cmake libtbb-dev libdbus-1-dev
           git clone --depth 1 --branch v${TRACY_VERSION} https://github.com/wolfpld/tracy.git tracy-src
-          cmake -S tracy-src/capture  -B tracy-src/capture/build  -DCMAKE_BUILD_TYPE=Release
+          cmake -S tracy-src/capture  -B tracy-src/capture/build -DCMAKE_BUILD_TYPE=Release
           cmake --build tracy-src/capture/build  --parallel
           cmake -S tracy-src/csvexport -B tracy-src/csvexport/build -DCMAKE_BUILD_TYPE=Release
           cmake --build tracy-src/csvexport/build --parallel
@@ -80,8 +80,11 @@ jobs:
 
       - name: Run profiling capture
         run: |
+          source $HOME/BYOND/byond/bin/byondsetup
           git remote remove origin
-          sudo PATH="$PATH" LD_LIBRARY_PATH="$LD_LIBRARY_PATH" unshare -n bash -c "ip link set lo up && source $HOME/BYOND/byond/bin/byondsetup && bash tools/ci/profile_server.sh startup.csv"
+          sudo sysctl -w kernel.unprivileged_userns_clone=1
+          unset $(env | grep -oE '^[A-Z_]+SECRET[A-Z_]*|^[A-Z_]*TOKEN[A-Z_]*|^[A-Z_]*KEY[A-Z_]*' | tr '\n' ' ') 2>/dev/null || true
+          unshare -n bash -c "ip link set lo up && bash tools/ci/profile_server.sh startup.csv"
 
       - name: Generate PR comment
         if: github.event_name == 'pull_request_target'
