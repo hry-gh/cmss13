@@ -31,6 +31,8 @@ SUBSYSTEM_DEF(atoms)
 	initialized = INITIALIZATION_INNEW_REGULAR
 	old_initialized = initialized
 
+	sleep(5 SECONDS)
+
 	// Set up roundstart seed list. This is here because vendors were
 	// bugging out and not populating with the correct packet names
 	// due to this list not being instantiated.
