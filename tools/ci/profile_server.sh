@@ -42,8 +42,6 @@ python3 "$SCRIPT_DIR/profile_merge.py" "$TOTAL_TMP" "$SELF_TMP" "$OUTPUT_CSV"
 
 rm "$TOTAL_TMP" "$SELF_TMP"
 
-rm "$TOTAL_TMP" "$SELF_TMP"
-
 echo "--- Zone timing summary (top 20 by total time) ---"
 awk -F',' 'NR==1 { print; next } { print | "sort -t, -k4 -rn" }' "$OUTPUT_CSV" \
     | head -n 21 \
