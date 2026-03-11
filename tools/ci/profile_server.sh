@@ -25,12 +25,13 @@ BYOND_TRACY_LIB="${BYOND_TRACY_LIB:-./libprof.so}"
     "$TRACY_CAPTURE" -o "$OUTPUT_TRACY" -f -a 127.0.0.1 -p "$TRACY_PORT" 2>/dev/null || true
 ) &
 
-"$DREAM_DAEMON" "$DMB" -trusted -invisible -map-threads 0 &
+UTRACY_BIND_PORT="$TRACY_PORT" "$DREAM_DAEMON" "$DMB" -trusted -invisible -map-threads 0 &
 
 wait
 
 [[ ! -f "$OUTPUT_TRACY" ]] && { echo "ERROR: Tracy capture file not created." >&2; exit 1; }
 
+# Export total (inclusive) and self (exclusive) time, then merge into one CSV
 TOTAL_TMP="$(mktemp)"
 SELF_TMP="$(mktemp)"
 "$TRACY_CSVEXPORT"    "$OUTPUT_TRACY" > "$TOTAL_TMP"
