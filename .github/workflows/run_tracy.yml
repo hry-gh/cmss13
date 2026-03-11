@@ -95,16 +95,8 @@ jobs:
           sudo unshare -n bash -c "\
             ip link set lo up && \
             source $HOME/BYOND/byond/bin/byondsetup && \
-            cd base && bash tools/ci/profile_server.sh ../base-1.csv ../base-1.tracy && cd .. && \
-            cd pr   && bash tools/ci/profile_server.sh ../pr-1.csv   ../pr-1.tracy   && cd .. && \
-            cd base && bash tools/ci/profile_server.sh ../base-2.csv ../base-2.tracy && cd .. && \
-            cd pr   && bash tools/ci/profile_server.sh ../pr-2.csv   ../pr-2.tracy   && cd .. && \
-            cd base && bash tools/ci/profile_server.sh ../base-3.csv ../base-3.tracy && cd .. && \
-            cd pr   && bash tools/ci/profile_server.sh ../pr-3.csv   ../pr-3.tracy   && cd .. && \
-            cd base && bash tools/ci/profile_server.sh ../base-4.csv ../base-4.tracy && cd .. && \
-            cd pr   && bash tools/ci/profile_server.sh ../pr-4.csv   ../pr-4.tracy   && cd .. && \
-            cd base && bash tools/ci/profile_server.sh ../base-5.csv ../base-5.tracy && cd .. && \
-            cd pr   && bash tools/ci/profile_server.sh ../pr-5.csv   ../pr-5.tracy
+            run() { dir=\$1 name=\$2 cpus=\$3; cd \$GITHUB_WORKSPACE/\$dir && taskset -c \$cpus bash tools/ci/profile_server.sh \$GITHUB_WORKSPACE/\${name}.csv \$GITHUB_WORKSPACE/\${name}.tracy; } && \
+            for i in 1 2 3 4 5 6 7 8 9 10; do run base base-\$i 0,1 & run pr pr-\$i 2,3 & wait; done
           "
 
       - name: Generate PR comment
@@ -134,31 +126,11 @@ jobs:
         if: always()
         with:
           name: tracy-profile-csv
-          path: |
-            base-1.csv
-            base-2.csv
-            base-3.csv
-            base-4.csv
-            base-5.csv
-            pr-1.csv
-            pr-2.csv
-            pr-3.csv
-            pr-4.csv
-            pr-5.csv
+          path: "*.csv"
 
       - name: Upload Tracy captures
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: tracy-profile-tracy
-          path: |
-            base-1.tracy
-            base-2.tracy
-            base-3.tracy
-            base-4.tracy
-            base-5.tracy
-            pr-1.tracy
-            pr-2.tracy
-            pr-3.tracy
-            pr-4.tracy
-            pr-5.tracy
+          path: "*.tracy"
