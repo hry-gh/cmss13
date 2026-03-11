@@ -70,9 +70,9 @@ jobs:
 
       - name: Compile PR build
         run: |
-          bash base/tools/ci/install_byond.sh
+          cd base && bash tools/ci/install_byond.sh
           source $HOME/BYOND/byond/bin/byondsetup
-          cd pr && tools/build/build.sh -DTRACY_PROFILE_AND_EXIT -DBYOND_TRACY
+          cd ../pr && tools/build/build.sh -DTRACY_PROFILE_AND_EXIT -DBYOND_TRACY
 
       - name: Compile base build
         run: |
