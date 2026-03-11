@@ -93,11 +93,15 @@ jobs:
           cd pr && git remote remove origin && cd ..
           cd base && git remote remove origin && cd ..
           WS="$GITHUB_WORKSPACE"
+          # Alternate CPU cores each run to cancel out core bias while keeping parallel execution
           sudo unshare -n bash -c "\
             ip link set lo up && \
             source $HOME/BYOND/byond/bin/byondsetup && \
             run() { dir=\$1 name=\$2 cpus=\$3 port=\$4; cd $WS/\$dir && TRACY_PORT=\$port taskset -c \$cpus bash tools/ci/profile_server.sh $WS/\${name}.csv $WS/\${name}.tracy; } && \
-            for i in 1 2 3 4 5 6 7 8 9 10; do run base base-\$i 0,1 8086 & run pr pr-\$i 2,3 8087 & wait; done
+            for i in 1 2 3 4 5 6 7 8 9 10; do \
+              if (( i % 2 == 1 )); then run base base-\$i 0,1 8086 & run pr pr-\$i 2,3 8087 & wait; \
+              else run pr pr-\$i 0,1 8086 & run base base-\$i 2,3 8087 & wait; fi; \
+            done
           "
 
       - name: Generate PR comment
