@@ -10,7 +10,7 @@ OUTPUT = "pr-comment.md"
 REPOSITORY = os.environ["GITHUB_REPOSITORY"]
 RUN_ID = os.environ["GITHUB_RUN_ID"]
 
-CHANGE_ABS_NS = 5_000_000
+CHANGE_ABS_NS = 10_000_000
 COMMENT_MARKER = "<!-- tracy-profile-comment -->"
 
 # One-tailed paired t critical values for p=0.05, indexed by degrees of freedom
@@ -83,15 +83,13 @@ for zone in all_zones:
     if abs(self_delta) < CHANGE_ABS_NS:
         continue
 
-    direction = paired_t_test(base_self_vals, pr_self_vals)
-    if direction == 0:
-        continue
-
     row = (zone, base_total, pr_total, total_delta_zone, total_pct_zone, base_self, pr_self, self_delta, self_pct)
     all_changes.append(row)
+
+    direction = paired_t_test(base_self_vals, pr_self_vals)
     if direction == 1:
         regressions.append(row)
-    else:
+    elif direction == -1:
         speedups.append(row)
 
 regressions.sort(key=lambda r: r[7], reverse=True)
@@ -133,10 +131,11 @@ if not regressions and not speedups:
     lines.append("No significant changes detected.\n")
 
 if all_changes:
+    top_changes = sorted(all_changes, key=lambda r: abs(r[7]), reverse=True)[:20]
     lines += [
         "<details>",
-        "<summary>Full breakdown</summary>\n",
-    ] + TABLE_HEADER + [fmt_row(r) for r in all_changes] + ["", "</details>"]
+        f"<summary>All changes >{CHANGE_ABS_NS // 1_000_000}ms (top 20 by magnitude)</summary>\n",
+    ] + TABLE_HEADER + [fmt_row(r) for r in top_changes] + ["", "</details>"]
 
 lines.append(f"\n_Full profiles available in the [workflow artifact]({artifact_url})._")
 
