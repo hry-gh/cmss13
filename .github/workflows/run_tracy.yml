@@ -92,10 +92,11 @@ jobs:
         run: |
           cd pr && git remote remove origin && cd ..
           cd base && git remote remove origin && cd ..
+          WS="$GITHUB_WORKSPACE"
           sudo unshare -n bash -c "\
             ip link set lo up && \
             source $HOME/BYOND/byond/bin/byondsetup && \
-            run() { dir=\$1 name=\$2 cpus=\$3; cd \$GITHUB_WORKSPACE/\$dir && taskset -c \$cpus bash tools/ci/profile_server.sh \$GITHUB_WORKSPACE/\${name}.csv \$GITHUB_WORKSPACE/\${name}.tracy; } && \
+            run() { dir=\$1 name=\$2 cpus=\$3; cd $WS/\$dir && taskset -c \$cpus bash tools/ci/profile_server.sh $WS/\${name}.csv $WS/\${name}.tracy; } && \
             for i in 1 2 3 4 5 6 7 8 9 10; do run base base-\$i 0,1 & run pr pr-\$i 2,3 & wait; done
           "
 
