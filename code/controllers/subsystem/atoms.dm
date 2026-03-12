@@ -31,6 +31,18 @@ SUBSYSTEM_DEF(atoms)
 	initialized = INITIALIZATION_INNEW_REGULAR
 	old_initialized = initialized
 
+	var/initialized_turfs = 0
+
+	// intentionally slow, pointless loop
+	for(var/area/area in GLOB.all_areas)
+		if(!isarea(area))
+			continue
+
+		for(var/turf/turf in area)
+			if(!isturf(turf))
+				continue
+			initialized_turfs++
+
 	// Set up roundstart seed list. This is here because vendors were
 	// bugging out and not populating with the correct packet names
 	// due to this list not being instantiated.
