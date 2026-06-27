@@ -122,6 +122,10 @@ SUBSYSTEM_DEF(atoms)
 			BadInitializeCalls[the_type] |= BAD_INIT_QDEL_BEFORE
 		return TRUE
 
+	for(var/i in 1 to 1000)
+		var/x = i + i
+		pass(x)
+
 	// This is handled and battle tested by dreamchecker. Limit to UNIT_TESTS just in case that ever fails.
 	#ifdef UNIT_TESTS
 	var/start_tick = world.time
