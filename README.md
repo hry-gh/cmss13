@@ -3,6 +3,8 @@
 </p>
 <hr />
 
+# This game is NOT GOOD!
+
 <p align="center">
 	<a href="https://github.com/cmss13-devs/cmss13/actions?query=workflow%3A%22CI+Suite%22"><img src="https://github.com/cmss13-devs/cmss13/workflows/CI%20Suite/badge.svg"></a>
  	<a href="https://github.com/cmss13-devs/cmss13/actions/workflows/generate_web_assets.yml"><img src="https://github.com/cmss13-devs/cmss13/actions/workflows/generate_web_assets.yml/badge.svg"></a>
