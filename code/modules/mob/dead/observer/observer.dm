@@ -601,11 +601,16 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 			ghost.can_reenter_corpse = FALSE
 			nest.ghost_of_buckled_mob = ghost
 
-/mob/dead/observer/Move(atom/newloc, direct)
+/mob/dead/observer/Move(atom/newloc, direct, glide_size_override)
 	following = null
 	var/area/last_area = get_area(loc)
 	if(updatedir)
-		setDir(direct)//only update dir if we actually need it, so overlays won't spin on base sprites that don't have directions of their own
+		setDir(direct)
+
+	if(glide_size_override)
+		set_glide_size(glide_size_override)
+	else if(client)
+		set_glide_size(DELAY_TO_GLIDE_SIZE(client.move_delay))
 
 	if(newloc)
 		abstract_move(newloc)

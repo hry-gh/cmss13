@@ -72,10 +72,9 @@
 	l_move_time = world.time
 	if ((oldloc != loc && oldloc && oldloc.z == z))
 		last_move_dir = get_dir(oldloc, loc)
-	if(. && buckled_mob && !handle_buckled_mob_movement(loc,direct)) //movement fails if buckled mob's move fails.
+	if(. && buckled_mob && !handle_buckled_mob_movement(loc, direct, glide_size_override)) //movement fails if buckled mob's move fails.
 		. = FALSE
 	if (.)
-
 		if(glide_size_override)
 			set_glide_size(glide_size_override)
 

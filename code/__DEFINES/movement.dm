@@ -59,10 +59,7 @@
 #define PASS_FLAGS_SMOKE (PASS_HIGH_OVER|PASS_AROUND|PASS_UNDER|PASS_MOB_THRU|PASS_THROUGH)
 #define PASS_FLAGS_CRAWLER (PASS_TYPE_CRAWLER|PASS_UNDER)
 
-//The minimum for glide_size to be clamped to.
-//Clamped to 5 because byond's glide size scaling is actually just completely broken and "step"
-//movement is better than dealing with the awful camera juddering
-#define MIN_GLIDE_SIZE 5
+#define MIN_GLIDE_SIZE 1
 //The maximum for glide_size to be clamped to.
 //This shouldn't be higher than the icon size, and generally you shouldn't be changing this, but it's here just in case.
 #define MAX_GLIDE_SIZE 32
@@ -78,7 +75,8 @@ GLOBAL_VAR_INIT(glide_size_multiplier, 1.0)
 /// Not very readable but it works
 #define DELAY_TO_GLIDE_SIZE(delay) (clamp(((world.icon_size / max((delay) / world.tick_lag, 1)) * GLOB.glide_size_multiplier), MIN_GLIDE_SIZE, MAX_GLIDE_SIZE))
 
-32 / max((delay) / world.tick_lag, 1)
+///Similar to DELAY_TO_GLIDE_SIZE, except without the clamping, and it supports piping in an unrelated scalar
+#define MOVEMENT_ADJUSTED_GLIDE_SIZE(delay, movement_disparity) (world.icon_size / ((delay) / world.tick_lag) * movement_disparity * GLOB.glide_size_multiplier)
 
 ///True if the dir is north or south, false therwise
 #define NSCOMPONENT(d) (d&(NORTH|SOUTH))

@@ -187,15 +187,15 @@
 					if(direct & WEST)
 						direction_to_face = WEST
 
-					pulling.Move(NewLoc, direction_to_face)
+					pulling.Move(NewLoc, direction_to_face, glide_size)
 					var/mob/living/pmob = pulling
 					if(istype(pmob))
 						SEND_SIGNAL(pmob, COMSIG_MOB_MOVE_OR_LOOK, TRUE, direction_to_face, direction_to_face)
 				else
-					pulling.Move(NewLoc, direct)
+					pulling.Move(NewLoc, direct, glide_size)
 		else if(get_dist(src, pulling) > 1 || ((pull_dir - 1) & pull_dir)) //puller and pullee more than one tile away or in diagonal position
 			var/pulling_dir = get_dir(pulling, T)
-			pulling.Move(T, pulling_dir) //the pullee tries to reach our previous position
+			pulling.Move(T, pulling_dir, glide_size) //the pullee tries to reach our previous position
 			if(pulling && get_dist(src, pulling) > 1) //the pullee couldn't keep up
 				stop_pulling()
 			else

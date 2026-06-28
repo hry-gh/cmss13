@@ -531,8 +531,8 @@
 
 	return FALSE
 
-/atom/movable/proc/handle_buckled_mob_movement(NewLoc, direct)
-	if(!buckled_mob.Move(NewLoc, direct))
+/atom/movable/proc/handle_buckled_mob_movement(NewLoc, direct, glide_size_override)
+	if(!buckled_mob.Move(NewLoc, direct, glide_size_override))
 		forceMove(buckled_mob.loc)
 		last_move_dir = buckled_mob.last_move_dir
 		buckled_mob.inertia_dir = last_move_dir
@@ -553,15 +553,8 @@
 	SEND_SIGNAL(src, COMSIG_MOVABLE_UPDATE_GLIDE_SIZE, target)
 	glide_size = target
 
-/obj/set_glide_size(target = 8)
-	. = ..()
-	if(!.)
-		return
-
-	if(buckled_mob.glide_size == target)
-		return
-
-	buckled_mob.set_glide_size(target)
+	for(var/mob/buckled as anything in buckled_mobs)
+		buckled.set_glide_size(target)
 
 /obj/structure/bed/set_glide_size(target = 8)
 	. = ..()

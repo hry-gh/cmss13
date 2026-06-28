@@ -180,7 +180,6 @@ CLIENT_VERB(drop_item)
 		return O.relaymove(mob, direct)
 	else
 		move_delay = mob.move_delay
-		var/old_move_delay = move_delay
 		if(mob.recalculate_move_delay)// && mob.next_delay_update <= world.time)
 			recalculate_move_delay()
 		if(mob.next_move_slowdown)
@@ -193,14 +192,11 @@ CLIENT_VERB(drop_item)
 		mob.cur_speed = clamp(10/(move_delay + 0.5), MIN_SPEED, MAX_SPEED)
 		next_movement = world.time + MINIMAL_MOVEMENT_INTERVAL // We pre-set this now for the crawling case. If crawling do_after fails, next_movement would be set after the attempt end instead of now.
 
-		var/new_glide_size = mob.glide_size
-
-		if(old_move_delay + world.tick_lag > world.time)
-			new_glide_size = DELAY_TO_GLIDE_SIZE((move_delay - old_move_delay) * ( (NSCOMPONENT(direct) && EWCOMPONENT(direct)) ? sqrt(2) : 1 ) )
-		else
-			new_glide_size = DELAY_TO_GLIDE_SIZE((move_delay - world.time) * ( (NSCOMPONENT(direct) && EWCOMPONENT(direct)) ? sqrt(2) : 1 ) )
-
-		mob.set_glide_size(new_glide_size)
+		var/add_delay = move_delay
+		var/glide_delay = add_delay
+		if(NSCOMPONENT(direct) && EWCOMPONENT(direct))
+			glide_delay = FLOOR(glide_delay * sqrt(2), world.tick_lag)
+		mob.set_glide_size(DELAY_TO_GLIDE_SIZE(glide_delay))
 
 		//Try to crawl first
 		if(living_mob && living_mob.body_position == LYING_DOWN)
@@ -237,6 +233,11 @@ CLIENT_VERB(drop_item)
 			mob.life_steps_total++
 			if(mob.clone != null)
 				mob.update_clone()
+			if(NSCOMPONENT(direct) && EWCOMPONENT(direct))
+				add_delay = FLOOR(add_delay * sqrt(2), world.tick_lag)
+
+		mob.set_glide_size(DELAY_TO_GLIDE_SIZE(add_delay))
+
 		mob.move_intentionally = FALSE
 		moving = FALSE
 		next_movement = world.time + move_delay
