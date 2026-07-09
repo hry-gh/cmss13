@@ -95,6 +95,8 @@ GLOBAL_LIST_INIT(reboot_sfx, file2list("config/reboot_sfx.txt"))
 /proc/start_logging()
 	GLOB.round_id = SSentity_manager.round.id
 
+	world.Export("["http://localhost:6062"]/round_start", "{\"round_id\": \"[GLOB.round_id]\"}")
+
 	GLOB.log_directory = "data/logs/[time2text(world.realtime, "YYYY/MM-Month/DD-Day")]/round-"
 
 	if(GLOB.round_id)
@@ -213,6 +215,8 @@ GLOBAL_LIST_INIT(reboot_sfx, file2list("config/reboot_sfx.txt"))
 /world/Reboot(reason)
 	if(reason == 1 || reason == 2) // host/topic
 		return
+
+	world.Export("["http://localhost:6062"]/round_end", "{}")
 
 	send_reboot_sound()
 	spawn(30)
