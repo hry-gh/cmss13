@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'tgui/backend';
 import { Section, Stack, Tabs } from 'tgui/components';
 
 import { ChatPageSettings } from '../chat';
+import { TtsSettings } from '../tts';
 import { changeSettingsTab } from './actions';
 import { SETTINGS_TABS } from './constants';
 import { selectActiveTab } from './selectors';
@@ -46,6 +47,7 @@ export const SettingsPanel = (props) => {
         {activeTab === 'chatPage' && <ChatPageSettings />}
         {activeTab === 'textHighlight' && <TextHighlightSettings />}
         {activeTab === 'statPanel' && <SettingsStatPanel />}
+        {activeTab === 'tts' && <TtsSettings />}
       </Stack.Item>
     </Stack>
   );

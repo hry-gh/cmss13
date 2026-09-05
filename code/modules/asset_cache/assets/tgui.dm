@@ -15,6 +15,7 @@
 	assets = list(
 		"tgui-panel.bundle.js" = "tgui/public/tgui-panel.bundle.js",
 		"tgui-panel.bundle.css" = "tgui/public/tgui-panel.bundle.css",
+		"tts-kokoro.bundle.js" = "tgui/public/tts-kokoro.bundle.js",
 	)
 
 #else
@@ -30,6 +31,7 @@
 	assets = list(
 		"tgui-panel.bundle.js" = file("tgui/public/tgui-panel.bundle.js"),
 		"tgui-panel.bundle.css" = file("tgui/public/tgui-panel.bundle.css"),
+		"tts-kokoro.bundle.js" = file("tgui/public/tts-kokoro.bundle.js"),
 	)
 
 #endif

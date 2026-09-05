@@ -33,6 +33,15 @@ export default defineConfig({
   module: {
     rules: [
       {
+        // Prevent rspack from trying to resolve WASM/worker URLs
+        // inside kokoro-js's pre-built distribution files.
+        test: /node_modules[\\/]kokoro-js/,
+        parser: {
+          url: false,
+          worker: false,
+        },
+      },
+      {
         test: /\.([tj]s(x)?|cjs)$/,
         type: 'javascript/auto',
         use: [
@@ -104,6 +113,18 @@ export default defineConfig({
   },
   optimization: {
     emitOnErrors: false,
+    splitChunks: {
+      cacheGroups: {
+        // Force all kokoro-js / onnxruntime-web code into one
+        // predictably-named chunk that the BYOND asset cache can serve.
+        ttsKokoro: {
+          test: /[\\/]node_modules[\\/](kokoro-js|onnxruntime-web|@huggingface[\\/]transformers)[\\/]/,
+          name: 'tts-kokoro',
+          chunks: 'async',
+          enforce: true,
+        },
+      },
+    },
   },
   output: {
     path: path.resolve(dirname, 'public'),
@@ -132,6 +153,10 @@ export default defineConfig({
       'tgui-panel': path.resolve(dirname, './packages/tgui-panel'),
       'tgui-say': path.resolve(dirname, './packages/tgui-say'),
       'tgui-dev-server': path.resolve(dirname, './packages/tgui-dev-server'),
+      'kokoro-js': path.resolve(
+        dirname,
+        './node_modules/kokoro-js/dist/kokoro.web.js',
+      ),
     },
   },
   stats: createStats(true),

@@ -22,6 +22,10 @@ export const SETTINGS_TABS = [
     id: 'statPanel',
     name: 'Statpanel',
   },
+  {
+    id: 'tts',
+    name: 'Text to Speech',
+  },
 ];
 
 export const FONTS_DISABLED = 'Default';

@@ -25,6 +25,7 @@ import { setupPanelFocusHacks } from './panelFocus';
 import { pingMiddleware, pingReducer } from './ping';
 import { settingsMiddleware, settingsReducer } from './settings';
 import { telemetryMiddleware } from './telemetry';
+import { ttsMiddleware, ttsReducer } from './tts';
 
 perf.mark('inception', window.performance?.timeOrigin);
 perf.mark('init');
@@ -36,6 +37,7 @@ const store = configureStore({
     game: gameReducer,
     ping: pingReducer,
     settings: settingsReducer,
+    tts: ttsReducer,
   }),
   middleware: {
     pre: [
@@ -45,6 +47,7 @@ const store = configureStore({
       settingsMiddleware,
       audioMiddleware,
       gameMiddleware,
+      ttsMiddleware,
     ],
   },
 });
@@ -97,6 +100,7 @@ function setupApp() {
         './ping',
         './settings',
         './telemetry',
+        './tts',
       ],
       () => {
         render(<Panel />);
